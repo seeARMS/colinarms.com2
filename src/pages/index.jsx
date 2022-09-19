@@ -21,7 +21,7 @@ import logoParagraph from "public/paragraph.png"
 import logoGoogle from "public/google.svg"
 import logoCoinbase from 'public/coinbase.svg'
 import { generateRssFeed } from '@/lib/generateRssFeed'
-import { getAllArticles } from '@/lib/getAllArticles'
+import { getColinArticles } from '@/lib/getAllArticles'
 import { formatDate } from '@/lib/formatDate'
 
 function MailIcon(props) {
@@ -84,15 +84,23 @@ function ArrowDownIcon(props) {
 }
 
 function Article({ article }) {
+  const date = new Date(article.isoDate).toISOString()
   return (
     <Card as="article">
-      <Card.Title href={`/articles/${article.slug}`}>
+      <Card.Title href={article.link}>
         {article.title}
       </Card.Title>
-      <Card.Eyebrow as="time" dateTime={article.date} decorate>
-        {formatDate(article.date)}
+      <Card.Eyebrow as="time" dateTime={date} decorate>
+        {new Date(date).toLocaleDateString('en-US', {
+
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+          timeZone: 'UTC',
+
+        })}
       </Card.Eyebrow>
-      <Card.Description>{article.description}</Card.Description>
+      <Card.Description>{article.contentSnippet}</Card.Description>
       <Card.Cta>Read article</Card.Cta>
     </Card>
   )
@@ -277,8 +285,8 @@ export default function Home({ articles }) {
       <Container className="mt-24 md:mt-28">
         <div className="mx-auto grid max-w-xl grid-cols-1 gap-y-20 lg:max-w-none lg:grid-cols-2">
           <div className="flex flex-col gap-16">
-            {articles.map((article) => (
-              <Article key={article.slug} article={article} />
+            {articles.map((article, idx) => (
+              <Article key={idx} article={article} />
             ))}
           </div>
           <div className="space-y-10 lg:pl-16 xl:pl-24">
@@ -296,11 +304,13 @@ export async function getStaticProps() {
     await generateRssFeed()
   }
 
+  const articles = await getColinArticles()
+
+
   return {
     props: {
-      articles: (await getAllArticles())
-        .slice(0, 4)
-        .map(({ component, ...meta }) => meta),
+      articles: articles,
     },
+    revalidate: 60
   }
 }
