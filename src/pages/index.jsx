@@ -22,7 +22,6 @@ import logoGoogle from "public/google.svg"
 import logoCoinbase from 'public/coinbase.svg'
 import { generateRssFeed } from '@/lib/generateRssFeed'
 import { getColinArticles } from '@/lib/getAllArticles'
-import { formatDate } from '@/lib/formatDate'
 
 function MailIcon(props) {
   return (
@@ -247,7 +246,7 @@ export default function Home({ articles }) {
     <>
       <Head>
         <title>
-          Spencer Sharp - Software designer, founder, and amateur astronaut
+          Colin Armstrong - software engineer & founder
         </title>
         <meta
           name="description"
@@ -260,7 +259,7 @@ export default function Home({ articles }) {
             Hi. I'm Colin.
           </h1>
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            I'm a software engineer, entrepreneur, and angel investor based in the San Francisco Bay Area. I used to work at Google and Coinbase, but now I help creators build media empires at Paragraph.
+            I'm a software engineer, entrepreneur, and angel investor based in the San Francisco Bay Area. I'm founder and CEO at <a className="underline text-teal-500" href="https://paragraph.xyz">Paragraph</a>, where I help creators build media empires. Previously, I managed communications abuse at Google, and helped launch Coinbase in Canada.
           </p>
           <div className="mt-6 flex gap-6">
             <SocialLink

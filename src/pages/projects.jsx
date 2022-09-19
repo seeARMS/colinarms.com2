@@ -11,37 +11,44 @@ import logoPlanetaria from '@/images/logos/planetaria.svg'
 
 const projects = [
   {
-    name: 'Planetaria',
+    name: 'BoltFare',
     description:
-      'Creating technology to empower civilians to explore space on their own terms.',
-    link: { href: 'http://planetaria.tech', label: 'planetaria.tech' },
+      'Facebook messenger Chatbot that helps find great flight deals. Saved millions of dollars from thousands of users. Micro-acquired in 2017.',
+    link: { href: 'http://planetaria.tech', label: 'boltfare.com' },
     logo: logoPlanetaria,
   },
   {
-    name: 'Animaginary',
+    name: 'BoltScale',
     description:
-      'High performance web animation library, hand-written in optimized WASM.',
-    link: { href: '#', label: 'github.com' },
+      'Dead-simple uptime & performance monitoring. Micro-acquired in 2020.',
+    link: { href: '#', label: 'boltscale.com' },
     logo: logoAnimaginary,
   },
   {
-    name: 'HelioStream',
+    name: 'YepLive',
     description:
-      'Real-time video streaming library, optimized for interstellar transmission.',
-    link: { href: '#', label: 'github.com' },
+      'Mobile, location-based livestreaming. Persiscope before Persiscope existed.',
+    link: { href: '#', label: 'yeplive.com' },
     logo: logoHelioStream,
   },
   {
-    name: 'cosmOS',
+    name: 'BitIndy',
     description:
-      'The operating system that powers our Planetaria space shuttles.',
+      'Bitcoin-based, decentralized, peer-to-peer marketplace. Built in 2014.',
     link: { href: '#', label: 'github.com' },
     logo: logoCosmos,
   },
   {
-    name: 'OpenShuttle',
+    name: 'SwiftGift',
     description:
-      'The schematics for the first rocket I designed that successfully made it to orbit.',
+      'A Tinder-like experience to give better gifts. Connect with Facebook. ',
+    link: { href: '#', label: 'github.com' },
+    logo: logoOpenShuttle,
+  },
+  {
+    name: 'Backito',
+    description:
+      'A distributed Kickstarter dApp on Ethereum, built in 2014.',
     link: { href: '#', label: 'github.com' },
     logo: logoOpenShuttle,
   },
