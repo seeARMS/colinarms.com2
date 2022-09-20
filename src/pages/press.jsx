@@ -36,7 +36,7 @@ export default function Speaking() {
         />
       </Head>
       <SimpleLayout
-        title="My work has been covered globally."
+        title="Occasionally, my work gets written about."
         intro="Both my personal projects and my professional career have been covered in a handful of different media outlets."
       >
         <div className="space-y-20">

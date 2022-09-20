@@ -11,6 +11,7 @@ import {
   LinkedInIcon,
 } from '@/components/SocialIcons'
 import portraitImage from 'public/colin.jpeg'
+import {useState} from 'react'
 
 function SocialLink({ className, href, children, icon: Icon }) {
   return (
@@ -37,7 +38,69 @@ function MailIcon(props) {
   )
 }
 
+{/*function PersonalText() {
+
+  return (
+    <>
+    <p>
+      My free time is divided between the outdoors (I ran
+    </p>
+
+    </>
+
+  )
+
+} */}
+
+
+function InvestingText() {
+
+  return (
+    <>
+    <p>
+      I recently began angel investing. I'm mainly interested in the creator economy, media, social, consumer, and web3 spaces.
+    </p>
+      <p>
+        If you're founding an early stage company in this space, I'd love to chat!
+      </p>
+
+    </>
+
+  )
+
+}
+
+function BackgroundText() {
+
+  return (
+    <>
+    <p>
+      I'm interested in technology - how it works, how it's made, how it can be improved, and ultimately how it can impact the lives of others. </p>
+
+    <p>When confronted with things that don't make sense, I love asking, <em>Why?</em> It seems my entire life has been a series of posing questions & chasing answers.
+    </p>
+    <p>
+      Ever since a young age I felt like this. When I got my first cellphone at age 15 - an old Android Samsung Galaxy - I asked, <em>Why is it slow?</em>, so I built my own custom ROM, optimized the heck out of it, and <a className="text-teal-500" href="https://forum.xda-developers.com/t/rom-seearms-customizable-ugjl2-v0-4-02-13-11-v0-4-major-release.906977/">released it online.</a>
+    </p>
+    <p>Shortly after that, I asked, <em>Why is it so hard to make a living online?</em> I built tons of projects to help answer this question, both for myself and for others - an online publication in 2011; a Bitcoin bank in 2012; a distributed kickstarter dApp in 2014; and a Bitcoin-based P2P marketplace in 2015.
+    </p>
+    <p>
+      Working on crypto led to another question - <em className="">Why is it so hard to buy and sell Bitcoin?</em> In 2015 I joined Coinbase to help get this answered. I worked on the team that launched Coinbase in Canada, and made improvements to their Bitcoin private-key storage & anti-abuse infrastructure.
+    </p>
+    <p>
+      This exposure to anti-abuse led me to ask <em>many</em> questions about spam including the motivation, prevalance, and techniques to mitigate. I joined Google and led their Communications Anti-Abuse team for 5 years, protecting billions of users from millions of abusive messages and phone calls every day.
+    </p>
+    <p>Now, I'm revisiting why it's so hard to make a living online. I'm founder & CEO at <a className="text-teal-500" href="https://paragraph.xyz">Paragraph</a>, where I'm aiming to get this question answered once and for all.</p>
+    </>
+
+  )
+
+}
+
 export default function About() {
+  const [tab, setTab] = useState("background")
+
+
   return (
     <>
       <Head>
@@ -63,24 +126,30 @@ export default function About() {
             <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
               I’m Colin Armstrong. I was born in Canada, and now live in San Francisco.
             </h1>
-            <div className="mt-6 space-y-7 text-base text-zinc-600 dark:text-zinc-400">
-              <p>
-                I'm interested in technology - how it works, how it's made, how it can be improved, and ultimately how it can impact the lives of others. </p>
+            <div className="flex justify-center">
+   <span className="isolate inline-flex rounded-md shadow-sm mt-8">
+      <button
+        type="button"
+        onClick={() => setTab("background")}
+        className={clsx("dark:bg-gray-800 dark:text-white relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 ",
+          tab === "background" ? "bg-gray-50 dark:bg-gray-700" : "")}
+      >
+        Background
+      </button>
+      <button
+        type="button"
+        onClick={() => setTab("investing")}
+        className={clsx("dark:bg-gray-800 dark:text-white relative rounded-r-md inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 ",
+          tab === "investing" ? "bg-gray-50 dark:bg-gray-700" : "")}
+      >
+        Angel investing
+      </button>
+    </span>
+            </div>
 
-              <p>When confronted with things that don't make sense, I love asking, <em>Why?</em> It seems my entire life has been a series of posing questions & chasing answers.
-              </p>
-              <p>
-                Ever since a young age I felt like this. When I got my first cellphone at age 15 - an old Android Samsung Galaxy - I asked, <em>Why is it slow?</em>, so I built my own custom ROM, optimized the heck out of it, and <a className="text-teal-500" href="https://forum.xda-developers.com/t/rom-seearms-customizable-ugjl2-v0-4-02-13-11-v0-4-major-release.906977/">released it online.</a>
-              </p>
-              <p>Shortly after that, I asked, <em>Why is it so hard to make a living online?</em> I built tons of projects to help answer this question, both for myself and for others - an online publication in 2011; a Bitcoin bank in 2012; a distributed kickstarter dApp in 2014; and a Bitcoin-based P2P marketplace in 2015.
-              </p>
-              <p>
-                Working on the Bitcoin apps led to another question - <em className="">Why is it so hard to buy and sell Bitcoin?</em> In 2015 I joined Coinbase to help get this answered. I worked on the team that launched Coinbase in Canada, and made improvements to their Bitcoin private-key storage & anti-abuse infrastructure.
-              </p>
-              <p>
-                This exposure to anti-abuse led me to ask, <em>Why does spam exist?</em> I joined Google and led their Communications Anti-Abuse team for 5 years to get this question answered. We protected billions of users from millions of abusive SMS messages and phone calls every day.
-              </p>
-              <p>Now, I'm revisiting why it's so hard to make a living online. I'm founder & CEO at <a className="text-teal-500" href="https://paragraph.xyz">Paragraph</a>, where I'm aiming to get this question answered once and for all.</p>
+            <div className="mt-6 space-y-7 text-base text-zinc-600 dark:text-zinc-400">
+              { tab === "background" && <BackgroundText /> }
+              { tab === "investing" && <InvestingText /> }
             </div>
           </div>
           <div className="lg:pl-20">
@@ -102,7 +171,7 @@ export default function About() {
                 me@colinarms.com
               </SocialLink>
               <p className="text-zinc-600 dark:text-zinc-400 text-sm pt-3">
-                I love chatting - please reach out! In particular if you're working on something in the consumer, creator-economy or web3 space; or you're seeking angel investment.
+                I love chatting - please reach out!
               </p>
             </ul>
           </div>
