@@ -32,12 +32,12 @@ export default function Speaking() {
         <title>Press - Colin Armstrong</title>
         <meta
           name="description"
-          content="I’ve spoken at events all around the world and been interviewed for many podcasts."
+          content="Both my personal projects and my professional career have been covered in a handful of different media outlets."
         />
       </Head>
       <SimpleLayout
         title="My work has been covered globally."
-        intro="Both my personal projects and my professional career have been covered in many different media outlets."
+        intro="Both my personal projects and my professional career have been covered in a handful of different media outlets."
       >
         <div className="space-y-20">
           <SpeakingSection title="Projects">

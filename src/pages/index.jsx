@@ -12,11 +12,12 @@ import {
   GitHubIcon,
   LinkedInIcon,
 } from '@/components/SocialIcons'
-import image1 from '@/images/photos/image-1.jpg'
-import image2 from '@/images/photos/image-2.jpg'
-import image3 from '@/images/photos/image-3.jpg'
-import image4 from '@/images/photos/image-4.jpg'
-import image5 from '@/images/photos/image-5.jpg'
+
+import astroImage from "public/photography/astro.png"
+import image2 from 'public/photography/balloon.jpg'
+import image3 from 'public/photography/hike.jpg'
+import image4 from 'public/photography/water.jpg'
+import image5 from 'public/photography/quail.jpg'
 import logoParagraph from "public/paragraph.png"
 import logoGoogle from "public/google.svg"
 import logoCoinbase from 'public/coinbase.svg'
@@ -259,7 +260,7 @@ function Photos() {
   return (
     <div className="mt-16 sm:mt-20">
       <div className="-my-4 flex justify-center gap-5 overflow-hidden py-4 sm:gap-8">
-        {[image1, image2, image3, image4, image5].map((image, imageIndex) => (
+        {[astroImage, image2, image3, image4, image5].map((image, imageIndex) => (
           <div
             key={image.src}
             className={clsx(
@@ -270,6 +271,7 @@ function Photos() {
             <Image
               src={image}
               alt=""
+              placeholder='blur'
               sizes="(min-width: 640px) 18rem, 11rem"
               className="absolute inset-0 h-full w-full object-cover"
             />

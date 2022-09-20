@@ -65,15 +65,17 @@ export default function About() {
             </h1>
             <div className="mt-6 space-y-7 text-base text-zinc-600 dark:text-zinc-400">
               <p>
-                I'm interested in technology - how it works, how it's made, how it can be improved, and ultimately how it can impact the lives of others. When confronted with things that don't make sense, I love asking, <em>Why?</em>
+                I'm interested in technology - how it works, how it's made, how it can be improved, and ultimately how it can impact the lives of others. </p>
+
+              <p>When confronted with things that don't make sense, I love asking, <em>Why?</em> It seems my entire life has been a series of posing questions & chasing answers.
               </p>
               <p>
-                Ever since a young age I felt like this. When I got my first cellphone at age 15 - an old Android Samsung Galaxy - I asked, <em>Why is it slow?</em>, so I built my own custom ROM, optimized the heck out of it, and <a className="text-teal-500 hover:underline" href="https://forum.xda-developers.com/t/rom-seearms-customizable-ugjl2-v0-4-02-13-11-v0-4-major-release.906977/">released it online.</a>
+                Ever since a young age I felt like this. When I got my first cellphone at age 15 - an old Android Samsung Galaxy - I asked, <em>Why is it slow?</em>, so I built my own custom ROM, optimized the heck out of it, and <a className="text-teal-500" href="https://forum.xda-developers.com/t/rom-seearms-customizable-ugjl2-v0-4-02-13-11-v0-4-major-release.906977/">released it online.</a>
               </p>
               <p>Shortly after that, I asked, <em>Why is it so hard to make a living online?</em> I built tons of projects to help answer this question, both for myself and for others - an online publication in 2011; a Bitcoin bank in 2012; a distributed kickstarter dApp in 2014; and a Bitcoin-based P2P marketplace in 2015.
               </p>
               <p>
-                The Bitcoin-based P2P marketplace got me the closest to answering this question, but that led to another question - <em className="">Why is it so hard to buy and sell Bitcoin?</em> In 2015 I joined Coinbase to help get this answered. I worked on the team that launched Coinbase in Canada, and made improvements to their Bitcoin private-key storage & anti-abuse infrastructure.
+                Working on the Bitcoin apps led to another question - <em className="">Why is it so hard to buy and sell Bitcoin?</em> In 2015 I joined Coinbase to help get this answered. I worked on the team that launched Coinbase in Canada, and made improvements to their Bitcoin private-key storage & anti-abuse infrastructure.
               </p>
               <p>
                 This exposure to anti-abuse led me to ask, <em>Why does spam exist?</em> I joined Google and led their Communications Anti-Abuse team for 5 years to get this question answered. We protected billions of users from millions of abusive SMS messages and phone calls every day.
