@@ -22,6 +22,7 @@ import logoGoogle from "public/google.svg"
 import logoCoinbase from 'public/coinbase.svg'
 import { generateRssFeed } from '@/lib/generateRssFeed'
 import { getColinArticles } from '@/lib/getAllArticles'
+import {useState} from 'react'
 
 function MailIcon(props) {
   return (
@@ -114,9 +115,40 @@ function SocialLink({ icon: Icon, ...props }) {
 }
 
 function Newsletter() {
+  const [email, setEmail] = useState("")
+  const [message, setMessage] = useState("")
   return (
     <form
-      action="/thank-you"
+      method="POST"
+      onSubmit={async (e) => {
+        e.preventDefault()
+
+try {
+      let res = await fetch(
+
+        "https://paragraph.xyz/api/blogs/@colins-blog/subscribe",
+   {
+        method: "POST",
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+        body: JSON.stringify({
+          email
+        }),
+      });
+      let resJson = await res.json();
+      if (res.status === 200) {
+        setEmail("");
+        setMessage("You're on the list!");
+      } else {
+        setMessage("Oh no - an error occurred!");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+
+      }}
       className="rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40"
     >
       <h2 className="flex text-sm font-semibold text-zinc-900 dark:text-zinc-100">
@@ -126,18 +158,25 @@ function Newsletter() {
       <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
         Get notified when I publish something new, and unsubscribe at any time.
       </p>
-      <div className="mt-6 flex">
+      { !message && <div className="mt-6 flex">
         <input
           type="email"
           placeholder="Email address"
           aria-label="Email address"
           required
+          onChange={(e) => setEmail(e.target.value)}
           className="min-w-0 flex-auto appearance-none rounded-md border border-zinc-900/10 bg-white px-3 py-[calc(theme(spacing.2)-1px)] shadow-md shadow-zinc-800/5 placeholder:text-zinc-400 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/10 dark:border-zinc-700 dark:bg-zinc-700/[0.15] dark:text-zinc-200 dark:placeholder:text-zinc-500 dark:focus:border-teal-400 dark:focus:ring-teal-400/10 sm:text-sm"
         />
         <Button type="submit" className="ml-4 flex-none">
           Join
         </Button>
-      </div>
+      </div> }
+
+      { message && <div className="mt-6 flex text-zinc-600 dark:text-zinc-400 text-sm">
+        { message }
+
+      </div>}
+
     </form>
   )
 }
