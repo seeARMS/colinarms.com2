@@ -170,9 +170,6 @@ export default function About() {
               >
                 me@colinarms.com
               </SocialLink>
-              <p className="text-zinc-600 dark:text-zinc-400 text-sm pt-3">
-                I love chatting - please reach out!
-              </p>
             </ul>
           </div>
         </div>
