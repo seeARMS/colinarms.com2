@@ -80,7 +80,7 @@ function BackgroundText() {
     <p>When confronted with things that don't make sense, I love asking, <em>Why?</em> It seems my entire life has been a series of posing questions & chasing answers.
     </p>
     <p>
-      Ever since a young age I felt like this. When I got my first cellphone at age 15 - an old Android Samsung Galaxy - I asked, <em>Why is it slow?</em>, so I built my own custom ROM, optimized the heck out of it, and <a className="text-teal-500" href="https://forum.xda-developers.com/t/rom-seearms-customizable-ugjl2-v0-4-02-13-11-v0-4-major-release.906977/">released it online.</a>
+      Ever since a young age I felt like this. When I got my first cellphone at age 15 - an old Android Samsung Galaxy - I asked, <em>Why is it slow?</em>, so I built my own custom ROM, optimized the heck out of it, and <a className="text-teal-500 hover:text-teal-400 transition-all" href="https://forum.xda-developers.com/t/rom-seearms-customizable-ugjl2-v0-4-02-13-11-v0-4-major-release.906977/">released it online.</a>
     </p>
     <p>Shortly after that, I asked, <em>Why is it so hard to make a living online?</em> I built tons of projects to help answer this question, both for myself and for others - an online publication in 2011; a Bitcoin bank in 2012; a distributed kickstarter dApp in 2014; and a Bitcoin-based P2P marketplace in 2015.
     </p>
@@ -90,7 +90,7 @@ function BackgroundText() {
     <p>
       This exposure to anti-abuse led me to ask <em>many</em> questions about spam including the motivation, prevalance, and techniques to mitigate. I joined Google and led their Communications Anti-Abuse team for 5 years, protecting billions of users from millions of abusive messages and phone calls every day.
     </p>
-    <p>Now, I'm revisiting why it's so hard to make a living online. I'm founder & CEO at <a className="text-teal-500" href="https://paragraph.xyz">Paragraph</a>, where I'm aiming to get this question answered once and for all.</p>
+      <p>Now, I'm revisiting why it's so hard to make a living online. I'm founder & CEO at <a className="text-teal-500 hover:text-teal-400 transition-all" href="https://paragraph.xyz">Paragraph</a>, where I'm aiming to get this question answered once and for all.</p>
     </>
 
   )

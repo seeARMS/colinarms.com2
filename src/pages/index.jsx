@@ -300,7 +300,7 @@ export default function Home({ articles }) {
             Hi. I'm Colin.
           </h1>
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            I'm a software engineer, entrepreneur, and angel investor based in the San Francisco Bay Area. I'm founder and CEO at <a className="underline text-teal-500" href="https://paragraph.xyz">Paragraph</a>, where I help creators build media empires.
+            I'm a software engineer, entrepreneur, and angel investor based in the San Francisco Bay Area. I'm founder and CEO at <a className="text-teal-500 hover:text-teal-400 transition-all" href="https://paragraph.xyz">Paragraph</a>, where I help creators build media empires.
 
           </p>
             <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
