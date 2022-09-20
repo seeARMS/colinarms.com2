@@ -83,16 +83,13 @@ export default function About() {
           </div>
           <div className="lg:pl-20">
             <ul role="list">
-              <SocialLink href="#" icon={TwitterIcon}>
+              <SocialLink href="https://twitter.com/colinarms" icon={TwitterIcon}>
                 Follow on Twitter
               </SocialLink>
-              <SocialLink href="#" icon={InstagramIcon} className="mt-4">
-                Follow on Instagram
-              </SocialLink>
-              <SocialLink href="#" icon={GitHubIcon} className="mt-4">
+              <SocialLink href="https://github.com/seeARMS" icon={GitHubIcon} className="mt-4">
                 Follow on GitHub
               </SocialLink>
-              <SocialLink href="#" icon={LinkedInIcon} className="mt-4">
+              <SocialLink href="https://linkedin.com/in/colinarms" icon={LinkedInIcon} className="mt-4">
                 Follow on LinkedIn
               </SocialLink>
               <SocialLink
@@ -102,6 +99,9 @@ export default function About() {
               >
                 me@colinarms.com
               </SocialLink>
+              <p className="text-zinc-600 dark:text-zinc-400 text-sm pt-3">
+                I love chatting - please reach out! In particular if you're working on something in the consumer, creator-economy or web3 space; or you're seeking angel investment.
+              </p>
             </ul>
           </div>
         </div>

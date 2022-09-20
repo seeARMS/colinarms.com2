@@ -250,7 +250,7 @@ export default function Home({ articles }) {
         </title>
         <meta
           name="description"
-          content="I’m Spencer, a software designer and entrepreneur based in New York City. I’m the founder and CEO of Planetaria, where we develop technologies that empower regular people to explore space on their own terms."
+          content="I’m Colin, a software engineer, entrepreneur and angel investor based in the San Francisco Bay Area. I'm founder and CEO at Paragraph. where I help creators build media empires."
         />
       </Head>
       <Container className="mt-9">
