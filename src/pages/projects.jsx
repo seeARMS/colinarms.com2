@@ -9,48 +9,67 @@ import logoHelioStream from '@/images/logos/helio-stream.svg'
 import logoOpenShuttle from '@/images/logos/open-shuttle.svg'
 import logoPlanetaria from '@/images/logos/planetaria.svg'
 
+import logoBoltscale from "public/boltscale.png"
+import logoShoutshare from "public/shoutshare.svg"
+import logoYeplive from "public/yeplive.PNG"
+import logoBoltfare from "public/boltfare.png"
+
 const projects = [
   {
     name: 'BoltFare',
     description:
-      'Facebook messenger Chatbot that helps find great flight deals. Saved millions of dollars from thousands of users. Micro-acquired in 2017.',
-    link: { href: 'http://planetaria.tech', label: 'boltfare.com' },
-    logo: logoPlanetaria,
+      'Chatbot that helps find great flight deals. Saved millions of dollars from thousands of users. Micro-acquired in 2017.',
+    link: { href: 'https://web.archive.org/web/20180308090449/https://boltfare-landing.herokuapp.com/', label: 'boltfare.com' },
+    logo: logoBoltfare,
+    year: 2017
   },
   {
     name: 'BoltScale',
     description:
       'Dead-simple uptime & performance monitoring. Micro-acquired in 2020.',
-    link: { href: '#', label: 'boltscale.com' },
-    logo: logoAnimaginary,
+    link: { href: 'https://boltscale.io', label: 'boltscale.io' },
+    logo: logoBoltscale,
+    year: 2019
+  },
+  {
+    name: 'ShoutShare',
+    description:
+      'JS widget that helps companies gather actionable feedback from their users.',
+    link: { href: 'https://feedback-frontend.vercel.app/', label: 'shoutshare.io' },
+    logo: logoShoutshare,
+    year: 2020
   },
   {
     name: 'YepLive',
     description:
       'Mobile, location-based livestreaming. Persiscope before Persiscope existed.',
-    link: { href: '#', label: 'yeplive.com' },
-    logo: logoHelioStream,
+    link: { href: 'https://web.archive.org/web/20150910203659/http://www.yeplive.com/', label: 'yeplive.com' },
+    logo: logoYeplive,
+    year: 2015
   },
   {
     name: 'BitIndy',
     description:
-      'Bitcoin-based, decentralized, peer-to-peer marketplace. Built in 2014.',
-    link: { href: '#', label: 'github.com' },
+      'Bitcoin-based peer-to-peer marketplace for buying & selling digital goods.',
+    link: { href: '#', label: '' },
     logo: logoCosmos,
+    year: 2014
   },
   {
     name: 'SwiftGift',
     description:
-      'A Tinder-like experience to give better gifts. Connect with Facebook. ',
-    link: { href: '#', label: 'github.com' },
+      'A Tinder-like experience to give better gifts. Connect with Facebook and get personalized recommendations. ',
+    link: { href: '#', label: '' },
     logo: logoOpenShuttle,
+    year: 2015
   },
   {
     name: 'Backito',
     description:
-      'A distributed Kickstarter dApp on Ethereum, built in 2014.',
-    link: { href: '#', label: 'github.com' },
+      'A distributed Kickstarter dApp on Ethereum.',
+    link: { href: 'https://github.com/prathamalag1994/hackmit', label: 'github.com' },
     logo: logoOpenShuttle,
+    year: 2014
   },
 ]
 
@@ -89,7 +108,7 @@ export default function Projects() {
                 <Image
                   src={project.logo}
                   alt=""
-                  className="h-8 w-8"
+                  className="h-8 w-8 rounded-3xl"
                   unoptimized
                 />
               </div>
@@ -97,10 +116,16 @@ export default function Projects() {
                 <Card.Link href={project.link.href}>{project.name}</Card.Link>
               </h2>
               <Card.Description>{project.description}</Card.Description>
+              <div className="flex justify-between w-full">
               <p className="relative z-10 mt-6 flex text-sm font-medium text-zinc-400 transition group-hover:text-teal-500 dark:text-zinc-200">
-                <LinkIcon className="h-6 w-6 flex-none" />
-                <span className="ml-2">{project.link.label}</span>
+                { project.link?.label && <><LinkIcon className="h-6 w-6 flex-none" />
+                  <span className="ml-2">{project.link.label}</span> </>
+                }
               </p>
+                <p className="relative z-10 mt-6 flex text-sm font-medium text-zinc-400 transition group-hover:text-teal-500 dark:text-zinc-200 border border-gray-200 rounded-lg px-2">
+                  {project.year}
+                </p>
+              </div>
             </Card>
           ))}
         </ul>
