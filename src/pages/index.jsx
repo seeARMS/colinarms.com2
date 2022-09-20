@@ -259,7 +259,11 @@ export default function Home({ articles }) {
             Hi. I'm Colin.
           </h1>
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            I'm a software engineer, entrepreneur, and angel investor based in the San Francisco Bay Area. I'm founder and CEO at <a className="underline text-teal-500" href="https://paragraph.xyz">Paragraph</a>, where I help creators build media empires. Previously, I managed communications abuse at Google, and helped launch Coinbase in Canada.
+            I'm a software engineer, entrepreneur, and angel investor based in the San Francisco Bay Area. I'm founder and CEO at <a className="underline text-teal-500" href="https://paragraph.xyz">Paragraph</a>, where I help creators build media empires.
+
+          </p>
+            <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
+            Previously, I managed communications anti-abuse at Google, and helped launch Coinbase in Canada.
           </p>
           <div className="mt-6 flex gap-6">
             <SocialLink

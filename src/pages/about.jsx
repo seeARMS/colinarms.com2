@@ -10,7 +10,7 @@ import {
   GitHubIcon,
   LinkedInIcon,
 } from '@/components/SocialIcons'
-import portraitImage from '@/images/portrait.jpg'
+import portraitImage from 'public/colin.jpeg'
 
 function SocialLink({ className, href, children, icon: Icon }) {
   return (
@@ -41,10 +41,10 @@ export default function About() {
   return (
     <>
       <Head>
-        <title>About - Spencer Sharp</title>
+        <title>About - Colin Armstrong</title>
         <meta
           name="description"
-          content="I’m Spencer Sharp. I live in New York City, where I design the future."
+          content="I’m Colin Armstrong. I live in New York City, where I design the future."
         />
       </Head>
       <Container className="mt-16 sm:mt-32">
@@ -61,36 +61,24 @@ export default function About() {
           </div>
           <div className="lg:order-first lg:row-span-2">
             <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-              I’m Spencer Sharp. I live in New York City, where I design the
-              future.
+              I’m Colin Armstrong. I was born in Canada, and now live in San Francisco.
             </h1>
             <div className="mt-6 space-y-7 text-base text-zinc-600 dark:text-zinc-400">
               <p>
-                I’ve loved making things for as long as I can remember, and
-                wrote my first program when I was 6 years old, just two weeks
-                after my mom brought home the brand new Macintosh LC 550 that I
-                taught myself to type on.
+                I'm interested in technology - how it works, how it's made, how it can be improved, and ultimately how it can impact the lives of others. When confronted with things that don't make sense, I love asking, <em>Why?</em>
               </p>
               <p>
-                The only thing I loved more than computers as a kid was space.
-                When I was 8, I climbed the 40-foot oak tree at the back of our
-                yard while wearing my older sister’s motorcycle helmet, counted
-                down from three, and jumped — hoping the tree was tall enough
-                that with just a bit of momentum I’d be able to get to orbit.
+                Ever since a young age I felt like this. When I got my first cellphone at age 15 - an old Android Samsung Galaxy - I asked, <em>Why is it slow?</em>, so I built my own custom ROM, optimized the heck out of it, and <a className="text-teal-500 hover:underline" href="https://forum.xda-developers.com/t/rom-seearms-customizable-ugjl2-v0-4-02-13-11-v0-4-major-release.906977/">released it online.</a>
+              </p>
+              <p>Shortly after that, I asked, <em>Why is it so hard to make a living online?</em> I built tons of projects to help answer this question, both for myself and for others - an online publication in 2011; a Bitcoin bank in 2012; a distributed kickstarter dApp in 2014; and a Bitcoin-based P2P marketplace in 2015.
               </p>
               <p>
-                I spent the next few summers indoors working on a rocket design,
-                while I recovered from the multiple surgeries it took to fix my
-                badly broken legs. It took nine iterations, but when I was 15 I
-                sent my dad’s Blackberry into orbit and was able to transmit a
-                photo back down to our family computer from space.
+                The Bitcoin-based P2P marketplace got me the closest to answering this question, but that led to another question - <em className="">Why is it so hard to buy and sell Bitcoin?</em> In 2015 I joined Coinbase to help get this answered. I worked on the team that launched Coinbase in Canada, and made improvements to their Bitcoin private-key storage & anti-abuse infrastructure.
               </p>
               <p>
-                Today, I’m the founder of Planetaria, where we’re working on
-                civilian space suits and manned shuttle kits you can assemble at
-                home so that the next generation of kids really <em>can</em>{' '}
-                make it to orbit — from the comfort of their own backyards.
+                This exposure to anti-abuse led me to ask, <em>Why does spam exist?</em> I joined Google and led their Communications Anti-Abuse team for 5 years to get this question answered. We protected billions of users from millions of abusive SMS messages and phone calls every day.
               </p>
+              <p>Now, I'm revisiting why it's so hard to make a living online. I'm founder & CEO at <a className="text-teal-500" href="https://paragraph.xyz">Paragraph</a>, where I'm aiming to get this question answered once and for all.</p>
             </div>
           </div>
           <div className="lg:pl-20">
@@ -108,11 +96,11 @@ export default function About() {
                 Follow on LinkedIn
               </SocialLink>
               <SocialLink
-                href="mailto:spencer@planetaria.tech"
+                href="mailto:me@colinarms.com"
                 icon={MailIcon}
                 className="mt-8 border-t border-zinc-100 pt-8 dark:border-zinc-700/40"
               >
-                spencer@planetaria.tech
+                me@colinarms.com
               </SocialLink>
             </ul>
           </div>

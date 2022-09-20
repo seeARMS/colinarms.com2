@@ -13,6 +13,8 @@ import logoBoltscale from "public/boltscale.png"
 import logoShoutshare from "public/shoutshare.svg"
 import logoYeplive from "public/yeplive.PNG"
 import logoBoltfare from "public/boltfare.png"
+import logoSwiftGift from "public/gift.png"
+import logoBitIndy from "public/bitindy.png"
 
 const projects = [
   {
@@ -52,7 +54,7 @@ const projects = [
     description:
       'Bitcoin-based peer-to-peer marketplace for buying & selling digital goods.',
     link: { href: '#', label: '' },
-    logo: logoCosmos,
+    logo: logoBitIndy,
     year: 2014
   },
   {
@@ -60,7 +62,7 @@ const projects = [
     description:
       'A Tinder-like experience to give better gifts. Connect with Facebook and get personalized recommendations. ',
     link: { href: '#', label: '' },
-    logo: logoOpenShuttle,
+    logo: logoSwiftGift,
     year: 2015
   },
   {
