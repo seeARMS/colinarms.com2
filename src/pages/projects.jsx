@@ -98,7 +98,7 @@ export default function Projects() {
       </Head>
       <SimpleLayout
         title="Things I’ve made trying to put my dent in the universe."
-        intro="I’ve worked on tons of projects over the years with varying success. These are the ones that I’m most proud of."
+        intro="I’ve worked on tons of projects over the years, with varying success. These are the ones that I’m most proud of."
       >
         <ul
           role="list"
