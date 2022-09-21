@@ -21,7 +21,6 @@ import image5 from 'public/photography/quail.jpg'
 import logoParagraph from "public/paragraph.png"
 import logoGoogle from "public/google.svg"
 import logoCoinbase from 'public/coinbase.svg'
-import { generateRssFeed } from '@/lib/generateRssFeed'
 import { getColinArticles } from '@/lib/getAllArticles'
 import {useState} from 'react'
 
@@ -344,12 +343,7 @@ export default function Home({ articles }) {
 }
 
 export async function getStaticProps() {
-  if (process.env.NODE_ENV === 'production') {
-    await generateRssFeed()
-  }
-
   const articles = await getColinArticles()
-
 
   return {
     props: {

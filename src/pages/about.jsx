@@ -107,7 +107,7 @@ export default function About() {
         <title>About - Colin Armstrong</title>
         <meta
           name="description"
-          content="I’m Colin Armstrong. I live in New York City, where I design the future."
+          content="I’m Colin Armstrong.."
         />
       </Head>
       <Container className="mt-16 sm:mt-32">
@@ -124,7 +124,7 @@ export default function About() {
           </div>
           <div className="lg:order-first lg:row-span-2">
             <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-              I’m Colin Armstrong. I was born in Canada, and now live in San Francisco.
+              I’m Colin Armstrong. I'm helping creators build media empires.
             </h1>
             <div className="flex justify-center">
    <span className="isolate inline-flex rounded-md shadow-sm mt-8">
