@@ -75,12 +75,9 @@ function BackgroundText() {
   return (
     <>
     <p>
-      I'm interested in technology - how it works, how it's made, how it can be improved, and ultimately how it can impact the lives of others. </p>
+      Ever since a young age, I've been interested in technology. How it works, how it's made, how it can be improved, and ultimately how it can impact the lives of others.</p>
 
-    <p>When confronted with things that don't make sense, I love asking, <em>Why?</em> It seems my entire life has been a series of posing questions & chasing answers.
-    </p>
-    <p>
-      Ever since a young age I felt like this. When I got my first cellphone at age 15 - an old Android Samsung Galaxy - I asked, <em>Why is it slow?</em>, so I built my own custom ROM, optimized the heck out of it, and <a className="text-teal-500 hover:text-teal-400 transition-all" href="https://forum.xda-developers.com/t/rom-seearms-customizable-ugjl2-v0-4-02-13-11-v0-4-major-release.906977/">released it online.</a>
+      <p>At age 15, when I got my first cellphone, I didn't understand why it was so slow. So, I built my own custom ROM, optimized the heck out of it, and <a className="text-teal-500 hover:text-teal-400 transition-all" href="https://forum.xda-developers.com/t/rom-seearms-customizable-ugjl2-v0-4-02-13-11-v0-4-major-release.906977/">released it online.</a>
     </p>
     <p>Shortly after that, I asked, <em>Why is it so hard to make a living online?</em> I built tons of projects to help answer this question, both for myself and for others - an online publication in 2011; a Bitcoin bank in 2012; a distributed kickstarter dApp in 2014; and a Bitcoin-based P2P marketplace in 2015.
     </p>
