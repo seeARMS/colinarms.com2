@@ -11,6 +11,21 @@ const nextConfig = {
     newNextLinkBehavior: true,
     scrollRestoration: true,
   },
+  redirects: async () => {
+    return [
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'chat.cma.xyz',
+          },
+        ],
+        permanent: false,
+        destination: 'https://calendly.com/colinarms/:path*',
+      },
+    ]
+  },
 }
 
 const withMDX = nextMDX({

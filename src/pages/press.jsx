@@ -15,7 +15,7 @@ function SpeakingSection({ children, ...props }) {
 function Appearance({ title, description, event, cta, href }) {
   return (
     <Card as="article">
-      <Card.Title as="h3" href={href}>
+      <Card.Title as="h3" href={href} >
         {title}
       </Card.Title>
       <Card.Eyebrow decorate>{event}</Card.Eyebrow>
@@ -36,10 +36,20 @@ export default function Speaking() {
         />
       </Head>
       <SimpleLayout
-        title="Occasionally, my work gets written about."
+        title="Occasionally, press covers my work."
         intro="Both my personal projects and my professional career have been covered in a handful of different media outlets."
       >
         <div className="space-y-20">
+          <SpeakingSection title="Paragraph">
+            <Appearance
+              href="https://www.theblock.co/post/179174/web3-publishing-platform-paragraph-raises"
+              title="Paragraph raises $1.7m"
+              description="Web3 publishing platform Paragraph has raised $1.7 million in a pre-seed funding round led by Lemniscap. Other investors in the round include FTX Ventures, Binance Labs, GCR and Seed Club Ventures, according to a company release."
+              event="TheBlock"
+              cta="Read article"
+            />
+          </SpeakingSection>
+
           <SpeakingSection title="Projects">
             <Appearance
               href="https://techcrunch.com/2015/06/24/yeplive"
