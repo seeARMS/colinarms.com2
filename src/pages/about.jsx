@@ -10,7 +10,7 @@ import {
   GitHubIcon,
   LinkedInIcon,
 } from '@/components/SocialIcons'
-import portraitImage from 'public/colin.jpeg'
+import portraitImage from 'public/colin_v1.png'
 import {useState} from 'react'
 
 function SocialLink({ className, href, children, icon: Icon }) {
@@ -111,8 +111,9 @@ export default function About() {
               <Image
                 src={portraitImage}
                 alt=""
+                quality={100}
                 sizes="(min-width: 1024px) 32rem, 20rem"
-                className="aspect-square lg:rotate-3 rounded-2xl bg-zinc-100 object-cover dark:bg-zinc-800"
+                className="aspect-square rounded-2xl bg-zinc-100 object-cover dark:bg-zinc-800"
               />
             </div>
           </div>
