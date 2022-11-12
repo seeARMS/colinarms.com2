@@ -121,7 +121,7 @@ export default function About() {
           </div>
           <div className="lg:order-first lg:row-span-2">
             <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-              I’m Colin Armstrong. I'm helping creators build media empires.
+              I'm helping creators build media empires.
             </h1>
             <div className="flex justify-center">
    <span className="isolate inline-flex rounded-md shadow-sm mt-8">

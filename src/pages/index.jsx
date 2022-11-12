@@ -156,7 +156,7 @@ try {
         <span className="ml-3">Stay up to date</span>
       </h2>
       <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-        Get notified when I publish something new, and unsubscribe at any time.
+        Get notified when I publish something new.
       </p>
       { !message && <div className="mt-6 flex">
         <input
@@ -296,14 +296,14 @@ export default function Home({ articles }) {
       <Container className="mt-9">
         <div className="max-w-2xl">
           <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-            Hi. I'm Colin.
+            Colin Mark Armstrong
           </h1>
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
             I'm a software engineer & entrepreneur based in the San Francisco Bay Area. I'm founder and CEO at <a className="text-teal-500 hover:text-teal-400 transition-all" href="https://paragraph.xyz">Paragraph</a>, where I help creators build media empires.
 
           </p>
             <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            Previously, I managed communications anti-abuse at Google, and helped launch Coinbase in Canada.
+            Previously, I managed communications anti-abuse at Google, and worked on payments at Coinbase.
           </p>
           <div className="mt-6 flex gap-6">
             <SocialLink
