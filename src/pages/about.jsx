@@ -74,20 +74,17 @@ function BackgroundText() {
 
   return (
     <>
-    <p>
-      Ever since a young age, I've been interested in technology. How it works, how it's made, how it can be improved, and ultimately how it can impact the lives of others.</p>
+      <p>
+        I'm founder at <a className="text-teal-500 " href="https://paragraph.xyz">Paragraph</a>. We're making it easier for creators to earn a living online.
+      </p>
+      <p>
+        Prior to Paragraph, I spent 5 years at Google leading the communications anti-abuse team. We were responsible for protecting over a billion users from spam, scams, & fraud.
+     I was also a part of the privacy working group, pioneering new ways of mitigating abuse while maintaining user privacy. </p>
 
-      <p>At age 15, when I got my first cellphone, I didn't understand why it was so slow. So, I built my own custom ROM, optimized the heck out of it, and <a className="text-teal-500 hover:text-teal-400 transition-all" href="https://forum.xda-developers.com/t/rom-seearms-customizable-ugjl2-v0-4-02-13-11-v0-4-major-release.906977/">released it online.</a>
-    </p>
-    <p>Shortly after that, I asked, <em>Why is it so hard to make a living online?</em> I built tons of projects to help answer this question, both for myself and for others - an online publication in 2011; a Bitcoin bank in 2012; a distributed kickstarter dApp in 2014; and a Bitcoin-based P2P marketplace in 2015.
-    </p>
-    <p>
-      Working on crypto led to another question - <em className="">Why is it so hard to buy and sell Bitcoin?</em> In 2015 I joined Coinbase to help get this answered. I worked on the team that launched Coinbase in Canada, and made improvements to their Bitcoin private-key storage & anti-abuse infrastructure.
-    </p>
-    <p>
-      This exposure to anti-abuse led me to ask <em>many</em> questions about spam including the motivation, prevalance, and techniques to mitigate. I joined Google and led their Communications Anti-Abuse team for 5 years, protecting billions of users from millions of abusive messages and phone calls every day.
-    </p>
-      <p>Now, I'm revisiting why it's so hard to make a living online. I'm founder & CEO at <a className="text-teal-500 hover:text-teal-400 transition-all" href="https://paragraph.xyz">Paragraph</a>, where I'm aiming to get this question answered once and for all.</p>
+      <p>Before Google, I spent some time at Coinbase. I helped launch Coinbase in Canada, and improved their Bitcoin private-key signing infrastructure.</p>
+      <p>During my undergrad and high school, I built <Link className="text-teal-500" href="/projects">many different projects</Link>, some of which were more successful than others.</p>
+
+      <p>In my free time, I enjoy hiking, coffee, photography, wine, and tinkering with new technologies.</p>
     </>
 
   )
@@ -161,11 +158,11 @@ export default function About() {
                 Follow on LinkedIn
               </SocialLink>
               <SocialLink
-                href="mailto:me@colinarms.com"
+                href="mailto:me@cma.xyz"
                 icon={MailIcon}
                 className="mt-8 border-t border-zinc-100 pt-8 dark:border-zinc-700/40"
               >
-                me@colinarms.com
+                me@cma.xyz
               </SocialLink>
             </ul>
           </div>

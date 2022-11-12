@@ -15,6 +15,7 @@ import logoYeplive from "public/yeplive.PNG"
 import logoBoltfare from "public/boltfare.png"
 import logoSwiftGift from "public/gift.png"
 import logoBitIndy from "public/bitindy.png"
+import logoAndroid from "public/android.png"
 
 const projects = [
   {
@@ -73,6 +74,14 @@ const projects = [
     logo: logoOpenShuttle,
     year: 2014
   },
+  {
+    name: 'Custom Android ROM',
+    description:
+      'A custom Android ROM, open sourced & used by thousands. Released at age 15.',
+    link: { href: 'https://forum.xda-developers.com/t/rom-seearms-customizable-ugjl2-v0-4-02-13-11-v0-4-major-release.906977/', label: 'xda-developers.com' },
+    logo: logoAndroid,
+    year: 2011
+  },
 ]
 
 function LinkIcon(props) {
@@ -97,7 +106,7 @@ export default function Projects() {
         />
       </Head>
       <SimpleLayout
-        title="Things I’ve made trying to put my dent in the universe."
+        title="Things I’ve built."
         intro="I’ve worked on tons of projects over the years, with varying success. These are the ones that I’m most proud of."
       >
         <ul
