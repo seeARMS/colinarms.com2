@@ -82,7 +82,7 @@ function BackgroundText() {
      I was also a part of the privacy working group, pioneering new ways of mitigating abuse while maintaining user privacy. </p>
 
       <p>Before Google, I spent some time at Coinbase. I helped launch Coinbase in Canada, and improved their Bitcoin private-key signing infrastructure.</p>
-      <p>During my undergrad and high school, I built <Link className="text-teal-500" href="/projects">many different projects</Link>, some of which were more successful than others.</p>
+      <p>During my undergrad and high school, I built <Link className="text-teal-500" href="/projects">many different projects</Link>, some of which were used by tens of thousands of users, and others that got micro-acquired.</p>
 
       <p>In my free time, I enjoy hiking, coffee, photography, wine, and tinkering with new technologies.</p>
     </>
