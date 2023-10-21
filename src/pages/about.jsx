@@ -58,10 +58,10 @@ function InvestingText() {
   return (
     <>
     <p>
-      I recently began angel investing. I'm mainly interested in the creator economy, media, social, consumer, and web3 spaces.
+      I occasionally angel invest. I'm interested in the creator economy, media, social, consumer, and web3 spaces.
     </p>
       <p>
-        If you're founding an early stage company in this space, I'd love to chat!
+        If you're founding an early stage company in this space, feel free to reach out.
       </p>
 
     </>
@@ -101,7 +101,7 @@ export default function About() {
         <title>About - Colin Armstrong</title>
         <meta
           name="description"
-          content="I’m Colin Armstrong.."
+          content="I’m Colin Armstrong"
         />
       </Head>
       <Container className="mt-16 sm:mt-32">
@@ -118,9 +118,6 @@ export default function About() {
             </div>
           </div>
           <div className="lg:order-first lg:row-span-2">
-            <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-              I'm helping creators build media empires.
-            </h1>
             <div className="flex justify-center">
    <span className="isolate inline-flex rounded-md shadow-sm mt-8">
       <button

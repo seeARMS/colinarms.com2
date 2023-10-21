@@ -36,8 +36,6 @@ export default function Speaking() {
         />
       </Head>
       <SimpleLayout
-        title="Occasionally, press covers my work."
-        intro="Both my personal projects and my professional career have been covered in a handful of different media outlets."
       >
         <div className="space-y-20">
           <SpeakingSection title="Paragraph">
@@ -47,6 +45,22 @@ export default function Speaking() {
               description="Web3 publishing platform Paragraph has raised $1.7 million in a pre-seed funding round led by Lemniscap. Other investors in the round include FTX Ventures, Binance Labs, GCR and Seed Club Ventures, according to a company release."
               event="TheBlock"
               cta="Read article"
+            /
+            >
+            <Appearance
+              href="https://podcasters.spotify.com/pod/show/web3-academy/episodes/How-Blockchain-Can-Transform-the-Newsletter-Industry--Colin-Armstrong--Paragraph--189-e246lvf"
+              title="Transforming the Newsletter Industry with Blockchain"
+              description="In this episode, Colin Armstrong from Paragraph talks about the impact of blockchain on the newsletter industry, exploring monetization, engagement and content creation. "
+              event="Web3Academy"
+              cta="Listen"
+            />
+
+            <Appearance
+              href="https://insidetheden.captivate.fm/episode/paragraph-and-its-three-pillars-with-colin-arnstrong"
+              title="The 3 Pillars of Building Paragraph"
+              description="Colin Armstrong the founder of Paragraph joins us to talk about how he’s building Paragraph on 3 important pillars."
+              event="Inside the Den"
+              cta="Listen to Podcast"
             />
           </SpeakingSection>
 

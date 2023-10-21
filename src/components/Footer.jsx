@@ -24,7 +24,7 @@ export function Footer() {
                 <NavLink href="/about">About</NavLink>
                 <NavLink href="/projects">Projects</NavLink>
                 <NavLink href="/press">Press</NavLink>
-                <NavLink href="https://blog.colinarms.com">Writing</NavLink>
+                <NavLink href="https://writing.cma.xyz">Writing</NavLink>
               </div>
               <p className="text-sm text-zinc-400 dark:text-zinc-500">
                 &copy; {new Date().getFullYear()} Colin Armstrong. All rights
