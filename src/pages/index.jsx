@@ -290,7 +290,7 @@ export default function Home({ articles }) {
         </title>
         <meta
           name="description"
-          content="I’m Colin, a software engineer & entrepreneur based in the San Francisco Bay Area. I'm founder and CEO at Paragraph. where I help creators build media empires."
+          content="I’m Colin, a software engineer & founder based in the San Francisco Bay Area."
         />
       </Head>
       <Container className="mt-9">
@@ -299,7 +299,7 @@ export default function Home({ articles }) {
             Colin Mark Armstrong
           </h1>
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            I'm a software engineer & entrepreneur based in the San Francisco Bay Area. I'm working on <a className="text-teal-500 hover:text-teal-400 transition-all" href="https://paragraph.xyz">Paragraph</a>, where I help creators build media empires.
+            I'm a software engineer & founder based in the San Francisco Bay Area. I'm working on <a className="text-teal-500 hover:text-teal-400 transition-all" href="https://paragraph.xyz">Paragraph</a>, where I help creators build media empires.
 
           </p>
             <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
