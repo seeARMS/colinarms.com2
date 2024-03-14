@@ -187,10 +187,10 @@ export default function Photography() {
   return (
     <>
       <Head>
-        <title>Projects - Colin Armstrong</title>
+        <title>Photography - Colin Armstrong</title>
         <meta
           name="description"
-          content="Things I’ve made trying to put my dent in the universe."
+          content="Some pictures I've taken."
         />
       </Head>
       <SimpleLayout
