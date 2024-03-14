@@ -136,7 +136,9 @@ const files = [
 
 function Modal({ src, open, setOpen}) {
   return (
-    <Transition.Root show={open} as={Fragment}>
+    <Transition.Root show={open} as={Fragment}
+
+    >
       <Dialog as="div" className="relative z-10" onClose={setOpen}>
         <Transition.Child
           as={Fragment}
@@ -146,7 +148,9 @@ function Modal({ src, open, setOpen}) {
           leave="ease-in duration-200"
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
+
         >
+
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
@@ -167,10 +171,10 @@ function Modal({ src, open, setOpen}) {
                     <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900">
                     </Dialog.Title>
                     <div className=" h-full w-full">
-                    { src && <Image src={src} alt="" className="rounded-lg"
+                    <Image src={src} alt="" className="rounded-lg"
                       quality={100}
                       placeholder="blur"
-                      /> }
+                      />
                     </div>
                   </div>
                 </div>
@@ -185,7 +189,18 @@ function Modal({ src, open, setOpen}) {
 
 
 export default function Photography() {
-  const [fullScreen, setFullScreen] = useState()
+ // Initialize state to track open status of each modal
+  const [modalOpenState, setModalOpenState] = useState(files.map(() => false));
+
+  // Function to handle opening a modal
+  const handleOpenModal = (index) => {
+    setModalOpenState(modalOpenState.map((open, i) => i === index ? true : open));
+  };
+
+  // Function to handle closing a modal
+  const handleCloseModal = (index) => {
+    setModalOpenState(modalOpenState.map((open, i) => i === index ? false : open));
+  };
 
   return (
     <>
@@ -201,27 +216,16 @@ export default function Photography() {
         intro="I love taking photos. Here are some of my favorites."
       >
 
-      <Modal src={fullScreen} open={!!fullScreen} setOpen={() => setFullScreen(null)} />
 
     <ul role="list" className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 sm:gap-x-6 lg:grid-cols-3 xl:gap-x-8">
-      {files.map((file) => (
-        <li key={file.source} className="relative"
+      {files.map((file, index) => (
+        <li key={index} className="relative" onClick={() => handleOpenModal(index)}>
 
-        onClick={() => {
-          console.log("Clicked!")
-          setFullScreen(file.source)
-        }
-        }
+        <Modal src={file.source} open={modalOpenState[index]} setOpen={() => handleCloseModal(index)} />
 
-        >
           <div className="group aspect-h-7 aspect-w-10 block w-full overflow-hidden rounded-lg bg-gray-100 focus-within:ring-2 focus-within:ring-teal-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-100 transition-all"
 
         >
-
-        <Image
-     src={file.source} alt="" className="hidden pointer-events-none object-cover group-hover:opacity-75 transition-all" fill
-        quality={100}
-    />
 
             <Image
             placeholder="blur"
