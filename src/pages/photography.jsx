@@ -167,7 +167,10 @@ function Modal({ src, open, setOpen}) {
                     <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900">
                     </Dialog.Title>
                     <div className=" h-full w-full">
-                    { src && <Image src={src} alt="" className="rounded-lg" /> }
+                    { src && <Image src={src} alt="" className="rounded-lg"
+                      quality={100}
+                      placeholder="blur"
+                      /> }
                     </div>
                   </div>
                 </div>
@@ -214,7 +217,17 @@ export default function Photography() {
           <div className="group aspect-h-7 aspect-w-10 block w-full overflow-hidden rounded-lg bg-gray-100 focus-within:ring-2 focus-within:ring-teal-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-100 transition-all"
 
         >
+
+        <Image
+     src={file.source} alt="" className="hidden pointer-events-none object-cover group-hover:opacity-75 transition-all" fill
+        quality={100}
+    />
+
             <Image
+            placeholder="blur"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        quality={50}
+          priority
          src={file.source} alt="" className="pointer-events-none object-cover group-hover:opacity-75 transition-all" fill
         />
         {/*<button type="button" className="absolute inset-0 focus:outline-none">
