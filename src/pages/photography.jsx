@@ -215,7 +215,6 @@ export default function Photography() {
 
         >
             <Image
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
          src={file.source} alt="" className="pointer-events-none object-cover group-hover:opacity-75 transition-all" fill
         />
         {/*<button type="button" className="absolute inset-0 focus:outline-none">
