@@ -13,6 +13,7 @@ import {
   LinkedInIcon,
 } from '@/components/SocialIcons'
 
+
 import astroImage from "public/photography/astro.png"
 import image2 from 'public/photography/balloon.jpg'
 import image3 from 'public/photography/hike.jpg'
@@ -23,6 +24,17 @@ import logoGoogle from "public/google.svg"
 import logoCoinbase from 'public/coinbase.svg'
 import { getColinArticles } from '@/lib/getAllArticles'
 import {useState} from 'react'
+
+function FarcasterIcon(props) {
+  return (
+<div className="text-zinc-500 group">
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition group-hover:text-zinc-600 dark:text-zinc-400 dark:group-hover:text-zinc-300" viewBox="0 0 24 24" width="1em" height="1em">
+    <path fill="currentColor" d="M18.24.24H5.76A5.76 5.76 0 0 0 0 6v12a5.76 5.76 0 0 0 5.76 5.76h12.48A5.76 5.76 0 0 0 24 18V6A5.76 5.76 0 0 0 18.24.24m.816 17.166v.504a.49.49 0 0 1 .543.48v.568h-5.143v-.569A.49.49 0 0 1 15 17.91v-.504c0-.22.153-.402.358-.458l-.01-4.364c-.158-1.737-1.64-3.098-3.443-3.098c-1.804 0-3.285 1.361-3.443 3.098l-.01 4.358c.228.042.532.208.54.464v.504a.49.49 0 0 1 .543.48v.568H4.392v-.569a.49.49 0 0 1 .543-.479v-.504c0-.253.201-.454.454-.472V9.039h-.49l-.61-2.031H6.93V5.042h9.95v1.966h2.822l-.61 2.03h-.49v7.896c.252.017.453.22.453.472"/>
+  </svg>
+</div>
+  )
+
+}
 
 function MailIcon(props) {
   return (
@@ -299,18 +311,24 @@ export default function Home({ articles }) {
             Colin Mark Armstrong
           </h1>
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            I'm a software engineer & founder based in the San Francisco Bay Area. I'm working on <a className="text-teal-500 hover:text-teal-400 transition-all" href="https://paragraph.xyz">Paragraph</a>, where I help creators build media empires.
+            I'm a software engineer & founder based in the San Francisco Bay Area. I'm working on <a className="text-teal-500 hover:text-teal-400 transition-all font-bold" href="https://paragraph.xyz">Paragraph</a>.
 
           </p>
             <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            Previously, I managed communications anti-abuse at Google, and worked on payments at Coinbase.
+            Previously, I was an engineering manager at Google, and before that I worked on payments at Coinbase.
           </p>
+
           <div className="mt-6 flex gap-6">
             <SocialLink
               href="https://twitter.com/colinarms"
               aria-label="Follow on Twitter"
               icon={TwitterIcon}
             />
+    <SocialLink
+      href="https://warpcast.com/colin"
+      aria-label="Follow on Farcaster"
+      icon={FarcasterIcon}
+    />
             <SocialLink
               href="https://github.com/seeARMS"
               aria-label="Follow on GitHub"
