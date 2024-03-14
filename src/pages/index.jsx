@@ -28,7 +28,7 @@ import {useState} from 'react'
 function FarcasterIcon(props) {
   return (
 <div className="text-zinc-500 group">
-  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition group-hover:text-zinc-600 dark:text-zinc-400 dark:group-hover:text-zinc-300" viewBox="0 0 24 24" width="1em" height="1em">
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 transition group-hover:text-zinc-600 dark:text-zinc-400 dark:group-hover:text-zinc-300" viewBox="0 0 24 24" width="1em" height="1em">
     <path fill="currentColor" d="M18.24.24H5.76A5.76 5.76 0 0 0 0 6v12a5.76 5.76 0 0 0 5.76 5.76h12.48A5.76 5.76 0 0 0 24 18V6A5.76 5.76 0 0 0 18.24.24m.816 17.166v.504a.49.49 0 0 1 .543.48v.568h-5.143v-.569A.49.49 0 0 1 15 17.91v-.504c0-.22.153-.402.358-.458l-.01-4.364c-.158-1.737-1.64-3.098-3.443-3.098c-1.804 0-3.285 1.361-3.443 3.098l-.01 4.358c.228.042.532.208.54.464v.504a.49.49 0 0 1 .543.48v.568H4.392v-.569a.49.49 0 0 1 .543-.479v-.504c0-.253.201-.454.454-.472V9.039h-.49l-.61-2.031H6.93V5.042h9.95v1.966h2.822l-.61 2.03h-.49v7.896c.252.017.453.22.453.472"/>
   </svg>
 </div>
