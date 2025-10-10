@@ -45,14 +45,11 @@ function BlogPost({ post, index }) {
   })
 
   return (
-    <motion.a
+    <a
       href={post.link}
       target="_blank"
       rel="noopener noreferrer"
       className="group flex items-baseline gap-4 py-3 border-b border-zinc-100 dark:border-zinc-800 hover:border-zinc-200 dark:hover:border-blue-400 transition-colors duration-200"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.05 }}
     >
       <time className="text-sm text-zinc-500 dark:text-zinc-500 min-w-[100px] tabular-nums">
         {date}
@@ -60,7 +57,7 @@ function BlogPost({ post, index }) {
       <span className="text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200 flex-1">
         {post.title}
       </span>
-    </motion.a>
+    </a>
   )
 }
 
@@ -92,41 +89,22 @@ export default function Home({ articles }) {
       <div className="min-h-screen flex flex-col">
         <main className="flex-1 max-w-3xl mx-auto px-6 sm:px-8 py-16 sm:py-24">
           {/* Hero Section */}
-          <motion.div
-            className="mb-16 sm:mb-20"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="flex items-center gap-6 mb-8">
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-              >
+          <div className="mb-16 sm:mb-20">
+            <div className="flex items-center gap-6 mb-8 animate-fade-in">
+              <div className="animate-scale-in animation-delay-100">
                 <Avatar className="h-10 w-10 sm:h-16 sm:w-16 ring-2 ring-zinc-100 dark:ring-zinc-800">
                   <AvatarImage src="/colin_v1.png" alt="Colin Armstrong" />
                   <AvatarFallback>CA</AvatarFallback>
                 </Avatar>
-              </motion.div>
-              <div>
-                <motion.h1
-                  className="text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-zinc-100 mb-2"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                >
+              </div>
+              <div className="animate-fade-in animation-delay-200">
+                <h1 className="text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
                   Colin Armstrong
-                </motion.h1>
+                </h1>
               </div>
             </div>
 
-            <motion.div
-              className="prose prose-zinc dark:prose-invert max-w-none"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
+            <div className="prose prose-zinc dark:prose-invert max-w-none animate-fade-in animation-delay-300">
               <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed">
                 I'm a software engineer & founder based in the San Francisco Bay Area. I'm building{' '}
                 <a
@@ -153,16 +131,12 @@ export default function Home({ articles }) {
 
     I enjoy photography, wine, angel investing & supporting great founders.
               </p>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
           {/* Blog Posts Section */}
           {articles && articles.length > 0 && (
-            <motion.section
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-            >
+            <section className="animate-fade-in-up animation-delay-400">
               <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-6">
                 Writing
               </h2>
@@ -171,12 +145,7 @@ export default function Home({ articles }) {
                   <BlogPost key={post.link} post={post} index={index} />
                 ))}
               </div>
-              <motion.div
-                className="mt-8 flex justify-center"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.7 }}
-              >
+              <div className="mt-8 flex justify-center animate-fade-in animation-delay-500">
                 <a
                   href="https://writing.cma.xyz"
                   target="_blank"
@@ -188,18 +157,13 @@ export default function Home({ articles }) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>
                 </a>
-              </motion.div>
-            </motion.section>
+              </div>
+            </section>
           )}
         </main>
 
         {/* Fixed Footer */}
-        <motion.footer
-          className="border-t border-zinc-100 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-        >
+        <footer className="border-t border-zinc-100 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm animate-fade-in animation-delay-500">
           <div className="max-w-3xl mx-auto px-6 sm:px-8 py-6">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <p className="text-sm text-zinc-600 dark:text-zinc-400">
@@ -234,7 +198,7 @@ export default function Home({ articles }) {
               </div>
             </div>
           </div>
-        </motion.footer>
+        </footer>
       </div>
     </>
   )
