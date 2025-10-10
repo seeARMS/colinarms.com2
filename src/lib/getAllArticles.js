@@ -7,7 +7,7 @@ let parser = new Parser()
 
 export async function getColinArticles() {
   let feed = await parser.parseURL(
-    'https://paragraph.xyz/api/blogs/rss/@colins-blog'
+    'https://api.paragraph.com/blogs/rss/@writing.cma.xyz'
   )
 
   console.log(feed)

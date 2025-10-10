@@ -1,295 +1,71 @@
-import Image from 'next/future/image'
 import Head from 'next/head'
-import Link from 'next/link'
-import clsx from 'clsx'
-
-import { Button } from '@/components/Button'
-import { Card } from '@/components/Card'
-import { Container } from '@/components/Container'
-import {
-  TwitterIcon,
-  InstagramIcon,
-  GitHubIcon,
-  LinkedInIcon,
-} from '@/components/SocialIcons'
-
-
-import astroImage from "public/photography/astro.png"
-import image2 from 'public/photography/balloon.jpg'
-import image3 from 'public/photography/hike.jpg'
-import image4 from 'public/photography/water.jpg'
-import image5 from 'public/photography/quail.jpg'
-import logoParagraph from "public/paragraph.png"
-import logoGoogle from "public/google.svg"
-import logoCoinbase from 'public/coinbase.svg'
+import Image from 'next/future/image'
+import { motion } from 'framer-motion'
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { getColinArticles } from '@/lib/getAllArticles'
-import {useState} from 'react'
+import { Github, Linkedin, Mail } from 'lucide-react'
 
-function FarcasterIcon(props) {
+function XIcon(props) {
   return (
-<div className="text-zinc-500 group">
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 transition group-hover:text-zinc-600 dark:text-zinc-400 dark:group-hover:text-zinc-300" viewBox="0 0 24 24" width="1em" height="1em">
-    <path fill="currentColor" d="M18.24.24H5.76A5.76 5.76 0 0 0 0 6v12a5.76 5.76 0 0 0 5.76 5.76h12.48A5.76 5.76 0 0 0 24 18V6A5.76 5.76 0 0 0 18.24.24m.816 17.166v.504a.49.49 0 0 1 .543.48v.568h-5.143v-.569A.49.49 0 0 1 15 17.91v-.504c0-.22.153-.402.358-.458l-.01-4.364c-.158-1.737-1.64-3.098-3.443-3.098c-1.804 0-3.285 1.361-3.443 3.098l-.01 4.358c.228.042.532.208.54.464v.504a.49.49 0 0 1 .543.48v.568H4.392v-.569a.49.49 0 0 1 .543-.479v-.504c0-.253.201-.454.454-.472V9.039h-.49l-.61-2.031H6.93V5.042h9.95v1.966h2.822l-.61 2.03h-.49v7.896c.252.017.453.22.453.472"/>
-  </svg>
-</div>
-  )
-
-}
-
-function MailIcon(props) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      {...props}
-    >
-      <path
-        d="M2.75 7.75a3 3 0 0 1 3-3h12.5a3 3 0 0 1 3 3v8.5a3 3 0 0 1-3 3H5.75a3 3 0 0 1-3-3v-8.5Z"
-        className="fill-zinc-100 stroke-zinc-400 dark:fill-zinc-100/10 dark:stroke-zinc-500"
-      />
-      <path
-        d="m4 6 6.024 5.479a2.915 2.915 0 0 0 3.952 0L20 6"
-        className="stroke-zinc-400 dark:stroke-zinc-500"
-      />
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="w-5 h-5" fill="currentColor" {...props}>
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
     </svg>
   )
 }
 
-function BriefcaseIcon(props) {
+function SocialIcon({ href, icon: Icon, label }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      {...props}
+    <motion.a
+      href={href}
+      aria-label={label}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-zinc-600 hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400 transition-colors duration-200"
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.95 }}
     >
-      <path
-        d="M2.75 9.75a3 3 0 0 1 3-3h12.5a3 3 0 0 1 3 3v8.5a3 3 0 0 1-3 3H5.75a3 3 0 0 1-3-3v-8.5Z"
-        className="fill-zinc-100 stroke-zinc-400 dark:fill-zinc-100/10 dark:stroke-zinc-500"
-      />
-      <path
-        d="M3 14.25h6.249c.484 0 .952-.002 1.316.319l.777.682a.996.996 0 0 0 1.316 0l.777-.682c.364-.32.832-.319 1.316-.319H21M8.75 6.5V4.75a2 2 0 0 1 2-2h2.5a2 2 0 0 1 2 2V6.5"
-        className="stroke-zinc-400 dark:stroke-zinc-500"
-      />
-    </svg>
+      <Icon className="w-5 h-5" />
+    </motion.a>
   )
 }
 
-function ArrowDownIcon(props) {
+function BlogPost({ post, index }) {
+  const date = new Date(post.isoDate).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })
+
   return (
-    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" {...props}>
-      <path
-        d="M4.75 8.75 8 12.25m0 0 3.25-3.5M8 12.25v-8.5"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
-
-function Article({ article }) {
-  const date = new Date(article.isoDate).toISOString()
-  return (
-    <Card as="article">
-      <Card.Title href={article.link}>
-        {article.title}
-      </Card.Title>
-      <Card.Eyebrow as="time" dateTime={date} decorate>
-        {new Date(date).toLocaleDateString('en-US', {
-
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-          timeZone: 'UTC',
-
-        })}
-      </Card.Eyebrow>
-      <Card.Description>{article.contentSnippet}</Card.Description>
-      <Card.Cta>Read article</Card.Cta>
-    </Card>
-  )
-}
-
-function SocialLink({ icon: Icon, ...props }) {
-  return (
-    <Link className="group -m-1 p-1" {...props}>
-      <Icon className="h-6 w-6 fill-zinc-500 transition group-hover:fill-zinc-600 dark:fill-zinc-400 dark:group-hover:fill-zinc-300" />
-    </Link>
-  )
-}
-
-function Newsletter() {
-  const [email, setEmail] = useState("")
-  const [message, setMessage] = useState("")
-  return (
-    <form
-      method="POST"
-      onSubmit={async (e) => {
-        e.preventDefault()
-
-try {
-      let res = await fetch(
-
-        "https://paragraph.xyz/api/blogs/@colins-blog/subscribe",
-   {
-        method: "POST",
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-        body: JSON.stringify({
-          email
-        }),
-      });
-      let resJson = await res.json();
-      if (res.status === 200) {
-        setEmail("");
-        setMessage("You're on the list!");
-      } else {
-        setMessage("Oh no - an error occurred!");
-      }
-    } catch (err) {
-      console.log(err);
-    }
-
-      }}
-      className="rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40"
+    <motion.a
+      href={post.link}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex items-baseline gap-4 py-3 border-b border-zinc-100 dark:border-zinc-800 hover:border-zinc-200 dark:hover:border-blue-400 transition-colors duration-200"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: index * 0.05 }}
     >
-      <h2 className="flex text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-        <MailIcon className="h-6 w-6 flex-none" />
-        <span className="ml-3">Stay up to date</span>
-      </h2>
-      <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-        Get notified when I publish something new.
-      </p>
-      { !message && <div className="mt-6 flex">
-        <input
-          type="email"
-          placeholder="Email address"
-          aria-label="Email address"
-          required
-          onChange={(e) => setEmail(e.target.value)}
-          className="min-w-0 flex-auto appearance-none rounded-md border border-zinc-900/10 bg-white px-3 py-[calc(theme(spacing.2)-1px)] shadow-md shadow-zinc-800/5 placeholder:text-zinc-400 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/10 dark:border-zinc-700 dark:bg-zinc-700/[0.15] dark:text-zinc-200 dark:placeholder:text-zinc-500 dark:focus:border-teal-400 dark:focus:ring-teal-400/10 sm:text-sm"
-        />
-        <Button type="submit" className="ml-4 flex-none">
-          Join
-        </Button>
-      </div> }
-
-      { message && <div className="mt-6 flex text-zinc-600 dark:text-zinc-400 text-sm">
-        { message }
-
-      </div>}
-
-    </form>
+      <time className="text-sm text-zinc-500 dark:text-zinc-500 min-w-[100px] tabular-nums">
+        {date}
+      </time>
+      <span className="text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200 flex-1">
+        {post.title}
+      </span>
+    </motion.a>
   )
 }
 
-function Resume() {
-  let resume = [
-    {
-      company: 'Paragraph',
-      title: 'Founder & CEO',
-      logo: logoParagraph,
-      start: '2022',
-      end: {
-        label: 'Present',
-        dateTime: new Date().getFullYear(),
-      },
-    },
-    {
-      company: 'Google',
-      title: 'Engineering Manager',
-      logo: logoGoogle,
-      start: '2017',
-      end: '2021',
-    },
-    {
-      company: 'Coinbase',
-      title: 'Software Engineer',
-      logo: logoCoinbase,
-      start: '2015',
-      end: '2016',
-    },
-  ]
-
+function CustomLink({ href, children }) {
   return (
-    <div className="rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40">
-      <h2 className="flex text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-        <BriefcaseIcon className="h-6 w-6 flex-none" />
-        <span className="ml-3">Work</span>
-      </h2>
-      <ol className="mt-6 space-y-4">
-        {resume.map((role, roleIndex) => (
-          <li key={roleIndex} className="flex gap-4">
-            <div className="relative mt-1 flex h-10 w-10 flex-none items-center justify-center rounded-full shadow-md shadow-zinc-800/5 ring-1 ring-zinc-900/5 dark:border dark:border-zinc-700/50 dark:bg-zinc-800 dark:ring-0">
-              <Image src={role.logo} alt="" className="h-7 w-7" unoptimized />
-            </div>
-            <dl className="flex flex-auto flex-wrap gap-x-2">
-              <dt className="sr-only">Company</dt>
-              <dd className="w-full flex-none text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                {role.company}
-              </dd>
-              <dt className="sr-only">Role</dt>
-              <dd className="text-xs text-zinc-500 dark:text-zinc-400">
-                {role.title}
-              </dd>
-              <dt className="sr-only">Date</dt>
-              <dd
-                className="ml-auto text-xs text-zinc-400 dark:text-zinc-500"
-                aria-label={`${role.start.label ?? role.start} until ${
-                  role.end.label ?? role.end
-                }`}
-              >
-                <time dateTime={role.start.dateTime ?? role.start}>
-                  {role.start.label ?? role.start}
-                </time>{' '}
-                <span aria-hidden="true">—</span>{' '}
-                <time dateTime={role.end.dateTime ?? role.end}>
-                  {role.end.label ?? role.end}
-                </time>
-              </dd>
-            </dl>
-          </li>
-        ))}
-      </ol>
-    </div>
-  )
-}
-
-function Photos() {
-  let rotations = ['rotate-2', '-rotate-2', 'rotate-2', 'rotate-2', '-rotate-2']
-
-  return (
-    <div className="mt-16 sm:mt-20">
-      <div className="-my-4 flex justify-center gap-5 overflow-hidden py-4 sm:gap-8">
-        {[astroImage, image2, image3, image4, image5].map((image, imageIndex) => (
-          <div
-            key={image.src}
-            className={clsx(
-              'relative aspect-[9/10] w-44 flex-none overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-800 sm:w-72 sm:rounded-2xl',
-              rotations[imageIndex % rotations.length]
-            )}
-          >
-            <Image
-              src={image}
-              alt=""
-              placeholder='blur'
-              sizes="(min-width: 640px) 18rem, 11rem"
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-          </div>
-        ))}
-      </div>
-    </div>
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-blue-600 hover:text-blue-400 dark:text-blue-400 dark:hover:text-blue-300 font-transition-colors duration-200 cursor-pointer no-underline"
+    >
+      {children}
+    </a>
   )
 }
 
@@ -297,65 +73,156 @@ export default function Home({ articles }) {
   return (
     <>
       <Head>
-        <title>
-          Colin Armstrong - software engineer & founder
-        </title>
+        <title>Colin Armstrong</title>
         <meta
           name="description"
-          content="I’m Colin, a software engineer & founder based in the San Francisco Bay Area."
+          content="Colin Armstrong - Software engineer & founder building Paragraph"
         />
       </Head>
-      <Container className="mt-9">
-        <div className="max-w-2xl">
-          <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-            Colin Mark Armstrong
-          </h1>
-          <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            I'm a software engineer & founder based in the San Francisco Bay Area. I'm working on <a className="text-teal-500 hover:text-teal-400 transition-all font-bold" href="https://paragraph.xyz">Paragraph</a>.
 
-          </p>
-            <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            Previously, I was an engineering manager at Google, and before that I worked on payments at Coinbase.
-          </p>
+      {/* Main Content */}
+      <div className="min-h-screen flex flex-col">
+        <main className="flex-1 max-w-3xl mx-auto px-6 sm:px-8 py-16 sm:py-24">
+          {/* Hero Section */}
+          <motion.div
+            className="mb-16 sm:mb-20"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="flex items-center gap-6 mb-8">
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+              >
+                <Avatar className="h-10 w-10 sm:h-16 sm:w-16 ring-2 ring-zinc-100 dark:ring-zinc-800">
+                  <AvatarImage src="/colin_v1.png" alt="Colin Armstrong" />
+                  <AvatarFallback>CA</AvatarFallback>
+                </Avatar>
+              </motion.div>
+              <div>
+                <motion.h1
+                  className="text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-zinc-100 mb-2"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  Colin Armstrong
+                </motion.h1>
+              </div>
+            </div>
 
-          <div className="mt-6 flex gap-6">
-            <SocialLink
-              href="https://twitter.com/colinarms"
-              aria-label="Follow on Twitter"
-              icon={TwitterIcon}
-            />
-    <SocialLink
-      href="https://warpcast.com/colin"
-      aria-label="Follow on Farcaster"
-      icon={FarcasterIcon}
-    />
-            <SocialLink
-              href="https://github.com/seeARMS"
-              aria-label="Follow on GitHub"
-              icon={GitHubIcon}
-            />
-            <SocialLink
-              href="https://linkedin.com/in/colinarms"
-              aria-label="Follow on LinkedIn"
-              icon={LinkedInIcon}
-            />
+            <motion.div
+              className="prose prose-zinc dark:prose-invert max-w-none"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                I'm a software engineer & founder based in the San Francisco Bay Area. I'm building{' '}
+                <a
+                  href="https://paragraph.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-400 dark:text-blue-400 dark:hover:text-blue-300 font-semibold transition-colors duration-200 no-underline"
+                >
+                  Paragraph
+                </a>
+                , a new way for people to share & earn off their best ideas. <br /><br />Previously, I was an engineering manager at Google working on anti-abuse, and before that I worked on payments at Coinbase.
+
+    <br /><br />
+
+    In my free time I've built a{" "}
+    <CustomLink href="https://web.archive.org/web/20180308090449/https:/boltfare-landing.herokuapp.com/">Chatbot that found flight deals</CustomLink>, an{" "}
+    <CustomLink href="https://boltscale.io/home">uptime monitoring</CustomLink> SaaS,
+    a <CustomLink href="https://feedback-frontend.vercel.app">customer feedback</CustomLink> library,
+    a <CustomLink hreef="https://web.archive.org/web/20150910203659/http:/www.yeplive.com/">mobile livestreaming</CustomLink> app,
+    a Bitcoin marketplace for buying digital goods,
+    and a <CustomLink href="https://github.com/prathamalag1994/hackmit">Kickstarter dapp</CustomLink> on Ethereum, before Ethereum ICO'd.
+
+    <br /><br />
+
+    I enjoy photography, wine, angel investing & supporting great founders.
+              </p>
+            </motion.div>
+          </motion.div>
+
+          {/* Blog Posts Section */}
+          {articles && articles.length > 0 && (
+            <motion.section
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            >
+              <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-6">
+                Writing
+              </h2>
+              <div className="space-y-0">
+                {articles.slice(0, 10).map((post, index) => (
+                  <BlogPost key={post.link} post={post} index={index} />
+                ))}
+              </div>
+              <motion.div
+                className="mt-8 flex justify-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+              >
+                <a
+                  href="https://writing.cma.xyz"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-lg transition-colors duration-200"
+                >
+                  View all writing
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </a>
+              </motion.div>
+            </motion.section>
+          )}
+        </main>
+
+        {/* Fixed Footer */}
+        <motion.footer
+          className="border-t border-zinc-100 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+        >
+          <div className="max-w-3xl mx-auto px-6 sm:px-8 py-6">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                © {new Date().getFullYear()} Colin Armstrong
+              </p>
+              <div className="flex items-center gap-6">
+                <SocialIcon
+                  href="https://x.com/colinarms"
+                  icon={XIcon}
+                  label="Follow on X"
+                />
+                <SocialIcon
+                  href="https://github.com/seeARMS"
+                  icon={Github}
+                  label="Follow on GitHub"
+                />
+                <SocialIcon
+                  href="https://linkedin.com/in/colinarms"
+                  icon={Linkedin}
+                  label="Follow on LinkedIn"
+                />
+                <SocialIcon
+                  href="mailto:me@cma.xyz"
+                  icon={Mail}
+                  label="Email me"
+                />
+              </div>
+            </div>
           </div>
-        </div>
-      </Container>
-      { /* <Photos /> */}
-      <Container className="mt-24 md:mt-28">
-        <div className="mx-auto grid max-w-xl grid-cols-1 gap-y-20 lg:max-w-none lg:grid-cols-2">
-          <div className="flex flex-col gap-16">
-            {articles.map((article, idx) => (
-              <Article key={idx} article={article} />
-            ))}
-          </div>
-          <div className="space-y-10 lg:pl-16 xl:pl-24">
-            <Newsletter />
-            <Resume />
-          </div>
-        </div>
-      </Container>
+        </motion.footer>
+      </div>
     </>
   )
 }
@@ -365,8 +232,8 @@ export async function getStaticProps() {
 
   return {
     props: {
-      articles: articles,
+      articles: articles || [],
     },
-    revalidate: 60
+    revalidate: 3600, // Revalidate every hour (3600 seconds)
   }
 }
