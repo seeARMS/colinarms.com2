@@ -115,21 +115,25 @@ export default function Home({ articles }) {
                 >
                   Paragraph
                 </a>
-                , a new way for people to share & earn off their best ideas. <br /><br />Previously, I was an engineering manager at Google working on anti-abuse, and before that I worked on payments at Coinbase.
+                , a new way for people to share & earn off their best ideas. <br /><br />From 2017 - 2022 I was an engineering manager at Google working on anti-abuse, and before that I worked on payments at Coinbase in 2015.
 
     <br /><br />
 
-    In my free time I've built a{" "}
+    I love building products that people love using. Over the past 15 years I've built a{" "}
     <CustomLink href="https://web.archive.org/web/20180308090449/https:/boltfare-landing.herokuapp.com/">Chatbot that found flight deals</CustomLink>, an{" "}
     <CustomLink href="https://boltscale.io/home">uptime monitoring</CustomLink> SaaS,
     a <CustomLink href="https://feedback-frontend.vercel.app">customer feedback</CustomLink> library,
     a <CustomLink hreef="https://web.archive.org/web/20150910203659/http:/www.yeplive.com/">mobile livestreaming</CustomLink> app,
-    a Bitcoin marketplace for buying digital goods,
-    and a <CustomLink href="https://github.com/prathamalag1994/hackmit">Kickstarter dapp</CustomLink> on Ethereum, before Ethereum ICO'd.
+    a Bitcoin marketplace for selling digital goods,
+    a <CustomLink href="https://github.com/prathamalag1994/hackmit">Kickstarter dapp</CustomLink> on Ethereum (before Ethereum ICO'd), and many more.
 
     <br /><br />
 
-    I enjoy photography, wine, angel investing & supporting great founders.
+    In my free time I enjoy photography, wine, cooking new recipes & cycling.
+
+    <br /><br />
+    I also occasionally angel invest & advise early-stage consumer startups. I've invested in <CustomLink href="https://farcaster.xyz">Farcaster</CustomLink>, <CustomLink href="https://pay.daimo.com">Daimo</CustomLink>, <CustomLink href="https://stack.so/">Stack</CustomLink>, <CustomLink href="https://layer3.xyz/">Layer3</CustomLink> & more. Feel free to{" "}
+    <CustomLink href="mailto:me@cma.xyz">reach out</CustomLink> if you're building something interesting.
               </p>
             </div>
           </div>
