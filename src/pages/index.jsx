@@ -106,7 +106,7 @@ export default function Home({ articles }) {
 
             <div className="prose prose-zinc dark:prose-invert max-w-none animate-fade-in animation-delay-300">
               <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                I'm a software engineer & founder based in the San Francisco Bay Area. I'm building{' '}
+    I’m a software engineer and founder in the Bay Area, building{" "}
                 <a
                   href="https://paragraph.com"
                   target="_blank"
@@ -114,26 +114,27 @@ export default function Home({ articles }) {
                   className="text-blue-600 hover:text-blue-400 dark:text-blue-400 dark:hover:text-blue-300 font-semibold transition-colors duration-200 no-underline"
                 >
                   Paragraph
-                </a>
-                , a new way for people to share & earn off their best ideas. <br /><br />From 2017 - 2022 I was an engineering manager at Google working on anti-abuse, and before that I worked on payments at Coinbase in 2015.
+                </a>{" "}
+                - a new way for people to share & earn off their best ideas. <br /><br />Before founding Paragraph, I led engineering teams at Google focused on anti-abuse & privacy, and earlier helped build Coinbase’s payments infrastructure.
+
 
     <br /><br />
 
-    I love building products that people love using. Over the past 15 years I've built a{" "}
-    <CustomLink href="https://web.archive.org/web/20180308090449/https:/boltfare-landing.herokuapp.com/">Chatbot that found flight deals</CustomLink>, an{" "}
-    <CustomLink href="https://boltscale.io/home">uptime monitoring</CustomLink> SaaS,
-    a <CustomLink href="https://feedback-frontend.vercel.app">customer feedback</CustomLink> library,
-    a <CustomLink hreef="https://web.archive.org/web/20150910203659/http:/www.yeplive.com/">mobile livestreaming</CustomLink> app,
-    a Bitcoin marketplace for selling digital goods,
-    a <CustomLink href="https://github.com/prathamalag1994/hackmit">Kickstarter dapp</CustomLink> on Ethereum (before Ethereum ICO'd), and many more.
+
+
+    Over the past 15 years, I've built everything from {" "}
+    <CustomLink href="https://web.archive.org/web/20180308090449/https:/boltfare-landing.herokuapp.com/">chatbots that found flight deals</CustomLink> to{" "}
+    <CustomLink href="https://boltscale.io/home">uptime monitoring</CustomLink> SaaS to{" "}
+    <CustomLink href="https://web.archive.org/web/20150910203659/http:/www.yeplive.com/">mobile livestreaming</CustomLink> apps.
+    Before Ethereum launched, I built a <CustomLink href="https://github.com/prathamalag1994/hackmit">decentralized crowdfunding smart contract</CustomLink> that led me to working at Coinbase. I love building things that people genuinely enjoy using.
 
     <br /><br />
 
     In my free time I enjoy photography, wine, cooking new recipes & cycling.
 
     <br /><br />
-    I also occasionally angel invest & advise early-stage consumer startups. I've invested in <CustomLink href="https://farcaster.xyz">Farcaster</CustomLink>, <CustomLink href="https://pay.daimo.com">Daimo</CustomLink>, <CustomLink href="https://stack.so/">Stack</CustomLink>, <CustomLink href="https://layer3.xyz/">Layer3</CustomLink> & more. Feel free to{" "}
-    <CustomLink href="mailto:me@cma.xyz">reach out</CustomLink> if you're building something interesting.
+    I also occasionally angel invest & advise early-stage consumer startups, including <CustomLink href="https://farcaster.xyz">Farcaster</CustomLink>, <CustomLink href="https://pay.daimo.com">Daimo</CustomLink>, <CustomLink href="https://stack.so/">Stack</CustomLink>, & <CustomLink href="https://layer3.xyz/">Layer3</CustomLink>. <br /><br />If you're building something interesting, feel free to
+    {" "}<CustomLink href="mailto:colin@armstr.ng">reach out</CustomLink>.
               </p>
             </div>
           </div>
@@ -144,6 +145,12 @@ export default function Home({ articles }) {
               <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-6">
                 Writing
               </h2>
+            <div className="pb-4">
+            I ocasionally write about startups, product, engineering, and other topics on my{" "}
+            <CustomLink href="https://writing.cma.xyz">Paragraph</CustomLink>.
+
+
+            </div>
               <div className="space-y-0">
                 {articles.slice(0, 10).map((post, index) => (
                   <BlogPost key={post.link} post={post} index={index} />
@@ -195,7 +202,7 @@ export default function Home({ articles }) {
                   label="Follow on LinkedIn"
                 />
                 <SocialIcon
-                  href="mailto:me@cma.xyz"
+                  href="mailto:colin@armstr.ng"
                   icon={Mail}
                   label="Email me"
                 />
