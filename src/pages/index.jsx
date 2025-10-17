@@ -49,7 +49,7 @@ function BlogPost({ post, index }) {
       href={post.link}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex items-baseline gap-4 py-3 border-b border-zinc-100 dark:border-zinc-800 hover:border-zinc-200 dark:hover:border-blue-400 transition-colors duration-200"
+      className="group flex items-baseline gap-4 py-3 border-b border-zinc-100 dark:border-zinc-800 hover:border-zinc-200 dark:hover:border-zinc-700 transition-colors duration-200"
     >
       <time className="text-sm text-zinc-500 dark:text-zinc-500 min-w-[100px] tabular-nums">
         {date}
@@ -145,7 +145,7 @@ export default function Home({ articles }) {
               <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-6">
                 Writing
               </h2>
-            <div className="pb-4">
+            <div className="pb-4 dark:text-zinc-400 text-zinc-600">
             I ocasionally write about startups, product, engineering, and other topics on my{" "}
             <CustomLink href="https://writing.cma.xyz">Paragraph</CustomLink>.
 
@@ -178,7 +178,7 @@ export default function Home({ articles }) {
           <div className="max-w-3xl mx-auto px-6 sm:px-8 py-6">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                © {new Date().getFullYear()} Colin Armstrong
+    colin@armstr.ng
               </p>
               <div className="flex items-center gap-6">
                 <SocialIcon
