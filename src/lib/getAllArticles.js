@@ -1,6 +1,3 @@
-import glob from 'fast-glob'
-import * as path from 'path'
-
 import * as Parser from 'rss-parser'
 
 let parser = new Parser()
