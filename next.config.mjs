@@ -2,15 +2,9 @@
 const nextConfig = {
   pageExtensions: ['jsx', 'mdx'],
   reactStrictMode: true,
-  swcMinify: true,
   images: {
     domains: ['images.unsplash.com'],
   },
-  experimental: {
-    newNextLinkBehavior: true,
-    scrollRestoration: true,
-  },
-
   webpack: (config) => {
     // this will override the experiments
     config.experiments = { ...config.experiments, topLevelAwait: true }
