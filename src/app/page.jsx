@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { getColinArticles } from '@/lib/getAllArticles'
 import { Github, Linkedin, Mail } from 'lucide-react'
 
@@ -84,20 +83,26 @@ export default async function Home() {
           {/* Hero Section */}
           <div className="mb-16 sm:mb-20">
             <div className="flex items-center gap-6 mb-8 animate-fade-in">
-              <div className="animate-scale-in animation-delay-100">
-                <Avatar className="h-10 w-10 sm:h-16 sm:w-16 ring-2 ring-zinc-100 dark:ring-zinc-800">
-                  <AvatarImage src="/colin_v1.png" alt="Colin Armstrong" />
-                  <AvatarFallback>CA</AvatarFallback>
-                </Avatar>
+              <div className="animate-scale-in animation-delay-200">
+                <div className="relative h-10 w-10 sm:h-16 sm:w-16 ring-2 ring-zinc-100 dark:ring-zinc-800 rounded-full overflow-hidden">
+                  <Image
+                    src="/colin_v1.png"
+                    alt="Colin Armstrong"
+                    fill
+                    sizes="(max-width: 640px) 40px, 64px"
+                    className="object-cover"
+                    priority
+                  />
+                </div>
               </div>
-              <div className="animate-fade-in animation-delay-200">
+              <div className="animate-fade-in animation-delay-400">
                 <h1 className="text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
                   Colin Armstrong
                 </h1>
               </div>
             </div>
 
-            <div className="prose prose-zinc dark:prose-invert max-w-none animate-fade-in animation-delay-300">
+            <div className="prose prose-zinc dark:prose-invert max-w-none animate-fade-in animation-delay-500">
               <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed">
     I'm a software engineer and founder in the Bay Area, building{" "}
                 <a
@@ -134,7 +139,7 @@ export default async function Home() {
 
           {/* Blog Posts Section */}
           {articles && articles.length > 0 && (
-            <section className="animate-fade-in-up animation-delay-400">
+            <section className="animate-fade-in-up animation-delay-700">
               <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-6">
                 Writing
               </h2>
@@ -149,7 +154,7 @@ export default async function Home() {
                   <BlogPost key={post.link} post={post} index={index} />
                 ))}
               </div>
-              <div className="mt-8 flex justify-center animate-fade-in animation-delay-500">
+              <div className="mt-8 flex justify-center animate-fade-in animation-delay-700">
                 <a
                   href="https://writing.cma.xyz"
                   target="_blank"
@@ -167,7 +172,7 @@ export default async function Home() {
         </main>
 
         {/* Fixed Footer */}
-        <footer className="border-t border-zinc-100 dark:border-zinc-800 dark:bg-zinc-900/80 backdrop-blur-sm animate-fade-in animation-delay-500">
+        <footer className="border-t border-zinc-100 dark:border-zinc-800 dark:bg-zinc-900/80 backdrop-blur-sm animate-fade-in animation-delay-1000">
           <div className="max-w-3xl mx-auto px-6 sm:px-8 py-6">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <p className="text-sm text-zinc-600 dark:text-zinc-400">
