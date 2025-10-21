@@ -1,6 +1,6 @@
 {
-  "name": "tailwindui-template",
-  "version": "0.1.0",
+  "name": "armstr.ng",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -13,6 +13,7 @@
     "@radix-ui/react-avatar": "^1.1.10",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/typography": "^0.5.4",
+    "autoprefixer": "^10.4.21",
     "clsx": "^1.2.1",
     "focus-visible": "^5.2.0",
     "framer-motion": "^12.23.22",
