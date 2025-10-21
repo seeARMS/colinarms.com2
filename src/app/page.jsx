@@ -96,7 +96,7 @@ export default async function Home() {
                 </div>
               </div>
               <div className="animate-fade-in animation-delay-400">
-                <h1 className="text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+                <h1 className="text-3xl sm:text-4xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2">
                   Colin Armstrong
                 </h1>
               </div>
