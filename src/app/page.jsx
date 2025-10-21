@@ -1,9 +1,10 @@
-import Head from 'next/head'
-import Image from 'next/future/image'
-import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { getColinArticles } from '@/lib/getAllArticles'
 import { Github, Linkedin, Mail } from 'lucide-react'
+
+// ISR: Revalidate every hour (3600 seconds)
+export const revalidate = 3600
 
 function XIcon(props) {
   return (
@@ -21,22 +22,6 @@ function FarcasterIcon(props) {
   )
 }
 
-function SocialIcon({ href, icon: Icon, label }) {
-  return (
-    <motion.a
-      href={href}
-      aria-label={label}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-zinc-600 hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400 transition-colors duration-200"
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.95 }}
-    >
-      <Icon className="w-5 h-5" />
-    </motion.a>
-  )
-}
-
 function BlogPost({ post, index }) {
   const date = new Date(post.isoDate).toLocaleDateString('en-US', {
     month: 'short',
@@ -49,7 +34,7 @@ function BlogPost({ post, index }) {
       href={post.link}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex items-baseline gap-4 py-3 border-b border-zinc-100 dark:border-zinc-800 hover:border-zinc-200 dark:hover:border-zinc-700 transition-colors duration-200"
+      className="group flex items-baseline gap-4 py-3  transition-colors duration-200"
     >
       <time className="text-sm text-zinc-500 dark:text-zinc-500 min-w-[100px] tabular-nums">
         {date}
@@ -57,6 +42,20 @@ function BlogPost({ post, index }) {
       <span className="text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200 flex-1">
         {post.title}
       </span>
+    </a>
+  )
+}
+
+function SocialIcon({ href, icon: Icon, label }) {
+  return (
+    <a
+      href={href}
+      aria-label={label}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-zinc-600 hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400 transition-all duration-200 hover:scale-110 active:scale-95 inline-block"
+    >
+      <Icon className="w-5 h-5" />
     </a>
   )
 }
@@ -74,17 +73,11 @@ function CustomLink({ href, children }) {
   )
 }
 
-export default function Home({ articles }) {
+export default async function Home() {
+  const articles = await getColinArticles()
+
   return (
     <>
-      <Head>
-        <title>Colin Armstrong</title>
-        <meta
-          name="description"
-          content="Colin Armstrong - Software engineer & founder building Paragraph"
-        />
-      </Head>
-
       {/* Main Content */}
       <div className="min-h-screen flex flex-col">
         <main className="flex-1 max-w-3xl mx-auto px-6 sm:px-8 py-16 sm:py-24">
@@ -106,7 +99,7 @@ export default function Home({ articles }) {
 
             <div className="prose prose-zinc dark:prose-invert max-w-none animate-fade-in animation-delay-300">
               <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed">
-    I’m a software engineer and founder in the Bay Area, building{" "}
+    I'm a software engineer and founder in the Bay Area, building{" "}
                 <a
                   href="https://paragraph.com"
                   target="_blank"
@@ -115,7 +108,7 @@ export default function Home({ articles }) {
                 >
                   Paragraph
                 </a>{" "}
-                - a new way for people to share & earn off their best ideas. <br /><br />Before founding Paragraph, I led engineering teams at Google focused on anti-abuse & privacy, and earlier helped build Coinbase’s payments infrastructure.
+                - a new way for people to share & earn off their best ideas. <br /><br />Before founding Paragraph, I led engineering teams at Google focused on anti-abuse & privacy, and earlier helped build Coinbase's payments infrastructure.
 
 
     <br /><br />
@@ -146,12 +139,12 @@ export default function Home({ articles }) {
                 Writing
               </h2>
             <div className="pb-4 dark:text-zinc-400 text-zinc-600">
-            I ocasionally write about startups, product, engineering, and other topics on my{" "}
+            I occasionally write about startups, product, engineering, and other topics on my{" "}
             <CustomLink href="https://writing.cma.xyz">Paragraph</CustomLink>.
 
 
             </div>
-              <div className="space-y-0">
+              <div className="space-y-0 bg-gray-50 px-6 py-3 rounded-lg dark:bg-zinc-800 divide-y divide-zinc-200 dark:divide-zinc-700">
                 {articles.slice(0, 10).map((post, index) => (
                   <BlogPost key={post.link} post={post} index={index} />
                 ))}
@@ -174,7 +167,7 @@ export default function Home({ articles }) {
         </main>
 
         {/* Fixed Footer */}
-        <footer className="border-t border-zinc-100 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm animate-fade-in animation-delay-500">
+        <footer className="border-t border-zinc-100 dark:border-zinc-800 dark:bg-zinc-900/80 backdrop-blur-sm animate-fade-in animation-delay-500">
           <div className="max-w-3xl mx-auto px-6 sm:px-8 py-6">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <p className="text-sm text-zinc-600 dark:text-zinc-400">
@@ -213,15 +206,4 @@ export default function Home({ articles }) {
       </div>
     </>
   )
-}
-
-export async function getStaticProps() {
-  const articles = await getColinArticles()
-
-  return {
-    props: {
-      articles: articles || [],
-    },
-    revalidate: 3600, // Revalidate every hour (3600 seconds)
-  }
 }
