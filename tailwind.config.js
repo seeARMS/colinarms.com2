@@ -1,10 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./src/**/*.{js,jsx,ts,tsx}', './app/**/*.{js,jsx,ts,tsx}'],
-  darkMode: 'class',
   plugins: [
     require('@tailwindcss/typography'),
-    require('@tailwindcss/aspect-ratio'),
   ],
   theme: {
     fontSize: {
@@ -243,7 +240,7 @@ module.exports = {
             marginBottom: theme('spacing.20'),
             borderTopWidth: '1px',
             borderColor: 'var(--tw-prose-hr)',
-            '@screen lg': {
+            '@media (min-width: 1024px)': {
               marginLeft: `calc(${theme('spacing.12')} * -1)`,
               marginRight: `calc(${theme('spacing.12')} * -1)`,
             },

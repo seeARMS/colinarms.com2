@@ -1,7 +1,9 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
+@import 'tailwindcss';
+@config '../../tailwind.config.js';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
 @import './prism.css';
-@import 'tailwindcss/utilities';
 
 @layer utilities {
   @keyframes fadeInUp {

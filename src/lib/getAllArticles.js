@@ -1,4 +1,4 @@
-import * as Parser from 'rss-parser'
+import Parser from 'rss-parser'
 
 let parser = new Parser()
 
