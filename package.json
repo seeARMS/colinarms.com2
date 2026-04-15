@@ -3,29 +3,27 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro build && wrangler dev",
+    "deploy": "astro build && wrangler deploy",
     "lint": "eslint src"
   },
-  "browserslist": "defaults, not ie <= 11",
   "dependencies": {
-    "@radix-ui/react-avatar": "^1.1.11",
-    "@tailwindcss/postcss": "^4.2.2",
+    "@astrojs/cloudflare": "^13.1.10",
     "@tailwindcss/typography": "^0.5.19",
-    "clsx": "^2.1.1",
-    "lucide-react": "^1.8.0",
-    "next": "^16.2.3",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5",
-    "rss-parser": "^3.13.0",
-    "tailwind-merge": "^3.5.0",
-    "tailwindcss": "^4.2.2"
+    "@tailwindcss/vite": "^4.2.2",
+    "astro": "^6.1.7",
+    "tailwindcss": "^4.2.2",
+    "wrangler": "^4.83.0"
+  },
+  "overrides": {
+    "vite": "$vite"
   },
   "devDependencies": {
     "eslint": "^9.0.0",
-    "eslint-config-next": "^16.2.3",
     "prettier": "^3.8.3",
-    "prettier-plugin-tailwindcss": "^0.7.2"
+    "prettier-plugin-tailwindcss": "^0.7.2",
+    "vite": "^7.0.0"
   }
 }

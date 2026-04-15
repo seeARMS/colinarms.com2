@@ -1,0 +1,64 @@
+---
+import '@/styles/tailwind.css'
+
+const GA_MEASUREMENT_ID = 'G-VLG18DVXN5'
+---
+
+<html lang="en" class="h-full antialiased">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Colin Armstrong</title>
+    <meta
+      name="description"
+      content="Colin Armstrong - Software engineer & founder building Paragraph"
+    />
+    <link rel="icon" href="/favicon.ico" />
+    <script is:inline>
+      let darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+
+      updateMode()
+      darkModeMediaQuery.addEventListener('change', updateModeWithoutTransitions)
+
+      function updateMode() {
+        let isSystemDarkMode = darkModeMediaQuery.matches
+
+        if (isSystemDarkMode) {
+          document.documentElement.classList.add('dark')
+        } else {
+          document.documentElement.classList.remove('dark')
+        }
+      }
+
+      function disableTransitionsTemporarily() {
+        document.documentElement.classList.add('[&_*]:!transition-none')
+        window.setTimeout(() => {
+          document.documentElement.classList.remove('[&_*]:!transition-none')
+        }, 0)
+      }
+
+      function updateModeWithoutTransitions() {
+        disableTransitionsTemporarily()
+        updateMode()
+      }
+    </script>
+  </head>
+  <body class="flex h-full flex-col">
+    <!-- Google Analytics -->
+    <script is:inline src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}></script>
+    <script is:inline define:vars={{ GA_MEASUREMENT_ID }}>
+      window.dataLayer = window.dataLayer || []
+      function gtag() {
+        dataLayer.push(arguments)
+      }
+      gtag('js', new Date())
+      gtag('config', GA_MEASUREMENT_ID, {
+        page_path: window.location.pathname,
+      })
+    </script>
+
+    <div class="bg-white dark:bg-zinc-900">
+      <slot />
+    </div>
+  </body>
+</html>
