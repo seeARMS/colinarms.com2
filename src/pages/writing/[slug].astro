@@ -1,5 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro'
+import { Image } from 'astro:assets'
+import avatarImg from '../../../public/colin_v1.jpg'
 import { getColinArticlesWithContent } from '@/lib/getAllArticles'
 
 export async function getStaticPaths() {
@@ -19,16 +21,42 @@ const date = new Date(isoDate).toLocaleDateString('en-US', {
 ---
 
 <Layout title={title}>
+  <div
+    id="sticky-nav"
+    class="fixed top-0 left-0 right-0 z-50 translate-y-[-100%] opacity-0 transition-all duration-300 ease-out border-b border-zinc-200 dark:border-zinc-700 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm"
+  >
+    <div class="relative px-4 sm:px-6 py-3 flex items-center">
+      <nav class="flex items-center gap-2 text-sm text-zinc-400 dark:text-zinc-500 shrink-0">
+        <a href="/" class="flex items-center gap-2 hover:text-zinc-900 dark:hover:text-zinc-300 transition-colors duration-200">
+          <Image
+            src={avatarImg}
+            alt="Colin Armstrong"
+            width={24}
+            height={24}
+            format="webp"
+            quality={80}
+            class="rounded-full"
+          />
+          <span>Colin Armstrong</span>
+        </a>
+        <span>/</span>
+        <a href="/writing" class="hover:text-zinc-900 dark:hover:text-zinc-300 transition-colors duration-200">Writing</a>
+      </nav>
+      <span class="absolute left-1/2 -translate-x-1/2 text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate max-w-[50%] text-center">
+        {title}
+      </span>
+    </div>
+  </div>
+
   <article class="min-h-screen">
     <div class="max-w-2xl mx-auto px-6 sm:px-8 py-16 sm:py-24">
-      <a
-        href="/"
-        class="text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 transition-colors duration-200"
-      >
-        &larr; Back
-      </a>
+      <nav class="flex items-center gap-2 text-sm text-zinc-400 dark:text-zinc-500">
+        <a href="/" class="hover:text-zinc-900 dark:hover:text-zinc-300 transition-colors duration-200">Home</a>
+        <span>/</span>
+        <a href="/writing" class="hover:text-zinc-900 dark:hover:text-zinc-300 transition-colors duration-200">Writing</a>
+      </nav>
 
-      <header class="mt-8 mb-8">
+      <header id="post-header" class="mt-8 mb-8">
         <time class="text-sm text-zinc-500">{date}</time>
         <h1
           class="mt-2 text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-zinc-100 leading-tight"
@@ -48,4 +76,22 @@ const date = new Date(isoDate).toLocaleDateString('en-US', {
       />
     </div>
   </article>
+
+  <script>
+    const nav = document.getElementById('sticky-nav')
+    const header = document.getElementById('post-header')
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          nav.classList.add('translate-y-[-100%]', 'opacity-0')
+          nav.classList.remove('translate-y-0', 'opacity-100')
+        } else {
+          nav.classList.remove('translate-y-[-100%]', 'opacity-0')
+          nav.classList.add('translate-y-0', 'opacity-100')
+        }
+      },
+      { threshold: 0 },
+    )
+    observer.observe(header)
+  </script>
 </Layout>

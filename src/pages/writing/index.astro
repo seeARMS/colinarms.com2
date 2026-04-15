@@ -1,0 +1,45 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import { getColinArticles } from '@/lib/getAllArticles'
+
+const articles = await getColinArticles()
+---
+
+<Layout title="Writing">
+  <div class="min-h-screen">
+    <div class="max-w-2xl mx-auto px-6 sm:px-8 py-16 sm:py-24">
+      <nav class="flex items-center gap-2 text-sm text-zinc-400 dark:text-zinc-500">
+        <a href="/" class="hover:text-zinc-900 dark:hover:text-zinc-300 transition-colors duration-200">Home</a>
+        <span>/</span>
+        <span class="text-zinc-900 dark:text-zinc-100">Writing</span>
+      </nav>
+
+      <h1 class="mt-8 mb-8 text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-zinc-100">
+        Writing
+      </h1>
+
+      <div class="divide-y divide-zinc-200 dark:divide-zinc-700">
+        {articles.map((post) => {
+          const date = new Date(post.isoDate).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+          })
+          return (
+            <a
+              href={post.link}
+              class="group flex items-baseline gap-4 py-3 transition-colors duration-200"
+            >
+              <time class="text-sm text-zinc-500 min-w-[100px] tabular-nums">
+                {date}
+              </time>
+              <span class="text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200 flex-1">
+                {post.title}
+              </span>
+            </a>
+          )
+        })}
+      </div>
+    </div>
+  </div>
+</Layout>
