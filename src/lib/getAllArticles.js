@@ -1,24 +1,19 @@
+const API_BASE = 'https://public.api.paragraph.com/api/v1'
+
 export async function getColinArticles() {
-  const res = await fetch(
-    'https://api.paragraph.com/blogs/rss/@writing.cma.xyz',
+  const pubRes = await fetch(
+    `${API_BASE}/publications/domain/writing.cma.xyz`,
   )
-  const xml = await res.text()
+  const pub = await pubRes.json()
 
-  const items = []
-  const itemRegex = /<item>([\s\S]*?)<\/item>/g
-  let match
+  const postsRes = await fetch(
+    `${API_BASE}/publications/${pub.id}/posts?limit=10`,
+  )
+  const { items } = await postsRes.json()
 
-  while ((match = itemRegex.exec(xml)) !== null) {
-    const itemXml = match[1]
-    const title = itemXml.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/)?.[1]
-      ?? itemXml.match(/<title>(.*?)<\/title>/)?.[1]
-      ?? ''
-    const link = itemXml.match(/<link>(.*?)<\/link>/)?.[1] ?? ''
-    const pubDate = itemXml.match(/<pubDate>(.*?)<\/pubDate>/)?.[1] ?? ''
-    const isoDate = pubDate ? new Date(pubDate).toISOString() : ''
-
-    items.push({ title, link, isoDate })
-  }
-
-  return items.sort((a, z) => new Date(z.isoDate) - new Date(a.isoDate))
+  return items.map((post) => ({
+    title: post.title,
+    link: `https://writing.cma.xyz/${post.slug}`,
+    isoDate: new Date(Number(post.publishedAt)).toISOString(),
+  }))
 }
