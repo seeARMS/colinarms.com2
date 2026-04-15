@@ -1,6 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro'
 import { Image } from 'astro:assets'
+import avatarImg from '../../public/colin_v1.jpg'
 import { getColinArticles } from '@/lib/getAllArticles'
 
 const articles = await getColinArticles()
@@ -18,10 +19,14 @@ const articles = await getColinArticles()
               class="relative h-10 w-10 sm:h-16 sm:w-16 ring-2 ring-zinc-100 dark:ring-zinc-800 rounded-full overflow-hidden"
             >
               <Image
-                src="/colin_v1.png"
+                src={avatarImg}
                 alt="Colin Armstrong"
-                width={64}
-                height={64}
+                width={128}
+                height={128}
+                format="webp"
+                quality={80}
+                loading="eager"
+                fetchpriority="high"
                 class="object-cover w-full h-full"
               />
             </div>

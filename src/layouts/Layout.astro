@@ -44,21 +44,20 @@ const GA_MEASUREMENT_ID = 'G-VLG18DVXN5'
     </script>
   </head>
   <body class="flex h-full flex-col">
-    <!-- Google Analytics -->
-    <script is:inline src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}></script>
-    <script is:inline define:vars={{ GA_MEASUREMENT_ID }}>
-      window.dataLayer = window.dataLayer || []
-      function gtag() {
-        dataLayer.push(arguments)
-      }
-      gtag('js', new Date())
-      gtag('config', GA_MEASUREMENT_ID, {
-        page_path: window.location.pathname,
-      })
-    </script>
-
     <div class="bg-white dark:bg-zinc-900">
       <slot />
     </div>
+
+    <!-- Google Analytics (deferred) -->
+    <script is:inline define:vars={{ GA_MEASUREMENT_ID }}>
+      window.dataLayer = window.dataLayer || []
+      function gtag() { dataLayer.push(arguments) }
+      gtag('js', new Date())
+      gtag('config', GA_MEASUREMENT_ID, { page_path: window.location.pathname })
+      var s = document.createElement('script')
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_MEASUREMENT_ID
+      s.async = true
+      document.body.appendChild(s)
+    </script>
   </body>
 </html>
