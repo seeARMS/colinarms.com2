@@ -3,7 +3,7 @@ import cloudflare from '@astrojs/cloudflare'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-  output: 'static',
+  output: 'server',
   prefetch: {
     prefetchAll: true,
     defaultStrategy: 'load',

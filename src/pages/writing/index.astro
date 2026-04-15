@@ -1,5 +1,8 @@
 ---
+export const prerender = true
+
 import Layout from '@/layouts/Layout.astro'
+import Footer from '@/components/Footer.astro'
 import { getColinArticles } from '@/lib/getAllArticles'
 
 const articles = await getColinArticles()
@@ -42,4 +45,5 @@ const articles = await getColinArticles()
       </div>
     </div>
   </div>
+  <Footer />
 </Layout>
