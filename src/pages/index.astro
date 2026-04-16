@@ -20,7 +20,7 @@ const articles = await getColinArticles()
   <Navbar minimal />
   <SubscribeDialog />
   <!-- Main Content -->
-  <div class="min-h-screen flex flex-col">
+  <div id="home-content" class="min-h-screen flex flex-col">
     <main class="flex-1 max-w-3xl mx-auto px-6 sm:px-8 pt-20 pb-16 sm:pt-24 sm:pb-24">
       <!-- Hero Section -->
       <div class="mb-16 sm:mb-20">
@@ -194,4 +194,11 @@ const articles = await getColinArticles()
 
     <Footer />
   </div>
+
+  <script is:inline>
+    if (sessionStorage.getItem('visited')) {
+      document.getElementById('home-content').classList.add('no-animate')
+    }
+    sessionStorage.setItem('visited', '1')
+  </script>
 </Layout>

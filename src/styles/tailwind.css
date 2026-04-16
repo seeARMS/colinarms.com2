@@ -7,6 +7,12 @@
 @import './prism.css';
 
 @layer utilities {
+  .no-animate *,
+  .no-animate {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
