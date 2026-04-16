@@ -1,107 +1,131 @@
 ---
-import { Image } from 'astro:assets'
-import avatarImg from '../../public/colin_v1.jpg'
 import ThemeToggle from './ThemeToggle.astro'
 
-interface Props {
-  scrollTitle?: string
-  minimal?: boolean
-}
+const currentPath = Astro.url.pathname
 
-const { scrollTitle, minimal } = Astro.props
+const links = [
+  { name: 'Home', href: '/' },
+  { name: 'Photography', href: '/photography' },
+  { name: 'Writing', href: '/writing' },
+  { name: 'Contact', href: '/contact' },
+]
+
+function isActive(href: string) {
+  if (href === '/') return currentPath === '/'
+  return currentPath.startsWith(href)
+}
 ---
 
-<div
+<nav
   id="fixed-nav"
-  class="fixed top-0 left-0 right-0 z-50 border-b border-transparent bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm transition-[border-color] duration-300"
+  class="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200 dark:border-zinc-700 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm"
 >
-  <div class="relative px-4 sm:px-6 py-3 flex items-center">
-    <!-- Initial state -->
-    <div id="nav-initial" class={`absolute inset-0 flex items-center ${minimal ? 'justify-end' : 'justify-start sm:justify-center'} px-4 sm:px-6 transition-opacity duration-300`}>
-      {!minimal && (
-        <a href="/" class="flex items-center gap-2.5 text-base font-medium text-zinc-900 dark:text-zinc-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
-          <Image
-            src={avatarImg}
-            alt="Colin Armstrong"
-            width={28}
-            height={28}
-            format="webp"
-            quality={80}
-            class="rounded-full"
-          />
-          <span>Colin Armstrong</span>
-        </a>
-      )}
-      <div class={`${minimal ? '' : 'absolute right-4 sm:right-6'} flex items-center gap-1`}>
-        <ThemeToggle />
-        <button
-          class="subscribe-btn shrink-0 text-sm font-medium px-4 py-1.5 rounded-full bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300 transition-colors duration-200"
-        >
-          Subscribe
-        </button>
-      </div>
+  <div class="px-4 sm:px-6 py-6 sm:py-3 flex items-center justify-center">
+    <!-- Mobile hamburger -->
+    <button
+      id="nav-hamburger"
+      aria-label="Open menu"
+      class="absolute left-4 sm:hidden flex flex-col justify-center gap-[5px] w-8 h-8"
+    >
+      <span class="block w-5 h-[1.5px] bg-zinc-700 dark:bg-zinc-300 transition-all duration-300 origin-center" id="ham-top"></span>
+      <span class="block w-5 h-[1.5px] bg-zinc-700 dark:bg-zinc-300 transition-all duration-300" id="ham-mid"></span>
+      <span class="block w-5 h-[1.5px] bg-zinc-700 dark:bg-zinc-300 transition-all duration-300 origin-center" id="ham-bot"></span>
+    </button>
+
+    <!-- Desktop nav links (centered) -->
+    <div class="hidden sm:flex items-center gap-1 text-sm font-medium">
+      {links.map((link, i) => (
+        <>
+          <a
+            href={link.href}
+            class:list={[
+              'px-2 py-1 transition-colors duration-200',
+              isActive(link.href)
+                ? 'text-zinc-900 dark:text-zinc-100'
+                : 'text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100',
+            ]}
+          >
+            {link.name}
+          </a>
+          {i < links.length - 1 && (
+            <span class="text-zinc-300 dark:text-zinc-600 select-none">|</span>
+          )}
+        </>
+      ))}
     </div>
 
-    {scrollTitle ? (
-      <!-- Scrolled state: name left, title center, actions right -->
-      <div id="nav-scrolled" class="flex items-center w-full opacity-0 transition-opacity duration-300 pointer-events-none">
-        <a href="/" class="flex items-center gap-2.5 text-base font-medium text-zinc-900 dark:text-zinc-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 shrink-0">
-          <Image
-            src={avatarImg}
-            alt="Colin Armstrong"
-            width={28}
-            height={28}
-            format="webp"
-            quality={80}
-            class="rounded-full"
-          />
-          <span>Colin Armstrong</span>
-        </a>
-        <span class="hidden sm:block absolute left-1/2 -translate-x-1/2 text-base font-medium text-zinc-900 dark:text-zinc-100 truncate max-w-[50%] text-center pointer-events-none">
-          {scrollTitle}
-        </span>
-        <div class="ml-auto flex items-center gap-1">
-          <ThemeToggle />
-          <button
-            class="subscribe-btn shrink-0 text-sm font-medium px-4 py-1.5 rounded-full bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300 transition-colors duration-200"
-          >
-            Subscribe
-          </button>
-        </div>
-      </div>
-    ) : (
-      <!-- No scroll state: just keep initial visible, use invisible spacer for height -->
-      <div class="invisible flex items-center gap-1">
-        <div class="h-8 w-8"></div>
-        <div class="px-4 py-1.5 text-sm">Subscribe</div>
-      </div>
-    )}
+    <!-- Right side actions -->
+    <div class="absolute right-4 sm:right-6 flex items-center gap-1">
+      <ThemeToggle />
+      <button
+        class="subscribe-btn shrink-0 text-sm font-medium px-4 py-1.5 rounded-full bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300 transition-colors duration-200"
+      >
+        Subscribe
+      </button>
+    </div>
   </div>
+</nav>
+
+<!-- Mobile full-screen overlay -->
+<div
+  id="nav-overlay"
+  class="fixed inset-0 z-40 bg-white dark:bg-zinc-900 flex flex-col items-center justify-center gap-8 opacity-0 pointer-events-none transition-opacity duration-300 sm:hidden"
+>
+  {links.map((link) => (
+    <a
+      href={link.href}
+      class:list={[
+        'text-2xl font-medium transition-colors duration-200',
+        isActive(link.href)
+          ? 'text-zinc-900 dark:text-zinc-100'
+          : 'text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100',
+      ]}
+    >
+      {link.name}
+    </a>
+  ))}
 </div>
 
 <script>
-  const navScrolled = document.getElementById('nav-scrolled')
-  if (navScrolled) {
-    const fixedNav = document.getElementById('fixed-nav')!
-    const navInitial = document.getElementById('nav-initial')!
-    const header = document.getElementById('post-header')!
+  const hamburger = document.getElementById('nav-hamburger')!
+  const overlay = document.getElementById('nav-overlay')!
+  const hamTop = document.getElementById('ham-top')!
+  const hamMid = document.getElementById('ham-mid')!
+  const hamBot = document.getElementById('ham-bot')!
+  let isOpen = false
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          navInitial.classList.remove('opacity-0', 'pointer-events-none')
-          navScrolled.classList.add('opacity-0', 'pointer-events-none')
-          fixedNav.classList.remove('border-zinc-200', 'dark:border-zinc-700')
-          fixedNav.classList.add('border-transparent')
-        } else {
-          navInitial.classList.add('opacity-0', 'pointer-events-none')
-          navScrolled.classList.remove('opacity-0', 'pointer-events-none')
-          fixedNav.classList.add('border-zinc-200', 'dark:border-zinc-700')
-          fixedNav.classList.remove('border-transparent')
-        }
-      },
-      { threshold: 0 },
-    )
-    observer.observe(header)
+  function toggle() {
+    isOpen = !isOpen
+    if (isOpen) {
+      overlay.classList.remove('opacity-0', 'pointer-events-none')
+      overlay.classList.add('opacity-100', 'pointer-events-auto')
+      document.body.style.overflow = 'hidden'
+      // Animate to X
+      hamTop.style.transform = 'translateY(6.5px) rotate(45deg)'
+      hamMid.style.opacity = '0'
+      hamBot.style.transform = 'translateY(-6.5px) rotate(-45deg)'
+    } else {
+      overlay.classList.add('opacity-0', 'pointer-events-none')
+      overlay.classList.remove('opacity-100', 'pointer-events-auto')
+      document.body.style.overflow = ''
+      // Animate back to hamburger
+      hamTop.style.transform = ''
+      hamMid.style.opacity = ''
+      hamBot.style.transform = ''
+    }
   }
+
+  hamburger.addEventListener('click', toggle)
+
+  // Close overlay on link click
+  overlay.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      if (isOpen) toggle()
+    })
+  })
+
+  // Close on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isOpen) toggle()
+  })
 </script>

@@ -6,6 +6,7 @@ import Footer from '@/components/Footer.astro'
 import PostList from '@/components/PostList.astro'
 import Navbar from '@/components/Navbar.astro'
 import SubscribeDialog from '@/components/SubscribeDialog.astro'
+import SubscribeWell from '@/components/SubscribeWell.astro'
 import { getColinArticlesWithContent } from '@/lib/getAllArticles'
 
 export async function getStaticPaths() {
@@ -37,7 +38,7 @@ const date = new Date(isoDate).toLocaleDateString('en-US', {
   type="article"
   publishedDate={isoDate}
 >
-  <Navbar scrollTitle={title} />
+  <Navbar />
 
   <article class="min-h-screen">
     <div class="max-w-2xl mx-auto px-6 sm:px-8 pt-20 pb-16 sm:pt-24 sm:pb-24 relative">
@@ -72,27 +73,7 @@ const date = new Date(isoDate).toLocaleDateString('en-US', {
   </article>
 
   <div class="max-w-2xl mx-auto px-6 sm:px-8 py-12 space-y-6">
-    <!-- Subscribe well -->
-    <div class="bg-gray-50 dark:bg-zinc-800 rounded-lg p-6">
-      <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-1">Subscribe</h3>
-      <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-4">Get new posts delivered to your inbox.</p>
-      <form class="subscribe-form flex gap-2">
-        <input
-          type="email"
-          name="email"
-          required
-          placeholder="you@example.com"
-          class="flex-1 min-w-0 px-3 py-2 text-sm rounded-lg border border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <button
-          type="submit"
-          class="shrink-0 px-5 py-2 text-sm font-medium rounded-lg bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300 transition-colors duration-200 disabled:opacity-50"
-        >
-          Subscribe
-        </button>
-      </form>
-      <p class="subscribe-msg text-sm mt-3 hidden"></p>
-    </div>
+    <SubscribeWell />
 
     <!-- Related posts well -->
     {allPosts.length > 0 && (
