@@ -1,0 +1,95 @@
+<dialog
+  id="subscribe-dialog"
+  class="fixed inset-0 m-auto backdrop:bg-black/50 backdrop:backdrop-blur-sm bg-white dark:bg-zinc-900 rounded-lg shadow-xl p-0 w-full max-w-sm border border-zinc-200 dark:border-zinc-700"
+>
+  <div class="p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Subscribe</h2>
+      <button id="close-dialog" class="text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-4">Get new posts delivered to your inbox.</p>
+    <form id="subscribe-form" class="flex gap-2">
+      <input
+        type="email"
+        name="email"
+        required
+        placeholder="you@example.com"
+        class="flex-1 min-w-0 px-3 py-2 text-sm rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+      <button
+        type="submit"
+        class="shrink-0 px-4 py-2 text-sm font-medium rounded-lg bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300 transition-colors duration-200 disabled:opacity-50"
+      >
+        Subscribe
+      </button>
+    </form>
+    <p id="subscribe-msg" class="text-sm mt-3 hidden"></p>
+  </div>
+</dialog>
+
+<script>
+  const dialog = document.getElementById('subscribe-dialog') as HTMLDialogElement
+  const form = document.getElementById('subscribe-form') as HTMLFormElement
+  const msg = document.getElementById('subscribe-msg')!
+
+  document.querySelectorAll('.subscribe-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      dialog.showModal()
+      dialog.classList.remove('animate-dialog-in')
+      void dialog.offsetWidth
+      dialog.classList.add('animate-dialog-in')
+    })
+  })
+  document.getElementById('close-dialog')!.addEventListener('click', () => dialog.close())
+  dialog.addEventListener('click', (e) => {
+    if (e.target === dialog) dialog.close()
+  })
+
+  async function handleSubscribe(f: HTMLFormElement, msgEl: HTMLElement) {
+    const btn = f.querySelector('button[type="submit"]') as HTMLButtonElement
+    const email = new FormData(f).get('email') as string
+
+    btn.disabled = true
+    msgEl.classList.add('hidden')
+
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        msgEl.textContent = 'Subscribed!'
+        msgEl.className = 'text-sm mt-3 text-green-600 dark:text-green-400'
+        f.reset()
+      } else {
+        msgEl.textContent = data.error || 'Something went wrong.'
+        msgEl.className = 'text-sm mt-3 text-red-600 dark:text-red-400'
+      }
+    } catch {
+      msgEl.textContent = 'Something went wrong.'
+      msgEl.className = 'text-sm mt-3 text-red-600 dark:text-red-400'
+    } finally {
+      btn.disabled = false
+    }
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault()
+    handleSubscribe(form, msg)
+  })
+
+  document.querySelectorAll('.subscribe-form').forEach((f) => {
+    const formEl = f as HTMLFormElement
+    const msgEl = formEl.nextElementSibling as HTMLElement
+    formEl.addEventListener('submit', (e) => {
+      e.preventDefault()
+      handleSubscribe(formEl, msgEl)
+    })
+  })
+</script>

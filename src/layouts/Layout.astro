@@ -26,9 +26,10 @@ const GA_MEASUREMENT_ID = 'G-VLG18DVXN5'
       darkModeMediaQuery.addEventListener('change', updateModeWithoutTransitions)
 
       function updateMode() {
-        let isSystemDarkMode = darkModeMediaQuery.matches
+        let saved = localStorage.getItem('theme')
+        let isDark = saved === 'dark' || (!saved && darkModeMediaQuery.matches)
 
-        if (isSystemDarkMode) {
+        if (isDark) {
           document.documentElement.classList.add('dark')
         } else {
           document.documentElement.classList.remove('dark')
@@ -44,6 +45,12 @@ const GA_MEASUREMENT_ID = 'G-VLG18DVXN5'
 
       function updateModeWithoutTransitions() {
         disableTransitionsTemporarily()
+        updateMode()
+      }
+
+      window.toggleDarkMode = function() {
+        let isDark = document.documentElement.classList.contains('dark')
+        localStorage.setItem('theme', isDark ? 'light' : 'dark')
         updateMode()
       }
     </script>

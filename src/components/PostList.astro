@@ -1,0 +1,27 @@
+---
+interface Props {
+  posts: { title: string; link?: string; slug?: string; isoDate?: string }[]
+  label?: string
+}
+
+const { posts, label = 'Keep reading' } = Astro.props
+---
+
+<div class="bg-gray-50 dark:bg-zinc-800 rounded-lg px-6 py-5">
+  <p class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500 mb-3">{label}</p>
+  <div class="divide-y divide-zinc-200 dark:divide-zinc-700">
+    {posts.map((post) => (
+      <a
+        href={post.link ?? `/writing/${post.slug}`}
+        class="group flex items-baseline justify-between gap-4 py-3 transition-colors duration-200"
+      >
+        <span class="text-sm text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
+          {post.title}
+        </span>
+        <svg class="w-4 h-4 shrink-0 text-zinc-300 dark:text-zinc-600 group-hover:text-blue-500 group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" />
+        </svg>
+      </a>
+    ))}
+  </div>
+</div>

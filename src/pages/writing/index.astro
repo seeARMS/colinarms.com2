@@ -3,21 +3,19 @@ export const prerender = true
 
 import Layout from '@/layouts/Layout.astro'
 import Footer from '@/components/Footer.astro'
+import Navbar from '@/components/Navbar.astro'
+import SubscribeDialog from '@/components/SubscribeDialog.astro'
 import { getColinArticles } from '@/lib/getAllArticles'
 
 const articles = await getColinArticles()
 ---
 
 <Layout title="Writing">
+  <Navbar />
+  <SubscribeDialog />
   <div class="min-h-screen">
-    <div class="max-w-2xl mx-auto px-6 sm:px-8 py-16 sm:py-24">
-      <nav class="flex items-center gap-2 text-sm text-zinc-400 dark:text-zinc-500">
-        <a href="/" class="hover:text-zinc-900 dark:hover:text-zinc-300 transition-colors duration-200">Home</a>
-        <span>/</span>
-        <span class="text-zinc-900 dark:text-zinc-100">Writing</span>
-      </nav>
-
-      <h1 class="mt-8 mb-8 text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-zinc-100">
+    <div class="max-w-2xl mx-auto px-6 sm:px-8 pt-20 pb-16 sm:pt-24 sm:pb-24">
+      <h1 class="mb-8 text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-zinc-100">
         Writing
       </h1>
 

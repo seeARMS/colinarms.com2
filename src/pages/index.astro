@@ -3,6 +3,9 @@ export const prerender = true
 
 import Layout from '@/layouts/Layout.astro'
 import Footer from '@/components/Footer.astro'
+import PostList from '@/components/PostList.astro'
+import Navbar from '@/components/Navbar.astro'
+import SubscribeDialog from '@/components/SubscribeDialog.astro'
 import { Image } from 'astro:assets'
 import avatarImg from '../../public/colin_v1.jpg'
 import { getColinArticles } from '@/lib/getAllArticles'
@@ -11,9 +14,11 @@ const articles = await getColinArticles()
 ---
 
 <Layout>
+  <Navbar minimal />
+  <SubscribeDialog />
   <!-- Main Content -->
   <div class="min-h-screen flex flex-col">
-    <main class="flex-1 max-w-3xl mx-auto px-6 sm:px-8 py-16 sm:py-24">
+    <main class="flex-1 max-w-3xl mx-auto px-6 sm:px-8 pt-20 pb-16 sm:pt-24 sm:pb-24">
       <!-- Hero Section -->
       <div class="mb-16 sm:mb-20">
         <div class="flex items-center gap-6 mb-8 animate-fade-in">
@@ -157,28 +162,7 @@ const articles = await getColinArticles()
               </a>
               .
             </div>
-            <div class="space-y-0 bg-gray-50 px-6 py-3 rounded-lg dark:bg-zinc-800 divide-y divide-zinc-200 dark:divide-zinc-700">
-              {articles.slice(0, 10).map((post) => {
-                const date = new Date(post.isoDate).toLocaleDateString('en-US', {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric',
-                })
-                return (
-                  <a
-                    href={post.link}
-                    class="group flex items-baseline gap-4 py-3 transition-colors duration-200"
-                  >
-                    <time class="text-sm text-zinc-500 dark:text-zinc-500 min-w-[100px] tabular-nums">
-                      {date}
-                    </time>
-                    <span class="text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200 flex-1">
-                      {post.title}
-                    </span>
-                  </a>
-                )
-              })}
-            </div>
+            <PostList posts={articles.slice(0, 10)} label="Writing" />
             <div class="mt-8 flex justify-center animate-fade-in animation-delay-700">
               <a
                 href="/writing"
