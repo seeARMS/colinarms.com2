@@ -27,6 +27,11 @@ async function fetchPosts({ includeContent } = {}) {
   const params = new URLSearchParams({ limit: '50' })
   if (includeContent) params.set('includeContent', 'true')
 
-  const res = await fetch(`${API_BASE}/publications/${PUB_ID}/posts?${params}`)
-  return res.json()
+  try {
+    const res = await fetch(`${API_BASE}/publications/${PUB_ID}/posts?${params}`)
+    return res.json()
+  } catch (e) {
+    console.error('Failed to fetch posts:', e)
+    return { items: [] }
+  }
 }
