@@ -55,128 +55,256 @@ const photos = Object.entries(imageModules)
 
   <Footer />
 
-  <!-- Lightbox overlay -->
-  <div
-    id="lightbox"
-    class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/90 backdrop-blur-sm"
-  >
-    <button
-      id="lightbox-close"
-      class="absolute top-4 right-4 z-10 text-white/70 hover:text-white transition-colors"
-      aria-label="Close"
-    >
-      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
-      </svg>
-    </button>
-    <img
-      id="lightbox-img"
-      class="max-w-[90vw] max-h-[90vh] object-contain rounded-lg"
-      src=""
-      alt=""
-    />
+  <!-- Lightbox: frosted glass with FLIP animation -->
+  <div id="lightbox" class="fixed inset-0 z-[100] pointer-events-none" style="opacity:0">
+    <!-- Frosted page blur layer -->
+    <div id="lb-frost" class="absolute inset-0 backdrop-blur-2xl bg-white/60 dark:bg-zinc-900/70"></div>
+
+    <!-- Photo container -->
+    <img id="lb-img" class="absolute will-change-transform rounded-lg shadow-2xl" src="" alt="" />
+
+    <!-- Minimal UI -->
+    <div id="lb-ui" class="absolute inset-x-0 bottom-0 flex items-end justify-between px-6 pb-6 opacity-0 transition-opacity duration-500 pointer-events-none">
+      <span id="lb-counter" class="text-xs tracking-widest text-zinc-500 dark:text-zinc-400 font-mono tabular-nums"></span>
+      <span class="text-xs text-zinc-400 dark:text-zinc-500">esc to close &middot; arrows to browse</span>
+    </div>
   </div>
+
+  <style>
+    #lightbox.is-open { pointer-events: auto; }
+    #lb-img { transition: none; }
+    #lb-img.animating {
+      transition: left 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  top 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  width 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  height 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-radius 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  opacity 0.3s ease;
+    }
+    #lb-frost {
+      transition: opacity 0.4s ease;
+    }
+    #lightbox {
+      transition: opacity 0.35s ease;
+    }
+    .photo-thumb.is-active img {
+      opacity: 0;
+    }
+  </style>
 
   <script>
     const lightbox = document.getElementById('lightbox')!
-    const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement
-    const thumbs = document.querySelectorAll('.photo-thumb')
-    let activeThumb: HTMLElement | null = null
+    const frost = document.getElementById('lb-frost')!
+    const lbImg = document.getElementById('lb-img') as HTMLImageElement
+    const lbUI = document.getElementById('lb-ui')!
+    const lbCounter = document.getElementById('lb-counter')!
+    const thumbList = Array.from(document.querySelectorAll('.photo-thumb')) as HTMLElement[]
+    let currentIndex = -1
+    let isOpen = false
+    let dragStartY = 0
+    let dragY = 0
+    let isDragging = false
 
-    function openLightbox(thumb: HTMLElement) {
+    function getFullSrc(thumb: HTMLElement) {
       const img = thumb.querySelector('img')!
-      // Use the largest srcset URL for the lightbox
       const srcset = img.getAttribute('srcset')
-      const fullSrc = srcset
-        ? srcset.split(',').pop()!.trim().split(' ')[0]
-        : img.src
-      const rect = img.getBoundingClientRect()
+      return srcset ? srcset.split(',').pop()!.trim().split(' ')[0] : img.src
+    }
 
-      activeThumb = thumb
+    function getFinalRect(img: HTMLImageElement) {
+      const vw = window.innerWidth * 0.92
+      const vh = window.innerHeight * 0.88
+      const naturalW = img.naturalWidth || 1080
+      const naturalH = img.naturalHeight || 810
+      const scale = Math.min(vw / naturalW, vh / naturalH)
+      const w = naturalW * scale
+      const h = naturalH * scale
+      return {
+        left: (window.innerWidth - w) / 2,
+        top: (window.innerHeight - h) / 2,
+        width: w,
+        height: h,
+      }
+    }
 
-      lightboxImg.src = fullSrc
-      lightboxImg.style.transition = 'none'
-      lightboxImg.style.position = 'fixed'
-      lightboxImg.style.left = rect.left + 'px'
-      lightboxImg.style.top = rect.top + 'px'
-      lightboxImg.style.width = rect.width + 'px'
-      lightboxImg.style.height = rect.height + 'px'
-      lightboxImg.style.maxWidth = 'none'
-      lightboxImg.style.maxHeight = 'none'
-      lightboxImg.style.borderRadius = '0.5rem'
+    function setImgRect(rect: { left: number; top: number; width: number; height: number }, radius = '0.5rem') {
+      lbImg.style.left = rect.left + 'px'
+      lbImg.style.top = rect.top + 'px'
+      lbImg.style.width = rect.width + 'px'
+      lbImg.style.height = rect.height + 'px'
+      lbImg.style.borderRadius = radius
+    }
 
-      lightbox.classList.remove('hidden')
-      lightbox.classList.add('flex')
-      lightbox.style.opacity = '0'
+    function open(index: number) {
+      currentIndex = index
+      const thumb = thumbList[index]
+      const thumbImg = thumb.querySelector('img')!
+      const rect = thumbImg.getBoundingClientRect()
 
+      // Hide the grid thumbnail
+      thumb.classList.add('is-active')
+
+      // Set image source & starting position (match thumbnail)
+      lbImg.src = getFullSrc(thumb)
+      lbImg.classList.remove('animating')
+      setImgRect({ left: rect.left, top: rect.top, width: rect.width, height: rect.height }, '0.5rem')
+
+      // Show lightbox
+      lightbox.style.opacity = '1'
+      lightbox.classList.add('is-open')
+      isOpen = true
+      document.body.style.overflow = 'hidden'
+
+      // Animate to center
       requestAnimationFrame(() => {
-        lightbox.style.transition = 'opacity 0.3s ease'
-        lightbox.style.opacity = '1'
-
-        // Calculate final centered size — fill 95% of viewport
-        const vw = window.innerWidth * 0.95
-        const vh = window.innerHeight * 0.95
-        const naturalW = img.naturalWidth || rect.width
-        const naturalH = img.naturalHeight || rect.height
-        const scale = Math.min(vw / naturalW, vh / naturalH)
-        const finalW = naturalW * scale
-        const finalH = naturalH * scale
-        const finalLeft = (window.innerWidth - finalW) / 2
-        const finalTop = (window.innerHeight - finalH) / 2
-
-        lightboxImg.style.transition = 'all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)'
-        lightboxImg.style.left = finalLeft + 'px'
-        lightboxImg.style.top = finalTop + 'px'
-        lightboxImg.style.width = finalW + 'px'
-        lightboxImg.style.height = finalH + 'px'
-        lightboxImg.style.borderRadius = '0.5rem'
+        lbImg.classList.add('animating')
+        const final = getFinalRect(thumbImg)
+        setImgRect(final, '0.25rem')
       })
 
-      document.body.style.overflow = 'hidden'
+      // Show UI after image lands
+      setTimeout(() => {
+        lbUI.style.opacity = '1'
+        lbUI.classList.add('pointer-events-auto')
+      }, 400)
+
+      lbCounter.textContent = `${index + 1} / ${thumbList.length}`
     }
 
-    function closeLightbox() {
-      if (!activeThumb) return
-      const img = activeThumb.querySelector('img')!
-      const rect = img.getBoundingClientRect()
+    function close() {
+      if (!isOpen) return
+      const thumb = thumbList[currentIndex]
+      const thumbImg = thumb.querySelector('img')!
+      const rect = thumbImg.getBoundingClientRect()
 
-      lightbox.style.transition = 'opacity 0.3s ease 0.1s'
-      lightbox.style.opacity = '0'
+      // Hide UI immediately
+      lbUI.style.opacity = '0'
+      lbUI.classList.remove('pointer-events-auto')
 
-      lightboxImg.style.transition = 'all 0.35s cubic-bezier(0.25, 0.1, 0.25, 1)'
-      lightboxImg.style.left = rect.left + 'px'
-      lightboxImg.style.top = rect.top + 'px'
-      lightboxImg.style.width = rect.width + 'px'
-      lightboxImg.style.height = rect.height + 'px'
+      // Animate image back to grid position
+      lbImg.classList.add('animating')
+      setImgRect({ left: rect.left, top: rect.top, width: rect.width, height: rect.height }, '0.5rem')
+
+      // Restore thumbnail as soon as image lands, then fade out lightbox
+      setTimeout(() => {
+        thumb.classList.remove('is-active')
+        lightbox.style.opacity = '0'
+      }, 480)
 
       setTimeout(() => {
-        lightbox.classList.add('hidden')
-        lightbox.classList.remove('flex')
-        lightboxImg.style.position = ''
-        lightboxImg.style.left = ''
-        lightboxImg.style.top = ''
-        lightboxImg.style.width = ''
-        lightboxImg.style.height = ''
-        lightboxImg.style.maxWidth = ''
-        lightboxImg.style.maxHeight = ''
-        lightboxImg.style.transition = ''
-        lightbox.style.transition = ''
-        lightbox.style.opacity = ''
-        activeThumb = null
+        lightbox.classList.remove('is-open')
+        isOpen = false
+        currentIndex = -1
         document.body.style.overflow = ''
-      }, 400)
+        lbImg.classList.remove('animating')
+      }, 800)
     }
 
-    thumbs.forEach((thumb) => {
-      thumb.addEventListener('click', () => openLightbox(thumb as HTMLElement))
+    function navigate(dir: number) {
+      if (!isOpen) return
+      const nextIndex = (currentIndex + dir + thumbList.length) % thumbList.length
+      const prevThumb = thumbList[currentIndex]
+
+      // Crossfade: fade out current
+      lbImg.classList.add('animating')
+      lbImg.style.opacity = '0'
+
+      setTimeout(() => {
+        prevThumb.classList.remove('is-active')
+        currentIndex = nextIndex
+        const nextThumb = thumbList[nextIndex]
+        const nextThumbImg = nextThumb.querySelector('img')!
+        nextThumb.classList.add('is-active')
+
+        lbImg.src = getFullSrc(nextThumb)
+        lbImg.classList.remove('animating')
+
+        // Position at final centered rect immediately
+        const final = getFinalRect(nextThumbImg)
+        setImgRect(final, '0.25rem')
+        lbImg.style.opacity = '0'
+
+        requestAnimationFrame(() => {
+          lbImg.classList.add('animating')
+          lbImg.style.opacity = '1'
+        })
+
+        lbCounter.textContent = `${nextIndex + 1} / ${thumbList.length}`
+      }, 250)
+    }
+
+    // Drag to dismiss
+    lbImg.addEventListener('pointerdown', (e) => {
+      if (!isOpen) return
+      isDragging = true
+      dragStartY = e.clientY
+      dragY = 0
+      lbImg.classList.remove('animating')
+      lbImg.setPointerCapture(e.pointerId)
+      lbImg.style.cursor = 'grabbing'
     })
 
-    document.getElementById('lightbox-close')!.addEventListener('click', closeLightbox)
-    lightbox.addEventListener('click', (e) => {
-      if (e.target === lightbox) closeLightbox()
+    lbImg.addEventListener('pointermove', (e) => {
+      if (!isDragging) return
+      dragY = e.clientY - dragStartY
+      const progress = Math.min(Math.abs(dragY) / 300, 1)
+      lbImg.style.transform = `translateY(${dragY}px) scale(${1 - progress * 0.15})`
+      frost.style.opacity = String(1 - progress * 0.6)
     })
+
+    lbImg.addEventListener('pointerup', () => {
+      if (!isDragging) return
+      isDragging = false
+      lbImg.style.cursor = ''
+
+      if (Math.abs(dragY) > 120) {
+        // Dismiss
+        lbImg.style.transition = 'transform 0.3s ease, opacity 0.3s ease'
+        lbImg.style.transform = `translateY(${dragY > 0 ? 400 : -400}px) scale(0.8)`
+        lbImg.style.opacity = '0'
+        frost.style.transition = 'opacity 0.3s ease'
+        frost.style.opacity = '0'
+        setTimeout(() => {
+          lightbox.style.opacity = '0'
+          setTimeout(() => {
+            lightbox.classList.remove('is-open')
+            thumbList[currentIndex]?.classList.remove('is-active')
+            isOpen = false
+            currentIndex = -1
+            document.body.style.overflow = ''
+            lbImg.style.transform = ''
+            lbImg.style.opacity = ''
+            lbImg.style.transition = ''
+            frost.style.opacity = ''
+            frost.style.transition = ''
+            lbImg.classList.remove('animating')
+          }, 300)
+        }, 100)
+      } else {
+        // Snap back
+        lbImg.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+        lbImg.style.transform = ''
+        frost.style.opacity = '1'
+        setTimeout(() => {
+          lbImg.style.transition = ''
+        }, 400)
+      }
+    })
+
+    // Click grid items
+    thumbList.forEach((thumb, i) => {
+      thumb.addEventListener('click', () => open(i))
+    })
+
+    // Click frost to close
+    frost.addEventListener('click', close)
+
+    // Keyboard
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !lightbox.classList.contains('hidden')) closeLightbox()
+      if (!isOpen) return
+      if (e.key === 'Escape') close()
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigate(1)
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') navigate(-1)
     })
   </script>
 </Layout>
