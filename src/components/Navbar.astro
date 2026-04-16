@@ -19,12 +19,12 @@ const { scrollTitle, minimal } = Astro.props
     <!-- Initial state -->
     <div id="nav-initial" class={`absolute inset-0 flex items-center ${minimal ? 'justify-end' : 'justify-start sm:justify-center'} px-4 sm:px-6 transition-opacity duration-300`}>
       {!minimal && (
-        <a href="/" class="flex items-center gap-2 text-sm font-medium text-zinc-900 dark:text-zinc-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+        <a href="/" class="flex items-center gap-2.5 text-base font-medium text-zinc-900 dark:text-zinc-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
           <Image
             src={avatarImg}
             alt="Colin Armstrong"
-            width={24}
-            height={24}
+            width={28}
+            height={28}
             format="webp"
             quality={80}
             class="rounded-full"
@@ -45,19 +45,19 @@ const { scrollTitle, minimal } = Astro.props
     {scrollTitle ? (
       <!-- Scrolled state: name left, title center, actions right -->
       <div id="nav-scrolled" class="flex items-center w-full opacity-0 transition-opacity duration-300 pointer-events-none">
-        <a href="/" class="flex items-center gap-2 text-sm font-medium text-zinc-900 dark:text-zinc-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 shrink-0">
+        <a href="/" class="flex items-center gap-2.5 text-base font-medium text-zinc-900 dark:text-zinc-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 shrink-0">
           <Image
             src={avatarImg}
             alt="Colin Armstrong"
-            width={24}
-            height={24}
+            width={28}
+            height={28}
             format="webp"
             quality={80}
             class="rounded-full"
           />
           <span>Colin Armstrong</span>
         </a>
-        <span class="hidden sm:block absolute left-1/2 -translate-x-1/2 text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate max-w-[50%] text-center pointer-events-none">
+        <span class="hidden sm:block absolute left-1/2 -translate-x-1/2 text-base font-medium text-zinc-900 dark:text-zinc-100 truncate max-w-[50%] text-center pointer-events-none">
           {scrollTitle}
         </span>
         <div class="ml-auto flex items-center gap-1">
