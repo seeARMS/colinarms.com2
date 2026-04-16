@@ -27,7 +27,7 @@ const photos = Object.entries(imageModules)
   <div class="flex-1">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-16 sm:pt-24 sm:pb-24">
 
-      <div class="columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3">
+      <div id="photo-grid" class="columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3">
         {photos.map((photo) => {
           const delay = (Math.random() * 0.8).toFixed(2)
           return (
@@ -93,6 +93,16 @@ const photos = Object.entries(imageModules)
   </style>
 
   <script>
+    const grid = document.getElementById('photo-grid')!
+    const thumbs = Array.from(grid.children) as HTMLElement[]
+    for (let i = thumbs.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[thumbs[i], thumbs[j]] = [thumbs[j], thumbs[i]]
+    }
+    const frag = document.createDocumentFragment()
+    thumbs.forEach((t) => frag.appendChild(t))
+    grid.appendChild(frag)
+
     const lightbox = document.getElementById('lightbox')!
     const frost = document.getElementById('lb-frost')!
     const lbImg = document.getElementById('lb-img') as HTMLImageElement
