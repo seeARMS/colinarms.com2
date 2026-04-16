@@ -29,7 +29,12 @@ const date = new Date(isoDate).toLocaleDateString('en-US', {
 })
 ---
 
-<Layout title={title}>
+<Layout
+  title={title}
+  description={subtitle || `${title} - by Colin Armstrong`}
+  type="article"
+  publishedDate={isoDate}
+>
   <Navbar scrollTitle={title} />
 
   <article class="min-h-screen">

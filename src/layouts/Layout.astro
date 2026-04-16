@@ -3,22 +3,98 @@ import '@/styles/tailwind.css'
 
 interface Props {
   title?: string
+  description?: string
+  image?: string
+  type?: 'website' | 'article'
+  publishedDate?: string
+  isHomepage?: boolean
 }
 
-const { title } = Astro.props
+const {
+  title,
+  description = 'Software engineer & founder building Paragraph.',
+  image = '/colin_v1.jpg',
+  type = 'website',
+  publishedDate,
+  isHomepage = false,
+} = Astro.props
+
 const GA_MEASUREMENT_ID = 'G-VLG18DVXN5'
+const pageTitle = title ? `${title} - Colin Armstrong` : 'Colin Armstrong'
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href
+const imageUrl = new URL(image, Astro.site).href
+
+const websiteSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Colin Armstrong',
+  url: Astro.site?.href,
+})
+
+const personSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Colin Armstrong',
+  url: Astro.site?.href,
+  jobTitle: 'Software Engineer & Founder',
+  worksFor: {
+    '@type': 'Organization',
+    name: 'Paragraph',
+    url: 'https://paragraph.com',
+  },
+  sameAs: [
+    'https://x.com/colinarms',
+    'https://github.com/seeARMS',
+    'https://linkedin.com/in/colinarms',
+    'https://farcaster.xyz/colin',
+  ],
+})
+
+const articleSchema = type === 'article' && title
+  ? JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: title,
+      datePublished: publishedDate,
+      author: {
+        '@type': 'Person',
+        name: 'Colin Armstrong',
+        url: Astro.site?.href,
+      },
+    })
+  : null
 ---
 
 <html lang="en" class="h-full antialiased">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title ? `${title} - Colin Armstrong` : 'Colin Armstrong'}</title>
-    <meta
-      name="description"
-      content="Colin Armstrong - Software engineer & founder building Paragraph"
-    />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:site_name" content="Colin Armstrong" />
+    {publishedDate && <meta property="article:published_time" content={publishedDate} />}
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@colinarms" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json" set:html={websiteSchema} />
+    {isHomepage && <script type="application/ld+json" set:html={personSchema} />}
+    {articleSchema && <script type="application/ld+json" set:html={articleSchema} />}
     <script is:inline>
       let darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
 

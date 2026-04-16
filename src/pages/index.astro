@@ -13,7 +13,10 @@ import { getColinArticles } from '@/lib/getAllArticles'
 const articles = await getColinArticles()
 ---
 
-<Layout>
+<Layout
+  description="Colin Armstrong - Software engineer & founder building Paragraph. Previously Google and Coinbase."
+  isHomepage
+>
   <Navbar minimal />
   <SubscribeDialog />
   <!-- Main Content -->
