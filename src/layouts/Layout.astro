@@ -77,6 +77,14 @@ const articleSchema = type === 'article' && title
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="alternate" type="application/rss+xml" title="Colin Armstrong" href="/feed.xml" />
 
+    <!-- Theme color for browser chrome -->
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#18181b" media="(prefers-color-scheme: dark)" />
+
+    <!-- Preconnect to external origins -->
+    <link rel="preconnect" href="https://public.api.paragraph.com" />
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+
     <!-- Open Graph -->
     <meta property="og:type" content={type} />
     <meta property="og:title" content={pageTitle} />

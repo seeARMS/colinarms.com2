@@ -6,6 +6,40 @@
 
 @import './prism.css';
 
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Selection */
+  ::selection {
+    background-color: rgb(59 130 246 / 0.2);
+    color: inherit;
+  }
+  .dark ::selection {
+    background-color: rgb(96 165 250 / 0.3);
+  }
+
+  /* Better focus rings for keyboard nav */
+  :focus-visible {
+    outline: 2px solid rgb(59 130 246);
+    outline-offset: 2px;
+    border-radius: 0.125rem;
+  }
+}
+
 @layer utilities {
   .no-animate *,
   .no-animate {
