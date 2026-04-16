@@ -1,15 +1,23 @@
 ---
 export const prerender = true
 
+import { Image } from 'astro:assets'
 import Layout from '@/layouts/Layout.astro'
 import Footer from '@/components/Footer.astro'
 import Navbar from '@/components/Navbar.astro'
 import SubscribeDialog from '@/components/SubscribeDialog.astro'
 
-const photoFiles = import.meta.glob('/public/photos/*.{jpg,jpeg,png,webp}', { eager: true })
-const photos = Object.keys(photoFiles)
-  .map((p) => p.replace('/public/photos/', '').replace(/\.[^.]+$/, ''))
-  .sort()
+const imageModules = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/photos/*.{jpg,jpeg,png,webp}',
+  { eager: true },
+)
+
+const photos = Object.entries(imageModules)
+  .map(([path, mod]) => ({
+    name: path.replace(/.*\//, '').replace(/\.[^.]+$/, ''),
+    image: mod.default,
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name))
 ---
 
 <Layout title="Photography" description="Wildlife, landscape, and astrophotography by Colin Armstrong." image="/photos/yosemite.jpg">
@@ -20,17 +28,20 @@ const photos = Object.keys(photoFiles)
     <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-16 sm:pt-24 sm:pb-24">
 
       <div class="columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3">
-        {photos.map((name) => {
+        {photos.map((photo) => {
           const delay = (Math.random() * 0.8).toFixed(2)
           return (
             <button
               class="photo-thumb block w-full break-inside-avoid cursor-zoom-in overflow-hidden rounded-lg opacity-[0.01] animate-fade-in"
               style={`animation-delay: ${delay}s`}
-              data-src={`/photos/${name}.jpg`}
             >
-              <img
-                src={`/photos/${name}.jpg`}
+              <Image
+                src={photo.image}
                 alt=""
+                widths={[400, 800, 1080]}
+                sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                format="webp"
+                quality={80}
                 loading="lazy"
                 decoding="async"
                 class="w-full block"
@@ -73,13 +84,17 @@ const photos = Object.keys(photoFiles)
     let activeThumb: HTMLElement | null = null
 
     function openLightbox(thumb: HTMLElement) {
-      const src = thumb.getAttribute('data-src')!
       const img = thumb.querySelector('img')!
+      // Use the largest srcset URL for the lightbox
+      const srcset = img.getAttribute('srcset')
+      const fullSrc = srcset
+        ? srcset.split(',').pop()!.trim().split(' ')[0]
+        : img.src
       const rect = img.getBoundingClientRect()
 
       activeThumb = thumb
 
-      lightboxImg.src = src
+      lightboxImg.src = fullSrc
       lightboxImg.style.transition = 'none'
       lightboxImg.style.position = 'fixed'
       lightboxImg.style.left = rect.left + 'px'
