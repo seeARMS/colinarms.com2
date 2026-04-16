@@ -20,20 +20,24 @@ const photos = Object.keys(photoFiles)
     <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-16 sm:pt-24 sm:pb-24">
 
       <div class="columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3">
-        {photos.map((name) => (
-          <button
-            class="photo-thumb block w-full break-inside-avoid cursor-zoom-in overflow-hidden rounded-lg"
-            data-src={`/photos/${name}.jpg`}
-          >
-            <img
-              src={`/photos/${name}.jpg`}
-              alt=""
-              loading="lazy"
-              decoding="async"
-              class="w-full block"
-            />
-          </button>
-        ))}
+        {photos.map((name) => {
+          const delay = (Math.random() * 0.8).toFixed(2)
+          return (
+            <button
+              class="photo-thumb block w-full break-inside-avoid cursor-zoom-in overflow-hidden rounded-lg opacity-[0.01] animate-fade-in"
+              style={`animation-delay: ${delay}s`}
+              data-src={`/photos/${name}.jpg`}
+            >
+              <img
+                src={`/photos/${name}.jpg`}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                class="w-full block"
+              />
+            </button>
+          )
+        })}
       </div>
     </div>
   </div>
@@ -94,12 +98,12 @@ const photos = Object.keys(photoFiles)
         lightbox.style.transition = 'opacity 0.3s ease'
         lightbox.style.opacity = '1'
 
-        // Calculate final centered size
-        const vw = window.innerWidth * 0.9
-        const vh = window.innerHeight * 0.9
+        // Calculate final centered size — fill 95% of viewport
+        const vw = window.innerWidth * 0.95
+        const vh = window.innerHeight * 0.95
         const naturalW = img.naturalWidth || rect.width
         const naturalH = img.naturalHeight || rect.height
-        const scale = Math.min(vw / naturalW, vh / naturalH, 1)
+        const scale = Math.min(vw / naturalW, vh / naturalH)
         const finalW = naturalW * scale
         const finalH = naturalH * scale
         const finalLeft = (window.innerWidth - finalW) / 2
