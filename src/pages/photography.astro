@@ -237,10 +237,11 @@ const photos = Object.entries(imageModules)
     function close() {
       if (!isOpen) return
       cancelPending()
-      // Drop pointer-events immediately so the grid underneath is clickable
-      // again right when the user dismisses, not after the morph finishes.
+      // Drop pointer-events and restore scroll immediately so the page is
+      // interactive right when the user dismisses, not after the morph.
       isOpen = false
       lightbox.classList.remove('is-open')
+      document.body.style.overflow = ''
 
       const thumb = thumbList[currentIndex]
       const closingIndex = currentIndex
@@ -266,7 +267,6 @@ const photos = Object.entries(imageModules)
         // Only finalize if no new open() has taken over (which would have
         // bumped currentIndex away from closingIndex).
         if (currentIndex === closingIndex) currentIndex = -1
-        document.body.style.overflow = ''
         lbImg.classList.remove('animating')
         lbImg.style.transform = ''
         lbImg.style.willChange = ''
@@ -344,10 +344,11 @@ const photos = Object.entries(imageModules)
       lbImg.style.cursor = ''
 
       if (Math.abs(dragY) > 120) {
-        // Dismiss: immediately drop pointer-events so the grid is clickable.
+        // Dismiss: immediately drop pointer-events and restore scroll.
         cancelPending()
         isOpen = false
         lightbox.classList.remove('is-open')
+        document.body.style.overflow = ''
         const dismissedIndex = currentIndex
 
         lbImg.style.transition = 'transform 0.3s ease, opacity 0.3s ease'
@@ -360,7 +361,6 @@ const photos = Object.entries(imageModules)
           pendingTimeouts.push(setTimeout(() => {
             thumbList[dismissedIndex]?.classList.remove('is-active')
             if (currentIndex === dismissedIndex) currentIndex = -1
-            document.body.style.overflow = ''
             lbImg.style.transform = ''
             lbImg.style.opacity = ''
             lbImg.style.transition = ''
