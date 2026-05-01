@@ -58,10 +58,10 @@ const photos = Object.entries(imageModules)
   <!-- Lightbox: frosted glass with FLIP animation -->
   <div id="lightbox" class="fixed inset-0 z-[100] pointer-events-none" style="opacity:0">
     <!-- Frosted page blur layer -->
-    <div id="lb-frost" class="absolute inset-0 backdrop-blur-2xl bg-white/60 dark:bg-zinc-900/70"></div>
+    <div id="lb-frost" class="absolute inset-0 backdrop-blur-xl bg-white/60 dark:bg-zinc-900/70"></div>
 
     <!-- Photo container -->
-    <img id="lb-img" class="absolute will-change-transform rounded-lg shadow-2xl" src="" alt="" />
+    <img id="lb-img" class="absolute rounded-lg shadow-2xl" src="" alt="" />
 
     <!-- Minimal UI -->
     <div id="lb-ui" class="absolute inset-x-0 bottom-0 flex items-end justify-between px-6 pb-6 opacity-0 transition-opacity duration-500 pointer-events-none">
@@ -72,20 +72,20 @@ const photos = Object.entries(imageModules)
 
   <style>
     #lightbox.is-open { pointer-events: auto; }
-    #lb-img { transition: none; }
+    #lb-img { transition: none; transform-origin: 0 0; }
     #lb-img.animating {
-      transition: left 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-                  top 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-                  width 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-                  height 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-                  border-radius 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-                  opacity 0.3s ease;
+      transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1),
+                  border-radius 0.4s cubic-bezier(0.32, 0.72, 0, 1),
+                  opacity 0.25s ease;
     }
     #lb-frost {
-      transition: opacity 0.4s ease;
+      transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: opacity;
+      transform: translateZ(0);
     }
     #lightbox {
-      transition: opacity 0.35s ease;
+      transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: opacity;
     }
     .photo-thumb.is-active img {
       opacity: 0;
@@ -109,11 +109,30 @@ const photos = Object.entries(imageModules)
     const lbUI = document.getElementById('lb-ui')!
     const lbCounter = document.getElementById('lb-counter')!
     const thumbList = Array.from(document.querySelectorAll('.photo-thumb')) as HTMLElement[]
+
+    // Pre-warm the backdrop-filter shader so the first open isn't a cold start.
+    requestAnimationFrame(() => {
+      lightbox.style.transition = 'none'
+      lightbox.style.opacity = '0.001'
+      lightbox.getBoundingClientRect() // force paint
+      requestAnimationFrame(() => {
+        lightbox.style.opacity = '0'
+        requestAnimationFrame(() => {
+          lightbox.style.transition = ''
+        })
+      })
+    })
     let currentIndex = -1
     let isOpen = false
     let dragStartY = 0
     let dragY = 0
     let isDragging = false
+    let pendingTimeouts: number[] = []
+
+    function cancelPending() {
+      pendingTimeouts.forEach((id) => clearTimeout(id))
+      pendingTimeouts = []
+    }
 
     function getFullSrc(thumb: HTMLElement) {
       const img = thumb.querySelector('img')!
@@ -137,89 +156,137 @@ const photos = Object.entries(imageModules)
       }
     }
 
-    function setImgRect(rect: { left: number; top: number; width: number; height: number }, radius = '0.5rem') {
+    type Rect = { left: number; top: number; width: number; height: number }
+
+    function setFinalRect(rect: Rect) {
       lbImg.style.left = rect.left + 'px'
       lbImg.style.top = rect.top + 'px'
       lbImg.style.width = rect.width + 'px'
       lbImg.style.height = rect.height + 'px'
-      lbImg.style.borderRadius = radius
+    }
+
+    function getCurrentFinalRect(): Rect {
+      return {
+        left: parseFloat(lbImg.style.left),
+        top: parseFloat(lbImg.style.top),
+        width: parseFloat(lbImg.style.width),
+        height: parseFloat(lbImg.style.height),
+      }
+    }
+
+    function inverseTransform(thumbRect: Rect, finalRect: Rect) {
+      const dx = thumbRect.left - finalRect.left
+      const dy = thumbRect.top - finalRect.top
+      const sx = thumbRect.width / finalRect.width
+      const sy = thumbRect.height / finalRect.height
+      return `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`
     }
 
     function open(index: number) {
+      // Interrupt any in-progress close: cancel timeouts and restore the
+      // previously-active thumb so the grid is consistent.
+      cancelPending()
+      if (currentIndex >= 0 && currentIndex !== index) {
+        thumbList[currentIndex].classList.remove('is-active')
+      }
+      // Clear any inline transition left over from drag-dismiss.
+      lbImg.style.transition = ''
+
       currentIndex = index
       const thumb = thumbList[index]
       const thumbImg = thumb.querySelector('img')!
-      const rect = thumbImg.getBoundingClientRect()
+      const thumbRect = thumbImg.getBoundingClientRect()
 
-      // Hide the grid thumbnail
       thumb.classList.add('is-active')
 
-      // Set image source & starting position (match thumbnail)
       lbImg.src = getFullSrc(thumb)
       lbImg.classList.remove('animating')
-      setImgRect({ left: rect.left, top: rect.top, width: rect.width, height: rect.height }, '0.5rem')
 
-      // Show lightbox
+      // Place lb-img at its final centered rect, then apply an inverse
+      // transform so it visually matches the thumbnail (FLIP technique).
+      const final = getFinalRect(thumbImg)
+      setFinalRect(final)
+      lbImg.style.transformOrigin = '0 0'
+      lbImg.style.transform = inverseTransform(thumbRect, final)
+      lbImg.style.borderRadius = '0.5rem'
+      lbImg.style.opacity = '1'
+      lbImg.style.willChange = 'transform'
+
       lightbox.style.opacity = '1'
       lightbox.classList.add('is-open')
       isOpen = true
       document.body.style.overflow = 'hidden'
 
-      // Animate to center
+      // Force reflow, then animate to identity transform.
+      lbImg.getBoundingClientRect()
       requestAnimationFrame(() => {
         lbImg.classList.add('animating')
-        const final = getFinalRect(thumbImg)
-        setImgRect(final, '0.25rem')
+        lbImg.style.transform = ''
+        lbImg.style.borderRadius = '0.25rem'
       })
 
-      // Show UI after image lands
-      setTimeout(() => {
+      pendingTimeouts.push(setTimeout(() => {
         lbUI.style.opacity = '1'
         lbUI.classList.add('pointer-events-auto')
-      }, 400)
+        lbImg.style.willChange = ''
+      }, 500))
 
       lbCounter.textContent = `${index + 1} / ${thumbList.length}`
     }
 
     function close() {
       if (!isOpen) return
-      const thumb = thumbList[currentIndex]
-      const thumbImg = thumb.querySelector('img')!
-      const rect = thumbImg.getBoundingClientRect()
+      cancelPending()
+      // Drop pointer-events immediately so the grid underneath is clickable
+      // again right when the user dismisses, not after the morph finishes.
+      isOpen = false
+      lightbox.classList.remove('is-open')
 
-      // Hide UI immediately
+      const thumb = thumbList[currentIndex]
+      const closingIndex = currentIndex
+      const thumbImg = thumb.querySelector('img')!
+      const thumbRect = thumbImg.getBoundingClientRect()
+      const final = getCurrentFinalRect()
+
       lbUI.style.opacity = '0'
       lbUI.classList.remove('pointer-events-auto')
 
-      // Animate image back to grid position
+      lbImg.style.willChange = 'transform'
+      lbImg.style.transformOrigin = '0 0'
       lbImg.classList.add('animating')
-      setImgRect({ left: rect.left, top: rect.top, width: rect.width, height: rect.height }, '0.5rem')
+      lbImg.style.transform = inverseTransform(thumbRect, final)
+      lbImg.style.borderRadius = '0.5rem'
 
-      // Restore thumbnail as soon as image lands, then fade out lightbox
-      setTimeout(() => {
+      pendingTimeouts.push(setTimeout(() => {
         thumb.classList.remove('is-active')
         lightbox.style.opacity = '0'
-      }, 480)
+      }, 420))
 
-      setTimeout(() => {
-        lightbox.classList.remove('is-open')
-        isOpen = false
-        currentIndex = -1
+      pendingTimeouts.push(setTimeout(() => {
+        // Only finalize if no new open() has taken over (which would have
+        // bumped currentIndex away from closingIndex).
+        if (currentIndex === closingIndex) currentIndex = -1
         document.body.style.overflow = ''
         lbImg.classList.remove('animating')
-      }, 800)
+        lbImg.style.transform = ''
+        lbImg.style.willChange = ''
+      }, 750))
     }
 
     function navigate(dir: number) {
       if (!isOpen) return
+      cancelPending()
       const nextIndex = (currentIndex + dir + thumbList.length) % thumbList.length
       const prevThumb = thumbList[currentIndex]
 
-      // Crossfade: fade out current
+      // Fade + subtle scale-down on the way out.
+      lbImg.style.transformOrigin = '50% 50%'
+      lbImg.style.willChange = 'transform, opacity'
       lbImg.classList.add('animating')
+      lbImg.style.transform = 'scale(0.97)'
       lbImg.style.opacity = '0'
 
-      setTimeout(() => {
+      pendingTimeouts.push(setTimeout(() => {
         prevThumb.classList.remove('is-active')
         currentIndex = nextIndex
         const nextThumb = thumbList[nextIndex]
@@ -229,18 +296,25 @@ const photos = Object.entries(imageModules)
         lbImg.src = getFullSrc(nextThumb)
         lbImg.classList.remove('animating')
 
-        // Position at final centered rect immediately
+        // Reposition at the new image's final rect, start slightly larger + transparent.
         const final = getFinalRect(nextThumbImg)
-        setImgRect(final, '0.25rem')
+        setFinalRect(final)
+        lbImg.style.transform = 'scale(1.03)'
         lbImg.style.opacity = '0'
 
+        lbImg.getBoundingClientRect()
         requestAnimationFrame(() => {
           lbImg.classList.add('animating')
+          lbImg.style.transform = ''
           lbImg.style.opacity = '1'
         })
 
+        pendingTimeouts.push(setTimeout(() => {
+          lbImg.style.willChange = ''
+        }, 400))
+
         lbCounter.textContent = `${nextIndex + 1} / ${thumbList.length}`
-      }, 250)
+      }, 200))
     }
 
     // Drag to dismiss
@@ -250,6 +324,8 @@ const photos = Object.entries(imageModules)
       dragStartY = e.clientY
       dragY = 0
       lbImg.classList.remove('animating')
+      lbImg.style.transformOrigin = '50% 50%'
+      lbImg.style.willChange = 'transform'
       lbImg.setPointerCapture(e.pointerId)
       lbImg.style.cursor = 'grabbing'
     })
@@ -268,35 +344,40 @@ const photos = Object.entries(imageModules)
       lbImg.style.cursor = ''
 
       if (Math.abs(dragY) > 120) {
-        // Dismiss
+        // Dismiss: immediately drop pointer-events so the grid is clickable.
+        cancelPending()
+        isOpen = false
+        lightbox.classList.remove('is-open')
+        const dismissedIndex = currentIndex
+
         lbImg.style.transition = 'transform 0.3s ease, opacity 0.3s ease'
         lbImg.style.transform = `translateY(${dragY > 0 ? 400 : -400}px) scale(0.8)`
         lbImg.style.opacity = '0'
         frost.style.transition = 'opacity 0.3s ease'
         frost.style.opacity = '0'
-        setTimeout(() => {
+        pendingTimeouts.push(setTimeout(() => {
           lightbox.style.opacity = '0'
-          setTimeout(() => {
-            lightbox.classList.remove('is-open')
-            thumbList[currentIndex]?.classList.remove('is-active')
-            isOpen = false
-            currentIndex = -1
+          pendingTimeouts.push(setTimeout(() => {
+            thumbList[dismissedIndex]?.classList.remove('is-active')
+            if (currentIndex === dismissedIndex) currentIndex = -1
             document.body.style.overflow = ''
             lbImg.style.transform = ''
             lbImg.style.opacity = ''
             lbImg.style.transition = ''
+            lbImg.style.willChange = ''
             frost.style.opacity = ''
             frost.style.transition = ''
             lbImg.classList.remove('animating')
-          }, 300)
-        }, 100)
+          }, 300))
+        }, 100))
       } else {
         // Snap back
-        lbImg.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+        lbImg.style.transition = 'transform 0.4s cubic-bezier(0.32, 0.72, 0, 1)'
         lbImg.style.transform = ''
         frost.style.opacity = '1'
         setTimeout(() => {
           lbImg.style.transition = ''
+          lbImg.style.willChange = ''
         }, 400)
       }
     })
