@@ -1,0 +1,52 @@
+---
+export const prerender = true
+
+import Layout from '@/layouts/Layout.astro'
+import Footer from '@/components/Footer.astro'
+import Navbar from '@/components/Navbar.astro'
+import SubscribeDialog from '@/components/SubscribeDialog.astro'
+
+const projects = [
+  {
+    name: 'Council',
+    summary: 'Parallel AI CLI',
+    href: 'https://council.armstr.ng',
+  },
+]
+---
+
+<Layout title="Projects" description="Projects built by Colin Armstrong.">
+  <Navbar />
+  <SubscribeDialog />
+
+  <div class="flex-1">
+    <div class="max-w-2xl mx-auto px-6 sm:px-8 pt-20 pb-16 sm:pt-24 sm:pb-24">
+      <h1 class="mb-8 text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-zinc-100">
+        Projects
+      </h1>
+
+      <div class="space-y-4">
+        {projects.map((project) => (
+          <a
+            href={project.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group flex items-center justify-between py-3 border-b border-zinc-100 dark:border-zinc-800 transition-colors duration-200"
+          >
+            <span class="text-lg text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
+              {project.name}
+            </span>
+            <div class="flex items-center gap-3">
+              <span class="text-sm text-zinc-400 dark:text-zinc-500">{project.summary}</span>
+              <svg class="w-4 h-4 text-zinc-300 dark:text-zinc-600 group-hover:text-blue-500 group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+              </svg>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <Footer />
+</Layout>
