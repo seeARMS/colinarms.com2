@@ -13,17 +13,51 @@ const projects = [
     href: 'https://council.armstr.ng',
   },
 ]
+
+const work = [
+  {
+    company: 'Paragraph',
+    years: '2022-Present',
+    summary: 'Founder & CEO',
+    details: [
+      'I founded Paragraph to help people publish, grow, and earn from their best ideas.',
+      'I lead product, engineering, and company-building across publishing tools, newsletters, memberships, payments, and creator monetization.',
+    ],
+  },
+  {
+    company: 'Google',
+    years: '2017-2022',
+    summary: 'Senior Software Engineer & Manager',
+    details: [
+      'I led engineering work on communications anti-abuse, building systems to protect people from spam, scams, and fraud across messaging surfaces.',
+      'I built our first on-device anti-abuse SDK, and deployed ML models and heuristic rules to millions of devices.',
+      'I also led initiatives in the privacy working group, ensuring abuse protections could work with minimal data collection and proper guardrails.',
+    ],
+  },
+  {
+    company: 'Coinbase',
+    years: '2015-2016',
+    summary: 'Engineer, Payments',
+    details: [
+      'I worked on payments infrastructure and helped launch Coinbase in Canada.',
+      'I also improved Bitcoin private-key signing infrastructure and anti-abuse systems around payments flows.',
+    ],
+  },
+]
 ---
 
-<Layout title="Projects" description="Projects built by Colin Armstrong.">
+<Layout title="Projects" description="Projects and work by Colin Armstrong.">
   <Navbar />
   <SubscribeDialog />
 
   <div class="flex-1">
     <div class="max-w-2xl mx-auto px-6 sm:px-8 pt-20 pb-16 sm:pt-24 sm:pb-24">
-      <h1 class="mb-8 text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-zinc-100">
+      <h1 class="mb-2 text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-zinc-100">
         Projects
       </h1>
+      <p class="mb-8 text-base text-zinc-500 dark:text-zinc-400">
+        Small products and experiments I've built, from AI tooling to earlier consumer and infrastructure projects.
+      </p>
 
       <div class="space-y-4">
         {projects.map((project) => (
@@ -45,8 +79,105 @@ const projects = [
           </a>
         ))}
       </div>
+
+      <h2 class="mt-14 mb-2 text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-zinc-100">
+        Work
+      </h2>
+      <p class="mb-8 text-base text-zinc-500 dark:text-zinc-400">
+        Selected roles where I worked on payments, anti-abuse, privacy, and systems that reached large numbers of people.
+      </p>
+
+      <div class="space-y-4">
+        {work.map((role) => (
+          <div class="border-b border-zinc-100 dark:border-zinc-800">
+            <button
+              type="button"
+              class="work-toggle group flex w-full items-center justify-between gap-4 py-3 text-left"
+              aria-expanded="false"
+              aria-controls={`work-${role.company.toLowerCase()}`}
+              data-work-toggle
+            >
+              <span class="min-w-0">
+                <span class="block text-lg text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
+                  {role.company}
+                </span>
+                <span class="block text-sm text-zinc-400 dark:text-zinc-500">
+                  {role.years}
+                </span>
+              </span>
+              <span class="flex min-w-0 shrink items-center gap-3">
+                <span class="truncate text-sm text-zinc-400 dark:text-zinc-500">
+                  {role.summary}
+                </span>
+                <svg
+                  class="work-caret h-4 w-4 shrink-0 text-zinc-300 dark:text-zinc-600 group-hover:text-blue-500 group-hover:translate-x-0.5 transition-all duration-200"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 6l6 6-6 6" />
+                </svg>
+              </span>
+            </button>
+            <div
+              id={`work-${role.company.toLowerCase()}`}
+              class="work-detail"
+              aria-hidden="true"
+              data-work-detail
+            >
+              <div class="min-h-0 overflow-hidden">
+                <div class="pb-5 pr-8 space-y-3 text-sm leading-6 text-zinc-600 dark:text-zinc-400">
+                  {role.details.map((detail) => <p>{detail}</p>)}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   </div>
 
   <Footer />
+
+  <style>
+    .work-detail {
+      display: grid;
+      grid-template-rows: 0fr;
+      opacity: 0;
+      transition:
+        grid-template-rows 260ms ease,
+        opacity 180ms ease;
+    }
+
+    .work-detail[data-open='true'] {
+      grid-template-rows: 1fr;
+      opacity: 1;
+    }
+
+    .work-toggle[aria-expanded='true'] .work-caret {
+      transform: rotate(90deg);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .work-detail,
+      .work-caret {
+        transition: none;
+      }
+    }
+  </style>
+
+  <script>
+    document.querySelectorAll<HTMLButtonElement>('[data-work-toggle]').forEach((toggle) => {
+      const detailId = toggle.getAttribute('aria-controls')
+      const detail = detailId ? document.getElementById(detailId) : null
+
+      toggle.addEventListener('click', () => {
+        const isOpen = toggle.getAttribute('aria-expanded') === 'true'
+        toggle.setAttribute('aria-expanded', String(!isOpen))
+        detail?.setAttribute('data-open', String(!isOpen))
+        detail?.setAttribute('aria-hidden', String(isOpen))
+      })
+    })
+  </script>
 </Layout>
