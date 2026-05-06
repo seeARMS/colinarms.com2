@@ -4,6 +4,7 @@ export const prerender = true
 import Layout from '@/layouts/Layout.astro'
 import Footer from '@/components/Footer.astro'
 import Navbar from '@/components/Navbar.astro'
+import ParagraphLogo from '@/components/ParagraphLogo.astro'
 import SubscribeDialog from '@/components/SubscribeDialog.astro'
 
 const projects = [
@@ -11,6 +12,7 @@ const projects = [
     name: 'Council',
     summary: 'Parallel AI CLI',
     href: 'https://council.armstr.ng',
+    logo: '/council.svg',
   },
 ]
 
@@ -19,6 +21,7 @@ const work = [
     company: 'Paragraph',
     years: '2022-Present',
     summary: 'Founder & CEO',
+    logo: 'paragraph',
     details: [
       'I founded Paragraph to help people publish, grow, and earn from their best ideas.',
       'I lead product, engineering, and company-building across publishing tools, newsletters, memberships, payments, and creator monetization.',
@@ -28,6 +31,7 @@ const work = [
     company: 'Google',
     years: '2017-2022',
     summary: 'Senior Software Engineer & Manager',
+    logo: '/google.svg',
     details: [
       'I led engineering work on communications anti-abuse, building systems to protect people from spam, scams, and fraud across messaging surfaces.',
       'I built our first on-device anti-abuse SDK, and deployed ML models and heuristic rules to millions of devices.',
@@ -38,6 +42,7 @@ const work = [
     company: 'Coinbase',
     years: '2015-2016',
     summary: 'Engineer, Payments',
+    logo: '/coinbase.svg',
     details: [
       'I worked on payments infrastructure and helped launch Coinbase in Canada.',
       'I also improved Bitcoin private-key signing infrastructure and anti-abuse systems around payments flows.',
@@ -65,12 +70,17 @@ const work = [
             href={project.href}
             target="_blank"
             rel="noopener noreferrer"
-            class="group flex items-center justify-between py-3 border-b border-zinc-100 dark:border-zinc-800 transition-colors duration-200"
+            class="group flex items-center justify-between gap-4 py-3 border-b border-zinc-100 dark:border-zinc-800 transition-colors duration-200"
           >
-            <span class="text-lg text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
-              {project.name}
+            <span class="flex min-w-0 items-center gap-3">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center">
+                <img src={project.logo} alt="" class="h-6 w-6 object-contain" loading="lazy" />
+              </span>
+              <span class="truncate text-lg text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
+                {project.name}
+              </span>
             </span>
-            <div class="flex items-center gap-3">
+            <div class="flex min-w-0 shrink items-center gap-3">
               <span class="text-sm text-zinc-400 dark:text-zinc-500">{project.summary}</span>
               <svg class="w-4 h-4 text-zinc-300 dark:text-zinc-600 group-hover:text-blue-500 group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
@@ -97,12 +107,21 @@ const work = [
               aria-controls={`work-${role.company.toLowerCase()}`}
               data-work-toggle
             >
-              <span class="min-w-0">
-                <span class="block text-lg text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
-                  {role.company}
+              <span class="flex min-w-0 items-center gap-3">
+                <span class="flex h-8 w-8 shrink-0 items-center justify-center">
+                  {role.logo === 'paragraph' ? (
+                    <ParagraphLogo size={24} class="text-zinc-900 dark:text-zinc-100" />
+                  ) : (
+                    <img src={role.logo} alt="" class="h-6 w-6 object-contain" loading="lazy" />
+                  )}
                 </span>
-                <span class="block text-sm text-zinc-400 dark:text-zinc-500">
-                  {role.years}
+                <span class="min-w-0">
+                  <span class="block truncate text-lg text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
+                    {role.company}
+                  </span>
+                  <span class="block text-sm text-zinc-400 dark:text-zinc-500">
+                    {role.years}
+                  </span>
                 </span>
               </span>
               <span class="flex min-w-0 shrink items-center gap-3">
