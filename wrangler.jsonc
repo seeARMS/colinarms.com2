@@ -3,5 +3,13 @@
   "compatibility_date": "2026-04-15",
   "assets": {
     "directory": "./dist"
-  }
+  },
+  // Five subscribe attempts per visitor per minute (see src/pages/api/subscribe.ts).
+  "ratelimits": [
+    {
+      "name": "SUBSCRIBE_LIMIT",
+      "namespace_id": "1101",
+      "simple": { "limit": 5, "period": 60 }
+    }
+  ]
 }

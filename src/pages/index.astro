@@ -1,160 +1,192 @@
 ---
 export const prerender = true
 
-import Layout from '@/layouts/Layout.astro'
-import Footer from '@/components/Footer.astro'
-import PostList from '@/components/PostList.astro'
-import Navbar from '@/components/Navbar.astro'
-import SubscribeDialog from '@/components/SubscribeDialog.astro'
 import { Image } from 'astro:assets'
-import avatarImg from '../../public/colin_v1.jpg'
+import Layout from '@/layouts/Layout.astro'
+import PostList from '@/components/PostList.astro'
+import WorkTimeline from '@/components/WorkTimeline.astro'
+import avatar from '@/assets/colin.jpg'
+import { person, projects, work } from '@/data/profile'
 import { getColinArticles } from '@/lib/getAllArticles'
 
 const articles = await getColinArticles()
+const [headers, draftside, council] = projects
 ---
 
-<Layout
-  description="Colin Armstrong - Software engineer & founder building Paragraph. Previously Google and Coinbase."
-  image="/og/home.png"
-  isHomepage
->
-  <Navbar />
-  <SubscribeDialog />
-  <!-- Main Content -->
-  <div id="home-content" class="flex-1 flex flex-col">
-    <main class="flex-1 max-w-3xl mx-auto px-6 sm:px-8 pt-20 pb-16 sm:pt-24 sm:pb-24">
-      <!-- Hero Section -->
-      <div class="mb-16 sm:mb-20">
-        <div class="flex items-center gap-6 mb-8 animate-fade-in">
-          <div class="animate-scale-in animation-delay-200">
-            <div
-              class="relative h-10 w-10 sm:h-16 sm:w-16 ring-2 ring-zinc-100 dark:ring-zinc-800 rounded-full overflow-hidden"
-            >
-              <Image
-                src={avatarImg}
-                alt="Colin Armstrong"
-                width={128}
-                height={128}
-                format="webp"
-                quality={80}
-                loading="eager"
-                fetchpriority="high"
-                class="object-cover w-full h-full"
-              />
-            </div>
-          </div>
-          <div class="animate-fade-in animation-delay-400">
-            <h1
-              class="text-3xl sm:text-4xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2"
-            >
-              Colin Armstrong
-            </h1>
-          </div>
-        </div>
+<Layout image="/og/home.png" isHomepage>
+  <!-- The entrance plays once per visit; coming back later, the page is just there. -->
+  <script is:inline>
+    try {
+      if (sessionStorage.getItem('visited')) document.documentElement.classList.add('seen')
+      sessionStorage.setItem('visited', '1')
+    } catch {}
+  </script>
 
-        <div
-          class="prose prose-zinc dark:prose-invert max-w-none animate-fade-in animation-delay-500"
-        >
-          <p
-            class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed"
-          >
-            I'm a software engineer and founder in the Bay Area, building{' '}
-            <a
-              href="https://paragraph.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-blue-600 hover:text-blue-400 dark:text-blue-400 dark:hover:text-blue-300 font-semibold transition-colors duration-200 no-underline"
-              >Paragraph</a
-            >
-            {' '}- a new way for people to share & earn off their best ideas. <br /><br
-            />Before founding Paragraph, I led engineering teams at Google focused on
-            anti-abuse & privacy, and earlier helped build Coinbase's payments
-            infrastructure.
-
-            <br /><br />
-
-            In my free time I enjoy <a
-              href="/photography"
-              class="text-blue-600 hover:text-blue-400 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200 no-underline"
-              >photography</a>, wine, cooking new recipes & cycling.
-
-            <br /><br />
-
-            I also occasionally angel invest & advise early-stage consumer startups,
-            including <a
-              href="https://farcaster.xyz"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-blue-600 hover:text-blue-400 dark:text-blue-400 dark:hover:text-blue-300 font-transition-colors duration-200 cursor-pointer no-underline"
-              >Farcaster</a
-            >, <a
-              href="https://pay.daimo.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-blue-600 hover:text-blue-400 dark:text-blue-400 dark:hover:text-blue-300 font-transition-colors duration-200 cursor-pointer no-underline"
-              >Daimo</a
-            >, <a
-              href="https://stack.so/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-blue-600 hover:text-blue-400 dark:text-blue-400 dark:hover:text-blue-300 font-transition-colors duration-200 cursor-pointer no-underline"
-              >Stack</a
-            >, & <a
-              href="https://layer3.xyz/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-blue-600 hover:text-blue-400 dark:text-blue-400 dark:hover:text-blue-300 font-transition-colors duration-200 cursor-pointer no-underline"
-              >Layer3</a
-            >. <br /><br />If you're building something interesting, feel free to
-            {' '}<a
-              href="/contact"
-              class="text-blue-600 hover:text-blue-400 dark:text-blue-400 dark:hover:text-blue-300 font-semibold transition-colors duration-200 no-underline"
-              >reach out</a>.
-          </p>
+  <div class="container">
+    <header class="page-head intro">
+      <div class="who rise">
+        <Image
+          src={avatar}
+          alt="Colin Armstrong"
+          widths={[72, 144, 216]}
+          sizes="72px"
+          format="webp"
+          quality={82}
+          loading="eager"
+          fetchpriority="high"
+          class="face"
+        />
+        <div>
+          <h1>{person.name}</h1>
+          <p class="role">{person.title} · {person.previously}</p>
         </div>
       </div>
 
-      <!-- Blog Posts Section -->
-      {
-        articles && articles.length > 0 && (
-          <section class="animate-fade-in-up animation-delay-700">
-            <div class="flex items-baseline justify-between mb-6">
-              <h2 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-                Writing
-              </h2>
-              <a
-                href="/writing"
-                class="inline-flex items-center gap-1.5 text-sm text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 transition-colors duration-200"
-              >
-                View all posts
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </a>
-            </div>
-            <div class="pb-4 text-base sm:text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              I occasionally write about startups, product, engineering, and other
-              topics on my{' '}
-              <a
-                href="https://writing.cma.xyz"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-blue-600 hover:text-blue-400 dark:text-blue-400 dark:hover:text-blue-300 font-semibold transition-colors duration-200 no-underline"
-              >Paragraph</a>.
-            </div>
-            <PostList posts={articles.slice(0, 10)} />
-          </section>
-        )
-      }
-    </main>
+      <div class="bio rise" style="--i:1">
+        <p>
+          I'm building <a class="link" href="https://paragraph.com" rel="noopener">Paragraph</a>, the media engine for
+          early-stage startups. We help founders turn launches, product updates, and what they're learning into media
+          they own. In 2024 we acquired Mirror and raised $5 million from USV and Coinbase Ventures.
+        </p>
+        <p>
+          Before that, I led anti-abuse and privacy engineering teams at Google and helped build Coinbase's payments
+          infrastructure. I also angel invest in early-stage startups like <a
+            class="link"
+            href="https://farcaster.xyz"
+            rel="noopener">Farcaster</a
+          >, <a class="link" href="https://daimo.com" rel="noopener">Daimo</a>, and <a
+            class="link"
+            href="https://layer3.xyz"
+            rel="noopener">Layer3</a
+          >, and back venture funds as a limited partner.
+        </p>
+        <p>
+          On the side I build small tools like <a class="link" href={headers.href} rel="noopener">{headers.name}</a>, <a
+            class="link"
+            href={draftside.href}
+            rel="noopener">{draftside.name}</a
+          >, and <a class="link" href={council.href} rel="noopener">{council.name}</a>. In my free time I enjoy <a
+            class="link"
+            href="/photography">photography</a
+          >, wine, cooking & cycling.
+        </p>
+        <p class="ask">
+          If you're a founder building something early, <a class="link" href={`mailto:${person.email}`}>email me</a>.
+        </p>
+      </div>
+    </header>
 
-    <Footer />
-  </div>
+    <section class="section rise" style="--i:2" aria-labelledby="work">
+      <div class="section-head">
+        <h2 id="work">Work</h2>
+        <a class="more" href="/projects">
+          Projects & Work
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            <path
+              d="M3 8h9.5M8.5 4l4 4-4 4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
+          </svg>
+        </a>
+      </div>
+      <WorkTimeline roles={work} />
+    </section>
 
-  <script is:inline>
-    if (sessionStorage.getItem('visited')) {
-      document.getElementById('home-content').classList.add('no-animate')
+    {
+      articles.length > 0 && (
+        <section class="section" aria-labelledby="writing">
+          <div class="section-head">
+            <h2 id="writing">Writing</h2>
+            <a class="more" href="/writing">
+              All posts
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path
+                  d="M3 8h9.5M8.5 4l4 4-4 4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+          </div>
+          <PostList posts={articles.slice(0, 5)} />
+        </section>
+      )
     }
-    sessionStorage.setItem('visited', '1')
-  </script>
+  </div>
 </Layout>
+
+<style>
+  .intro {
+    padding-top: 64px;
+  }
+
+  .who {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .face {
+    display: block;
+    flex: none;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 1px var(--line),
+      0 0 0 4px var(--surface),
+      0 0 0 5px var(--line);
+  }
+
+  .role {
+    margin-top: 6px;
+    color: var(--ink-2);
+    font-size: 15px;
+  }
+
+  .bio {
+    display: grid;
+    gap: 14px;
+    max-width: 62ch;
+    margin-top: 28px;
+    color: var(--ink-2);
+    font-size: 16px;
+    line-height: 1.65;
+    text-wrap: pretty;
+  }
+
+  .ask {
+    color: var(--ink);
+  }
+
+  @media (max-width: 639px) {
+    .intro {
+      padding-top: 36px;
+    }
+
+    .who {
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .face {
+      width: 56px;
+      height: 56px;
+    }
+
+    .role {
+      font-size: 14px;
+    }
+
+    .bio {
+      margin-top: 22px;
+      font-size: 15px;
+    }
+  }
+</style>

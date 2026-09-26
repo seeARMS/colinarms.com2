@@ -2,222 +2,279 @@
 export const prerender = true
 
 import Layout from '@/layouts/Layout.astro'
-import Footer from '@/components/Footer.astro'
-import HeadersLogo from '@/components/HeadersLogo.astro'
-import Navbar from '@/components/Navbar.astro'
-import ParagraphLogo from '@/components/ParagraphLogo.astro'
-import SubscribeDialog from '@/components/SubscribeDialog.astro'
+import Mark from '@/components/Mark.astro'
+import WorkTimeline from '@/components/WorkTimeline.astro'
+import { appearances, projects, work } from '@/data/profile'
 
-const projects = [
-  {
-    name: 'heade.rs',
-    summary: 'Domain and IP lookup with live routes and latency',
-    href: 'https://heade.rs',
-    logo: 'headers',
-  },
-  {
-    name: 'Draftside',
-    summary: 'Private writing editor with on-device AI',
-    href: 'https://draftside.ai',
-    logo: '/draftside.svg',
-  },
-  {
-    name: 'Council',
-    summary: 'CLI that runs three AI models and synthesizes one answer',
-    href: 'https://council.armstr.ng',
-    logo: '/council.svg',
-  },
-]
-
-const work = [
-  {
-    company: 'Paragraph',
-    years: '2022-Present',
-    summary: 'Founder & CEO',
-    shortSummary: 'CEO',
-    logo: 'paragraph',
-    details: [
-      'I founded Paragraph to help people publish, grow, and earn from their best ideas.',
-      'I lead product, engineering, and company-building across publishing tools, newsletters, memberships, payments, and creator monetization.',
-    ],
-  },
-  {
-    company: 'Google',
-    years: '2017-2022',
-    summary: 'Senior Software Engineer & Manager',
-    shortSummary: 'SWE',
-    logo: '/google.svg',
-    details: [
-      'I led engineering work on communications anti-abuse, building systems to protect people from spam, scams, and fraud across messaging surfaces.',
-      'I built our first on-device anti-abuse SDK, and deployed ML models and heuristic rules to millions of devices.',
-      'I also led initiatives in the privacy working group, ensuring abuse protections could work with minimal data collection and proper guardrails.',
-    ],
-  },
-  {
-    company: 'Coinbase',
-    years: '2015-2016',
-    summary: 'Engineer, Payments',
-    shortSummary: 'SWE',
-    logo: '/coinbase.svg',
-    details: [
-      'I worked on payments infrastructure and helped launch Coinbase in Canada.',
-      'I also improved Bitcoin private-key signing infrastructure and anti-abuse systems around payments flows.',
-    ],
-  },
-]
+const since = Math.min(...work.map((role) => role.from))
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+const when = (ym: string) => {
+  const [y, m] = ym.split('-').map(Number)
+  return `${MONTHS[m - 1]} ${y}`
+}
 ---
 
-<Layout title="Projects" description="Projects and work by Colin Armstrong.">
-  <Navbar />
-  <SubscribeDialog />
+<Layout
+  title="Projects & Work"
+  description="What Colin Armstrong is building, where he has worked, and where he has talked about it."
+>
+  <div class="container">
+    <header class="page-head">
+      <h1>Projects & Work</h1>
+      <p class="summary">What I'm building on the side, where I've worked, and where I've talked about it.</p>
+    </header>
 
-  <div class="flex-1">
-    <div class="max-w-2xl mx-auto px-6 sm:px-8 pt-20 pb-16 sm:pt-24 sm:pb-24">
-      <h1 class="mb-2 text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-zinc-100">
-        Projects
-      </h1>
-      <p class="mb-8 text-base text-zinc-500 dark:text-zinc-400">
-        Small products & experiments I've built.
-      </p>
-
-      <div class="space-y-4">
-        {projects.map((project) => (
-          <a
-            href={project.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="group flex items-center justify-between gap-4 py-3 border-b border-zinc-100 dark:border-zinc-800 transition-colors duration-200"
-          >
-            <span class="flex shrink-0 items-center gap-3">
-              <span class="flex h-8 w-8 shrink-0 items-center justify-center">
-                {project.logo === 'headers' ? (
-                  <HeadersLogo size={24} class="text-zinc-900 dark:text-zinc-100" />
-                ) : (
-                  <img src={project.logo} alt="" class="h-6 w-6 object-contain" loading="lazy" />
-                )}
-              </span>
-              <span class="truncate text-lg text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
-                {project.name}
-              </span>
-            </span>
-            <div class="flex min-w-0 shrink items-center gap-3">
-              <span class="text-sm text-zinc-400 dark:text-zinc-500">{project.summary}</span>
-              <svg class="w-4 h-4 shrink-0 text-zinc-300 dark:text-zinc-600 group-hover:text-blue-500 group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-              </svg>
-            </div>
-          </a>
-        ))}
+    <section class="section" aria-labelledby="projects">
+      <div class="section-head">
+        <h2 id="projects">Projects</h2>
+        <span class="meta">Small products & experiments I've built</span>
       </div>
+      <ul class="grid">
+        {
+          projects.map((project) => (
+            <li>
+              <a class="card project" href={project.href} rel="noopener">
+                <span class="top">
+                  <Mark logo={project.logo} size={28} />
+                  <svg class="out" viewBox="0 0 16 16" aria-hidden="true">
+                    <path
+                      d="M5 11 11 5M6 5h5v5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+                <span class="name">{project.name}</span>
+                <span class="domain mono">{project.href.replace(/^https?:\/\//, '')}</span>
+                <span class="about">{project.summary}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
 
-      <h2 class="mt-14 mb-2 text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-zinc-100">
-        Work
-      </h2>
-      <p class="mb-8 text-base text-zinc-500 dark:text-zinc-400">
-        Selected roles where I worked on payments, anti-abuse, privacy, and systems that reached large numbers of people.
+    <section class="section" aria-labelledby="work">
+      <div class="section-head">
+        <h2 id="work">Work</h2>
+        <span class="meta">Since {since}</span>
+      </div>
+      <p class="lead muted">
+        Selected roles where I worked on payments, anti-abuse, privacy, and systems that reached large numbers of
+        people.
       </p>
+      <WorkTimeline roles={work} variant="expand" />
+    </section>
 
-      <div class="space-y-4">
-        {work.map((role) => (
-          <div class="border-b border-zinc-100 dark:border-zinc-800">
-            <button
-              type="button"
-              class="work-toggle group flex w-full items-center justify-between gap-4 py-3 text-left"
-              aria-expanded="false"
-              aria-controls={`work-${role.company.toLowerCase()}`}
-              data-work-toggle
-            >
-              <span class="flex min-w-0 items-center gap-3">
-                <span class="flex h-8 w-8 shrink-0 items-center justify-center">
-                  {role.logo === 'paragraph' ? (
-                    <ParagraphLogo size={24} class="text-zinc-900 dark:text-zinc-100" />
-                  ) : (
-                    <img src={role.logo} alt="" class="h-6 w-6 object-contain" loading="lazy" />
-                  )}
-                </span>
-                <span class="min-w-0">
-                  <span class="block truncate text-lg text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
-                    {role.company}
-                  </span>
-                  <span class="block whitespace-nowrap text-sm text-zinc-400 dark:text-zinc-500">
-                    {role.years}
-                  </span>
-                </span>
-              </span>
-              <span class="flex min-w-0 shrink items-center gap-3">
-                <span class="truncate text-sm text-zinc-400 dark:text-zinc-500">
-                  <span class="sm:hidden">{role.shortSummary}</span>
-                  <span class="hidden sm:inline">{role.summary}</span>
-                </span>
-                <svg
-                  class="work-caret h-4 w-4 shrink-0 text-zinc-300 dark:text-zinc-600 group-hover:text-blue-500 group-hover:translate-x-0.5 transition-all duration-200"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 6l6 6-6 6" />
+    <section class="section" aria-labelledby="press">
+      <div class="section-head">
+        <h2 id="press">Podcasts & press</h2>
+      </div>
+      <ol class="card press">
+        {
+          appearances.map((a) => (
+            <li>
+              <a href={a.href} rel="noopener">
+                <span class="outlet">{a.outlet}</span>
+                <span class="title">{a.title}</span>
+                <span class="kind">{a.kind}</span>
+                <time class="date mono num" datetime={a.date}>
+                  {when(a.date)}
+                </time>
+                <svg class="go" viewBox="0 0 16 16" aria-hidden="true">
+                  <path
+                    d="M5 11 11 5M6 5h5v5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
                 </svg>
-              </span>
-            </button>
-            <div
-              id={`work-${role.company.toLowerCase()}`}
-              class="work-detail"
-              aria-hidden="true"
-              data-work-detail
-            >
-              <div class="min-h-0 overflow-hidden">
-                <div class="pb-5 pr-8 space-y-3 text-sm leading-6 text-zinc-600 dark:text-zinc-400">
-                  {role.details.map((detail) => <p>{detail}</p>)}
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
   </div>
-
-  <Footer />
-
-  <style>
-    .work-detail {
-      display: grid;
-      grid-template-rows: 0fr;
-      opacity: 0;
-      transition:
-        grid-template-rows 260ms ease,
-        opacity 180ms ease;
-    }
-
-    .work-detail[data-open='true'] {
-      grid-template-rows: 1fr;
-      opacity: 1;
-    }
-
-    .work-toggle[aria-expanded='true'] .work-caret {
-      transform: rotate(90deg);
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .work-detail,
-      .work-caret {
-        transition: none;
-      }
-    }
-  </style>
-
-  <script>
-    document.querySelectorAll<HTMLButtonElement>('[data-work-toggle]').forEach((toggle) => {
-      const detailId = toggle.getAttribute('aria-controls')
-      const detail = detailId ? document.getElementById(detailId) : null
-
-      toggle.addEventListener('click', () => {
-        const isOpen = toggle.getAttribute('aria-expanded') === 'true'
-        toggle.setAttribute('aria-expanded', String(!isOpen))
-        detail?.setAttribute('data-open', String(!isOpen))
-        detail?.setAttribute('aria-hidden', String(isOpen))
-      })
-    })
-  </script>
 </Layout>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .project {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 18px 20px 20px;
+    transition: border-color 120ms;
+  }
+
+  .project:hover {
+    border-color: var(--line-strong);
+  }
+
+  .top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .top :global(.mark) {
+    transition: transform 240ms var(--ease);
+  }
+
+  .project:hover .top :global(.mark) {
+    transform: translateY(-2px);
+  }
+
+  .out,
+  .go {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    color: var(--ink-3);
+    transition:
+      transform 160ms var(--ease),
+      color 120ms;
+  }
+
+  .project:hover .out,
+  .press a:hover .go {
+    color: var(--ink);
+    transform: translate(1px, -1px);
+  }
+
+  .name {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+
+  .domain {
+    margin-top: 2px;
+    color: var(--ink-3);
+    font-size: 12.5px;
+  }
+
+  .about {
+    margin-top: 10px;
+    color: var(--ink-2);
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
+
+  .lead {
+    max-width: 64ch;
+    margin: -4px 0 16px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* Podcasts & press: the same rows as the writing list. */
+  .press {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    list-style: none;
+  }
+
+  .press li + li {
+    border-top: 1px solid var(--line);
+  }
+
+  .press a {
+    display: grid;
+    grid-template-columns: minmax(120px, 0.7fr) minmax(0, 2fr) 72px 72px 16px;
+    align-items: center;
+    gap: 16px;
+    min-height: 48px;
+    padding: 12px 16px;
+    transition: background-color 120ms;
+  }
+
+  .press a:hover {
+    background: var(--surface-2);
+  }
+
+  .outlet {
+    color: var(--ink-2);
+  }
+
+  .title {
+    min-width: 0;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    text-wrap: pretty;
+  }
+
+  .kind {
+    justify-self: end;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    box-shadow: inset 0 0 0 1px var(--line);
+    color: var(--ink-2);
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .date {
+    color: var(--ink-3);
+    font-size: 12.5px;
+    text-align: right;
+  }
+
+  @media (max-width: 767px) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    .top {
+      margin-bottom: 14px;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .press a {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas:
+        'outlet date'
+        'title title';
+      gap: 2px 12px;
+      padding-block: 13px;
+    }
+
+    .outlet {
+      grid-area: outlet;
+      font-size: 13px;
+    }
+
+    .date {
+      grid-area: date;
+    }
+
+    .title {
+      grid-area: title;
+    }
+
+    .kind,
+    .go {
+      display: none;
+    }
+  }
+</style>

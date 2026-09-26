@@ -1,5 +1,12 @@
 ---
-import '@/styles/tailwind.css'
+import { Font, getImage } from 'astro:assets'
+import '@/styles/global.css'
+import Footer from '@/components/Footer.astro'
+import Nav from '@/components/Nav.astro'
+import SubscribeDialog from '@/components/SubscribeDialog.astro'
+import avatar from '@/assets/colin.jpg'
+import { person, socials } from '@/data/profile'
+import { pagePath } from '@/lib/path'
 
 interface Props {
   title?: string
@@ -8,11 +15,14 @@ interface Props {
   type?: 'website' | 'article'
   publishedDate?: string
   isHomepage?: boolean
+  /** Keep the page out of search results (the 404). */
+  noindex?: boolean
 }
 
 const {
+  noindex = false,
   title,
-  description = 'Software engineer & founder building Paragraph.',
+  description = `${person.title}, the media engine for early-stage startups. ${person.previously}.`,
   image,
   type = 'website',
   publishedDate,
@@ -20,68 +30,63 @@ const {
 } = Astro.props
 
 const GA_MEASUREMENT_ID = 'G-VLG18DVXN5'
-const pageTitle = title ? `${title} - Colin Armstrong` : 'Colin Armstrong'
-const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href
+const pageTitle = title ? `${title} – ${person.name}` : `${person.name} – ${person.title}`
+const canonicalUrl = new URL(pagePath(Astro.url), Astro.site).href
 
 const imageUrl = new URL(image || '/og/home.png', Astro.site).href
 
 const websiteSchema = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: 'Colin Armstrong',
+  name: person.name,
   url: Astro.site?.href,
 })
 
+const portrait = isHomepage ? await getImage({ src: avatar, width: 400, height: 400, format: 'jpg' }) : undefined
 const personSchema = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'Person',
-  name: 'Colin Armstrong',
+  name: person.name,
   url: Astro.site?.href,
-  jobTitle: 'Software Engineer & Founder',
+  image: portrait && new URL(portrait.src, Astro.site).href,
+  description: `${person.title}, the media engine for early-stage startups. Previously led anti-abuse and privacy engineering at Google and helped build Coinbase's payments infrastructure.`,
+  jobTitle: 'Founder & CEO',
   worksFor: {
     '@type': 'Organization',
     name: 'Paragraph',
     url: 'https://paragraph.com',
   },
-  sameAs: [
-    'https://x.com/colinarms',
-    'https://github.com/seeARMS',
-    'https://linkedin.com/in/colinarms',
-    'https://farcaster.xyz/colin',
-  ],
+  sameAs: socials.map((s) => s.href),
 })
 
-const articleSchema = type === 'article' && title
-  ? JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'Article',
-      headline: title,
-      datePublished: publishedDate,
-      author: {
-        '@type': 'Person',
-        name: 'Colin Armstrong',
-        url: Astro.site?.href,
-      },
-    })
-  : null
+const articleSchema =
+  type === 'article' && title
+    ? JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: title,
+        datePublished: publishedDate,
+        author: {
+          '@type': 'Person',
+          name: person.name,
+          url: Astro.site?.href,
+        },
+      })
+    : null
 ---
 
-<html lang="en" class="h-full antialiased">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonicalUrl} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonicalUrl} />}
     <link rel="icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="alternate" type="application/rss+xml" title="Colin Armstrong" href="/feed.xml" />
+    <meta name="theme-color" content="#fafafa" />
 
-    <!-- Theme color for browser chrome -->
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#18181b" media="(prefers-color-scheme: dark)" />
-
-    <!-- Preconnect to external origins -->
     <link rel="preconnect" href="https://public.api.paragraph.com" />
     <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 
@@ -105,51 +110,81 @@ const articleSchema = type === 'article' && title
     <script type="application/ld+json" set:html={websiteSchema} />
     {isHomepage && <script type="application/ld+json" set:html={personSchema} />}
     {articleSchema && <script type="application/ld+json" set:html={articleSchema} />}
+
+    <Font cssVariable="--font-sans" preload={[{ style: 'normal' }]} />
+    <Font cssVariable="--font-mono" />
+
+    <!-- Before first paint: pick the theme, so the page never flashes. -->
     <script is:inline>
-      let darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-
-      updateMode()
-      darkModeMediaQuery.addEventListener('change', updateModeWithoutTransitions)
-
-      function updateMode() {
-        let saved = localStorage.getItem('theme')
-        let isDark = saved === 'dark' || (!saved && darkModeMediaQuery.matches)
-
-        if (isDark) {
-          document.documentElement.classList.add('dark')
-        } else {
-          document.documentElement.classList.remove('dark')
+      ;(() => {
+        const root = document.documentElement
+        const media = matchMedia('(prefers-color-scheme: dark)')
+        let memory = null
+        const read = () => {
+          try {
+            return localStorage.getItem('theme')
+          } catch {
+            return memory
+          }
         }
-      }
+        const write = (value) => {
+          memory = value
+          try {
+            localStorage.setItem('theme', value)
+          } catch {}
+        }
 
-      function disableTransitionsTemporarily() {
-        document.documentElement.classList.add('[&_*]:!transition-none')
-        window.setTimeout(() => {
-          document.documentElement.classList.remove('[&_*]:!transition-none')
-        }, 0)
-      }
+        const apply = () => {
+          const saved = read()
+          const dark = saved === 'dark' || (!saved && media.matches)
+          root.classList.toggle('dark', dark)
+          document
+            .querySelector('meta[name="theme-color"]')
+            ?.setAttribute('content', dark ? '#0a0a0a' : '#fafafa')
+        }
 
-      function updateModeWithoutTransitions() {
-        disableTransitionsTemporarily()
-        updateMode()
-      }
+        // Swap every color at once, rather than each element easing on its own.
+        const applyQuietly = () => {
+          root.classList.add('no-transitions')
+          apply()
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => root.classList.remove('no-transitions')),
+          )
+        }
 
-      window.toggleDarkMode = function() {
-        let isDark = document.documentElement.classList.contains('dark')
-        localStorage.setItem('theme', isDark ? 'light' : 'dark')
-        updateMode()
-      }
+        apply()
+        media.addEventListener('change', applyQuietly)
+
+        window.toggleDarkMode = () => {
+          write(root.classList.contains('dark') ? 'light' : 'dark')
+          const calm = matchMedia('(prefers-reduced-motion: reduce)').matches
+          if (document.startViewTransition && !calm) {
+            root.dataset.themeSwap = ''
+            document
+              .startViewTransition(applyQuietly)
+              .finished.finally(() => delete root.dataset.themeSwap)
+          } else {
+            applyQuietly()
+          }
+        }
+      })()
     </script>
   </head>
-  <body class="flex h-full flex-col">
-    <div class="bg-white dark:bg-zinc-900 flex-1 flex flex-col">
+  <body>
+    <a class="skip" href="#content">Skip to content</a>
+    <Nav />
+    <main id="content">
       <slot />
-    </div>
+    </main>
+    <Footer />
+    <SubscribeDialog />
 
     <!-- Google Analytics (deferred) -->
     <script is:inline define:vars={{ GA_MEASUREMENT_ID }}>
       window.dataLayer = window.dataLayer || []
-      function gtag() { dataLayer.push(arguments) }
+      function gtag() {
+        dataLayer.push(arguments)
+      }
       gtag('js', new Date())
       gtag('config', GA_MEASUREMENT_ID, { page_path: window.location.pathname })
       var s = document.createElement('script')

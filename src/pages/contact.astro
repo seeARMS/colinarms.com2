@@ -2,50 +2,219 @@
 export const prerender = true
 
 import Layout from '@/layouts/Layout.astro'
-import Footer from '@/components/Footer.astro'
-import Navbar from '@/components/Navbar.astro'
-import SubscribeDialog from '@/components/SubscribeDialog.astro'
-
-const links = [
-  { name: 'Email', handle: 'colin@armstr.ng', href: 'mailto:colin@armstr.ng', external: true },
-  { name: 'X', handle: '@colinarms', href: 'https://x.com/colinarms', external: true },
-  { name: 'GitHub', handle: 'seeARMS', href: 'https://github.com/seeARMS', external: true },
-  { name: 'LinkedIn', handle: 'colinarms', href: 'https://linkedin.com/in/colinarms', external: true },
-]
+import { person, socials } from '@/data/profile'
 ---
 
-<Layout title="Contact" description="Get in touch with Colin Armstrong.">
-  <Navbar />
-  <SubscribeDialog />
+<Layout
+  title="Contact"
+  description="Get in touch with Colin Armstrong. Founders building something early are especially welcome."
+>
+  <div class="container narrow">
+    <header class="page-head">
+      <h1>Contact</h1>
+      <p class="summary">
+        I especially like hearing from founders building something early. Email is the best way to reach me: send a few
+        lines on what you're building, who it's for, and where I could help.
+      </p>
+    </header>
 
-  <div class="flex-1">
-    <div class="max-w-2xl mx-auto px-6 sm:px-8 pt-20 pb-16 sm:pt-24 sm:pb-24">
-      <h1 class="mb-8 text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-zinc-100">
-        Contact
-      </h1>
-
-      <div class="space-y-4">
-        {links.map((link) => (
-          <a
-            href={link.href}
-            target={link.external ? '_blank' : undefined}
-            rel={link.external ? 'noopener noreferrer' : undefined}
-            class="group flex items-center justify-between py-3 border-b border-zinc-100 dark:border-zinc-800 transition-colors duration-200"
-          >
-            <span class="text-lg text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
-              {link.name}
-            </span>
-            <div class="flex items-center gap-3">
-              <span class="text-sm text-zinc-400 dark:text-zinc-500">{link.handle}</span>
-              <svg class="w-4 h-4 text-zinc-300 dark:text-zinc-600 group-hover:text-blue-500 group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+    <ul class="card rows ways">
+      <li class="row">
+        <span class="name">
+          <svg viewBox="0 0 16 16" aria-hidden="true" class="line-icon">
+            <rect x="2" y="3.5" width="12" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"
+            ></rect>
+            <path
+              d="m2.75 4.5 5.25 4 5.25-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linejoin="round"></path>
+          </svg>
+          Email
+        </span>
+        <a class="handle mono" href={`mailto:${person.email}`}>{person.email}</a>
+        <span class="actions">
+          <button class="btn copy" type="button" data-copy={person.email}>
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <rect x="5.25" y="5.25" width="8" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"
+              ></rect>
+              <path
+                d="M10.75 5.25V4a1.5 1.5 0 0 0-1.5-1.5H4A1.5 1.5 0 0 0 2.5 4v5.25a1.5 1.5 0 0 0 1.5 1.5h1.25"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.4"></path>
+            </svg>
+            <span data-label>Copy</span>
+          </button>
+        </span>
+      </li>
+      {
+        socials.map((s) => (
+          <li class="row">
+            <span class="name">
+              <svg viewBox={s.viewBox ?? '0 0 24 24'} aria-hidden="true" class="fill-icon">
+                <path d={s.icon} />
               </svg>
-            </div>
-          </a>
-        ))}
-      </div>
-    </div>
+              {s.name}
+            </span>
+            <a class="handle mono" href={s.href} rel="me noopener">
+              {s.handle}
+            </a>
+            <span class="actions">
+              <svg class="out" viewBox="0 0 16 16" aria-hidden="true">
+                <path
+                  d="M5 11 11 5M6 5h5v5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+          </li>
+        ))
+      }
+    </ul>
   </div>
-
-  <Footer />
 </Layout>
+
+<script>
+  for (const btn of document.querySelectorAll<HTMLButtonElement>('[data-copy]')) {
+    const label = btn.querySelector('[data-label]')
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(btn.dataset.copy ?? '')
+        if (label) {
+          label.textContent = 'Copied'
+          setTimeout(() => (label.textContent = 'Copy'), 1600)
+        }
+      } catch {
+        // Clipboard blocked: the address is still there to select.
+      }
+    })
+  }
+</script>
+
+<style>
+  .narrow {
+    max-width: calc(720px + var(--gutter) * 2);
+  }
+
+  .ways {
+    margin-top: 32px;
+  }
+
+  .row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr) auto;
+    gap: 16px;
+    min-height: 56px;
+    transition: background-color 120ms;
+  }
+
+  .row:hover {
+    background: var(--surface-2);
+  }
+
+  .row:first-child {
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+
+  .row:last-child {
+    border-radius: 0 0 var(--radius) var(--radius);
+  }
+
+  .name {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ink-2);
+  }
+
+  .line-icon,
+  .fill-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--ink-3);
+  }
+
+  .fill-icon {
+    width: 14px;
+    height: 14px;
+    margin-inline: 1px;
+    fill: currentColor;
+  }
+
+  .handle {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13.5px;
+  }
+
+  /* The whole row is the link; the copy button sits above it. */
+  .handle::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+
+  .actions {
+    display: inline-flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .copy {
+    position: relative;
+    z-index: 1;
+    height: 28px;
+    padding: 0 10px;
+    font-size: 13px;
+  }
+
+  .copy svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .out {
+    width: 16px;
+    height: 16px;
+    color: var(--ink-3);
+    transition:
+      transform 160ms var(--ease),
+      color 120ms;
+  }
+
+  .row:hover .out {
+    color: var(--ink);
+    transform: translate(1px, -1px);
+  }
+
+  @media (max-width: 519px) {
+    .row {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 2px 12px;
+      padding-block: 12px;
+    }
+
+    .name {
+      grid-column: 1;
+    }
+
+    .handle {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .actions {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+    }
+  }
+</style>

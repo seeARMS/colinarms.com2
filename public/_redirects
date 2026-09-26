@@ -1,0 +1,6 @@
+# Old addresses that now live elsewhere. Paragraph gave this post a slug with
+# a colon; the site uses a clean one (see src/lib/slug.js).
+/writing/nextjs:-server-side-and-client-side-mismatch /writing/nextjs-server-side-and-client-side-mismatch 301
+/writing/nextjs:-server-side-and-client-side-mismatch/ /writing/nextjs-server-side-and-client-side-mismatch 301
+/writing/nextjs%3A-server-side-and-client-side-mismatch /writing/nextjs-server-side-and-client-side-mismatch 301
+/writing/nextjs%3A-server-side-and-client-side-mismatch/ /writing/nextjs-server-side-and-client-side-mismatch 301

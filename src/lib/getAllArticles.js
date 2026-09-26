@@ -1,3 +1,5 @@
+import { siteSlug } from './slug.js'
+
 const API_BASE = 'https://public.api.paragraph.com/api/v1'
 const PUB_ID = '3eJHzLXKQHclhCdsO4Yr'
 
@@ -6,7 +8,8 @@ export async function getColinArticles() {
 
   return items.map((post) => ({
     title: post.title,
-    link: `/writing/${post.slug}`,
+    subtitle: post.subtitle,
+    link: `/writing/${siteSlug(post.slug)}`,
     isoDate: new Date(Number(post.publishedAt)).toISOString(),
   }))
 }
@@ -17,7 +20,9 @@ export async function getColinArticlesWithContent() {
   return items.map((post) => ({
     title: post.title,
     subtitle: post.subtitle,
-    slug: post.slug,
+    slug: siteSlug(post.slug),
+    /** The slug on paragraph.com, which may differ from the site's. */
+    paragraphSlug: post.slug,
     html: post.staticHtml,
     isoDate: new Date(Number(post.publishedAt)).toISOString(),
   }))
