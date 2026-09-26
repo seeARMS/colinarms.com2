@@ -1,19 +1,22 @@
 ---
 export const prerender = true
 
-import { Image } from 'astro:assets'
+import { Image, getImage } from 'astro:assets'
 import Layout from '@/layouts/Layout.astro'
 import PostList from '@/components/PostList.astro'
 import WorkTimeline from '@/components/WorkTimeline.astro'
 import avatar from '@/assets/colin.jpg'
 import { person, projects, work } from '@/data/profile'
 import { getColinArticles } from '@/lib/getAllArticles'
+import { profilePage } from '@/lib/schema'
 
 const articles = await getColinArticles()
 const [headers, draftside, council] = projects
+const portrait = await getImage({ src: avatar, width: 400, height: 400, format: 'jpg' })
+const schema = profilePage(`${person.name} – ${person.title}`, new URL(portrait.src, Astro.site).href)
 ---
 
-<Layout image="/og/home.png" isHomepage>
+<Layout image="/og/home.png" schema={schema}>
   <!-- The entrance plays once per visit; coming back later, the page is just there. -->
   <script is:inline>
     try {

@@ -22,7 +22,7 @@ const rows = posts.map((post, i) => ({
       <li class:list={{ 'new-year': byYear && post.firstOfYear }}>
         <a href={post.link}>
           {byYear && <span class="year mono num">{post.firstOfYear ? post.year : ''}</span>}
-          <span class="title">{post.title}</span>
+          <span class="title" data-vt-post={post.link}>{post.title}</span>
           <time class="date mono num" datetime={post.isoDate}>
             {byYear ? (
               <>
@@ -90,8 +90,9 @@ const rows = posts.map((post, i) => ({
     font-size: 13px;
   }
 
+  /* The title hugs its text, so it can grow into a post's heading cleanly. */
   .title {
-    flex: 1;
+    flex: 0 1 auto;
     min-width: 0;
     font-size: 15px;
     font-weight: 500;
@@ -101,6 +102,7 @@ const rows = posts.map((post, i) => ({
 
   .date {
     flex: none;
+    margin-left: auto;
     color: var(--ink-3);
     font-size: 12.5px;
   }

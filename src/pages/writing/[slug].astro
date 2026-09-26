@@ -6,7 +6,8 @@ import PageToc from '@/components/PageToc.astro'
 import PostList from '@/components/PostList.astro'
 import SubscribeForm from '@/components/SubscribeForm.astro'
 import { getColinArticlesWithContent } from '@/lib/getAllArticles'
-import { longDate, readingTime } from '@/lib/format'
+import { longDate, postDescription, readingTime } from '@/lib/format'
+import { blogPosting, breadcrumbs } from '@/lib/schema'
 import { person } from '@/data/profile'
 import { highlight } from '@/lib/highlight'
 
@@ -24,17 +25,31 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params
-const { title, subtitle, html, isoDate, paragraphSlug, allPosts } = Astro.props
+const { title, subtitle, html, isoDate, updatedIso, paragraphSlug, allPosts } = Astro.props
 const minutes = html ? readingTime(html) : 0
 const body = html ? await highlight(html) : ''
+const path = `/writing/${slug}`
+const image = `/og/${slug}.png`
+const description = postDescription(title, subtitle, html ?? '')
+const words = html ? html.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length : undefined
+const schema = [
+  blogPosting({ path, title, description, image, published: isoDate, modified: updatedIso, words }),
+  breadcrumbs([
+    { name: 'Writing', path: '/writing' },
+    { name: title, path },
+  ]),
+]
 ---
 
 <Layout
   title={title}
-  description={subtitle || `${title} - by Colin Armstrong`}
-  image={`/og/${slug}.png`}
+  description={description}
+  image={image}
   type="article"
   publishedDate={isoDate}
+  modifiedDate={updatedIso}
+  schema={schema}
+  noindex={!html}
 >
   <article class="post">
     <header class="page-head">
@@ -54,7 +69,7 @@ const body = html ? await highlight(html) : ''
         <time datetime={isoDate}>{longDate(isoDate)}</time>
         {minutes > 0 && <span>{minutes} min read</span>}
       </p>
-      <h1>{title}</h1>
+      <h1 data-vt-post={`/writing/${slug}`}>{title}</h1>
       {subtitle && <p class="summary">{subtitle}</p>}
     </header>
 
@@ -143,6 +158,7 @@ const body = html ? await highlight(html) : ''
   }
 
   .page-head h1 {
+    width: fit-content;
     font-size: 38px;
   }
 

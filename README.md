@@ -23,8 +23,22 @@ New Paragraph posts appear after the next build.
 npm install
 npm run dev       # http://localhost:4321
 npm run build     # social preview images, then the site
-npm run deploy    # build and deploy with Wrangler
 ```
+
+## Deploy
+
+Everything deploys to the **Colin Personal** Cloudflare account. Its Wrangler login lives in a separate profile (`~/.config/wrangler-personal`), so the work login in the default profile is never used, and `account_id` in `wrangler.jsonc` pins the account as a second guard.
+
+```sh
+npm run cf -- login   # once: authorize the personal account
+npm run deploy        # build and deploy the site
+npm run deploy:www    # the Worker that redirects www.armstr.ng to armstr.ng
+npm run cf -- tail    # any other wrangler command, same profile
+```
+
+## Search
+
+Every page's structured data is one connected graph built in `src/lib/schema.ts`: the home page is a `ProfilePage` about Colin (with his profiles and press as `sameAs` and `subjectOf`), Paragraph is an `Organization` with Colin as founder (using paragraph.com's own `@id`), posts are `BlogPosting`s with breadcrumbs, and photos are credited to Colin. Post descriptions come from each post's subtitle and opening sentences (`postDescription` in `src/lib/format.ts`).
 
 ## Configuration
 

@@ -24,6 +24,7 @@ export async function getColinArticlesWithContent() {
     /** The slug on paragraph.com, which may differ from the site's. */
     paragraphSlug: post.slug,
     html: post.staticHtml,
+    updatedIso: new Date(Math.max(Number(post.publishedAt), Number(post.updatedAt) || 0)).toISOString(),
     isoDate: new Date(Number(post.publishedAt)).toISOString(),
   }))
 }

@@ -1,0 +1,10 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "armstrng-www",
+  // Colin Personal, same as the main Worker.
+  "account_id": "68d615b353a7fe2663d3e7154366864a",
+  "main": "index.js",
+  "compatibility_date": "2026-09-26",
+  "workers_dev": false,
+  "routes": [{ "pattern": "www.armstr.ng", "custom_domain": true }]
+}

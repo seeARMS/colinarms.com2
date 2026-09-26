@@ -5,6 +5,7 @@ import Layout from '@/layouts/Layout.astro'
 import Mark from '@/components/Mark.astro'
 import WorkTimeline from '@/components/WorkTimeline.astro'
 import { appearances, projects, work } from '@/data/profile'
+import { breadcrumbs } from '@/lib/schema'
 
 const since = Math.min(...work.map((role) => role.from))
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -15,8 +16,9 @@ const when = (ym: string) => {
 ---
 
 <Layout
-  title="Projects & Work"
-  description="What Colin Armstrong is building, where he has worked, and where he has talked about it."
+  title="Projects, work and press"
+  description="Colin Armstrong's side projects (heade.rs, Draftside, Council), his work at Paragraph, Mirror, Google and Coinbase, and his podcast and press appearances."
+  schema={[breadcrumbs([{ name: 'Projects & Work', path: '/projects' }])]}
 >
   <div class="container">
     <header class="page-head">
