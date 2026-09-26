@@ -21,3 +21,44 @@ export function readingTime(html: string): number {
   const words = html.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length
   return Math.max(1, Math.round(words / 230))
 }
+
+const ENTITIES: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' }
+const decode = (text: string) =>
+  text.replace(/&(#x?[0-9a-f]+|\w+);/gi, (match, entity: string) => {
+    if (!entity.startsWith('#')) return ENTITIES[entity] ?? match
+    const code = entity[1] === 'x' ? parseInt(entity.slice(2), 16) : parseInt(entity.slice(1), 10)
+    return Number.isNaN(code) ? match : String.fromCodePoint(code)
+  })
+
+/**
+ * A search-result description for a post: its subtitle, then its opening
+ * sentences, up to about 155 characters, ending on a sentence where it can.
+ */
+export function postDescription(title: string, subtitle: string | undefined, html: string): string {
+  const LIMIT = 158
+  const inner = [...html.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/g)].map((m) => m[1])
+  // Skip opening asides set in italics (like an old "written with Paragraph"
+  // plug); the description should start with the post itself.
+  const text = (p: string) => p.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim()
+  const italics = (p: string) => [...p.matchAll(/<em>([\s\S]*?)<\/em>/g)].map((m) => text(m[1])).join(' ')
+  const aside = (p: string) => text(p).length > 0 && italics(p).length >= text(p).length * 0.85
+  while (inner.length && aside(inner[0])) inner.shift()
+  const paragraphs = inner.map((p) => decode(p.replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim()).filter(Boolean)
+  const sentences = paragraphs.join(' ').split(/(?<=[.!?])\s+/)
+
+  let out = subtitle?.trim() ?? ''
+  if (out && !/[.!?]$/.test(out)) out += '.'
+  let i = 0
+  for (; i < sentences.length; i++) {
+    const next = out ? `${out} ${sentences[i]}` : sentences[i]
+    if (next.length > LIMIT) break
+    out = next
+  }
+  // Still short (one long opening sentence): cut the rest at a word.
+  if (out.length < 90 && i < sentences.length) {
+    const room = LIMIT - (out ? out.length + 1 : 0) - 1
+    const cut = sentences.slice(i).join(' ').slice(0, room).replace(/\s+\S*$/, '').replace(/[,;:]$/, '')
+    if (cut) out = `${out ? `${out} ` : ''}${cut}…`
+  }
+  return out || `${title}, by Colin Armstrong.`
+}

@@ -1,20 +1,22 @@
 ---
-import { Font, getImage } from 'astro:assets'
+import { Font } from 'astro:assets'
 import '@/styles/global.css'
 import Footer from '@/components/Footer.astro'
 import Nav from '@/components/Nav.astro'
 import SubscribeDialog from '@/components/SubscribeDialog.astro'
-import avatar from '@/assets/colin.jpg'
-import { person, socials } from '@/data/profile'
+import { person } from '@/data/profile'
 import { pagePath } from '@/lib/path'
 
 interface Props {
+  /** The page's own title; " – Colin Armstrong" is added unless it names him already. */
   title?: string
   description?: string
   image?: string
   type?: 'website' | 'article'
   publishedDate?: string
-  isHomepage?: boolean
+  modifiedDate?: string
+  /** schema.org nodes for this page (see src/lib/schema.ts). */
+  schema?: object[]
   /** Keep the page out of search results (the 404). */
   noindex?: boolean
 }
@@ -22,57 +24,25 @@ interface Props {
 const {
   noindex = false,
   title,
-  description = `${person.title}, the media engine for early-stage startups. ${person.previously}.`,
+  description = `${person.name} is the founder and CEO of Paragraph, the media engine for early-stage startups. Previously anti-abuse at Google and payments at Coinbase.`,
   image,
   type = 'website',
   publishedDate,
-  isHomepage = false,
+  modifiedDate,
+  schema = [],
 } = Astro.props
 
 const GA_MEASUREMENT_ID = 'G-VLG18DVXN5'
-const pageTitle = title ? `${title} – ${person.name}` : `${person.name} – ${person.title}`
+const pageTitle = !title
+  ? `${person.name} – ${person.title}`
+  : title.includes(person.name)
+    ? title
+    : `${title} – ${person.name}`
 const canonicalUrl = new URL(pagePath(Astro.url), Astro.site).href
 
 const imageUrl = new URL(image || '/og/home.png', Astro.site).href
 
-const websiteSchema = JSON.stringify({
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: person.name,
-  url: Astro.site?.href,
-})
-
-const portrait = isHomepage ? await getImage({ src: avatar, width: 400, height: 400, format: 'jpg' }) : undefined
-const personSchema = JSON.stringify({
-  '@context': 'https://schema.org',
-  '@type': 'Person',
-  name: person.name,
-  url: Astro.site?.href,
-  image: portrait && new URL(portrait.src, Astro.site).href,
-  description: `${person.title}, the media engine for early-stage startups. Previously led anti-abuse and privacy engineering at Google and helped build Coinbase's payments infrastructure.`,
-  jobTitle: 'Founder & CEO',
-  worksFor: {
-    '@type': 'Organization',
-    name: 'Paragraph',
-    url: 'https://paragraph.com',
-  },
-  sameAs: socials.map((s) => s.href),
-})
-
-const articleSchema =
-  type === 'article' && title
-    ? JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'Article',
-        headline: title,
-        datePublished: publishedDate,
-        author: {
-          '@type': 'Person',
-          name: person.name,
-          url: Astro.site?.href,
-        },
-      })
-    : null
+const graph = schema.length ? JSON.stringify({ '@context': 'https://schema.org', '@graph': schema }) : undefined
 ---
 
 <html lang="en">
@@ -81,6 +51,7 @@ const articleSchema =
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
+    <meta name="author" content={person.name} />
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonicalUrl} />}
     <link rel="icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -98,21 +69,81 @@ const articleSchema =
     <meta property="og:image" content={imageUrl} />
     <meta property="og:site_name" content="Colin Armstrong" />
     {publishedDate && <meta property="article:published_time" content={publishedDate} />}
+    {modifiedDate && <meta property="article:modified_time" content={modifiedDate} />}
+    {type === 'article' && <meta property="article:author" content={Astro.site?.href} />}
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@colinarms" />
+    <meta name="twitter:creator" content="@colinarms" />
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={imageUrl} />
 
-    <!-- Structured Data -->
-    <script type="application/ld+json" set:html={websiteSchema} />
-    {isHomepage && <script type="application/ld+json" set:html={personSchema} />}
-    {articleSchema && <script type="application/ld+json" set:html={articleSchema} />}
+    <!-- Structured data: one connected graph per page (src/lib/schema.ts) -->
+    {graph && <script type="application/ld+json" set:html={graph} />}
 
     <Font cssVariable="--font-sans" preload={[{ style: 'normal' }]} />
     <Font cssVariable="--font-mono" />
+
+    <!-- Paint the first frame only once the page's content is in, so a page
+         transition can find what it carries across. -->
+    <link rel="expect" href="#site-footer" blocking="render" />
+
+    <!-- Page transitions carry one thing across: the post title you clicked
+         grows into the post's heading (and back again), and a Work row glides
+         to its place on Projects & Work. Only that element is named, just
+         before the swap, so nothing else flies around. -->
+    <script is:inline>
+      ;(() => {
+        if (!('onpagereveal' in window)) return
+        let named = []
+        const clear = () => {
+          named.forEach((el) => (el.style.viewTransitionName = ''))
+          named = []
+        }
+        const name = (el, as) => {
+          if (!el) return false
+          el.style.viewTransitionName = as
+          named.push(el)
+          return true
+        }
+        const isPost = (path) => /^\/writing\/[^/]+$/.test(path)
+        const find = (attr, value) => document.querySelector(`[${attr}="${CSS.escape(value)}"]`)
+
+        // The same choice on both pages, from the addresses alone: the post
+        // being opened (its title grows), else the post being left (its title
+        // shrinks back into the list), else the Work role asked for.
+        function pair(fromHref, toHref) {
+          clear()
+          const from = new URL(fromHref)
+          const to = new URL(toHref)
+          if (isPost(to.pathname) && name(find('data-vt-post', to.pathname), 'post-title')) return 'grow'
+          if (isPost(from.pathname) && name(find('data-vt-post', from.pathname), 'post-title')) return 'shrink'
+          const role = (to.pathname === '/projects' && to.hash) || (from.pathname === '/projects' && from.hash)
+          if (role && name(find('data-vt-work', decodeURIComponent(role.slice(1))), 'work-row')) return 'work'
+        }
+
+        addEventListener('pageswap', (e) => {
+          if (e.viewTransition && e.activation) pair(location.href, e.activation.entry.url)
+        })
+
+        addEventListener('pagereveal', (e) => {
+          const from = window.navigation?.activation?.from?.url
+          if (!e.viewTransition || !from) return
+          const root = document.documentElement
+          const move = pair(from, location.href)
+          if (move) root.dataset.move = move
+          // Whatever should wait for the page to settle (a Work entry
+          // unfolding) can wait on this.
+          window.arrival = e.viewTransition.finished.catch(() => {})
+          window.arrival.then(() => {
+            clear()
+            delete root.dataset.move
+          })
+        })
+      })()
+    </script>
 
     <!-- Before first paint: pick the theme, so the page never flashes. -->
     <script is:inline>

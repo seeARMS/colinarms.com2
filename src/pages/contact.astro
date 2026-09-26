@@ -3,11 +3,13 @@ export const prerender = true
 
 import Layout from '@/layouts/Layout.astro'
 import { person, socials } from '@/data/profile'
+import { breadcrumbs, contactPage } from '@/lib/schema'
 ---
 
 <Layout
-  title="Contact"
-  description="Get in touch with Colin Armstrong. Founders building something early are especially welcome."
+  title="Contact Colin Armstrong"
+  description="Get in touch with Colin Armstrong, founder and CEO of Paragraph. Founders building something early are especially welcome. Email is the best way to reach him."
+  schema={[contactPage(), breadcrumbs([{ name: 'Contact', path: '/contact' }])]}
 >
   <div class="container narrow">
     <header class="page-head">

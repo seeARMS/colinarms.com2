@@ -5,6 +5,7 @@ import { Image, getImage } from 'astro:assets'
 import Layout from '@/layouts/Layout.astro'
 import meta from 'virtual:photo-meta'
 import { captions } from '@/data/photos'
+import { breadcrumbs, imageGallery } from '@/lib/schema'
 
 const modules = import.meta.glob<{ default: ImageMetadata }>('/src/assets/photos/*.{jpg,jpeg,png,webp}', {
   eager: true,
@@ -39,9 +40,13 @@ const camera = [...counts].sort((a, b) => b[1] - a[1])[0]?.[0]
 ---
 
 <Layout
-  title="Photography"
-  description="Wildlife, landscape, and astrophotography by Colin Armstrong."
+  title="Wildlife, landscape & astrophotography"
+  description="Photographs by Colin Armstrong: birds, bobcats and gray foxes, the Milky Way, Meteora, Santorini and Big Sur, mostly shot on a Canon EOS R5."
   image="/photos/yosemite.jpg"
+  schema={[
+    imageGallery(photos.map((p) => ({ src: p.full, caption: p.caption }))),
+    breadcrumbs([{ name: 'Photography', path: '/photography' }]),
+  ]}
 >
   <div class="container wide">
     <header class="page-head">

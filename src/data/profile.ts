@@ -145,7 +145,7 @@ export type Appearance = {
   href: string
   /** YYYY-MM */
   date: string
-  kind: 'Podcast' | 'Press'
+  kind: 'Podcast' | 'Press' | 'Interview'
 }
 
 export const appearances: Appearance[] = [
@@ -178,6 +178,27 @@ export const appearances: Appearance[] = [
     kind: 'Press',
   },
   {
+    outlet: 'SiliconANGLE',
+    title: 'Web3 newsletter Paragraph raises $5M and takes over blogging platform Mirror',
+    href: 'https://siliconangle.com/2024/05/03/web3-newsletter-paragraph-raises-5m-takes-blogging-platform-mirror/',
+    date: '2024-05',
+    kind: 'Press',
+  },
+  {
+    outlet: 'Danica Swanson',
+    title: 'Introducing Referral Rewards: an interview with Colin Armstrong',
+    href: 'https://paragraph.com/@danicaswanson/referral-rewards-interview-with-colin-armstrong',
+    date: '2023-10',
+    kind: 'Interview',
+  },
+  {
+    outlet: 'Milk Road',
+    title: 'How blockchain can transform the newsletter industry',
+    href: 'https://www.youtube.com/watch?v=jJ_BwfLCzKs',
+    date: '2023-05',
+    kind: 'Podcast',
+  },
+  {
     outlet: 'Humans of Farcaster',
     title: 'Colin Armstrong, founder of Paragraph',
     href: 'https://open.spotify.com/episode/7DNIPl4AgIZ7mFHTl6rb84',
@@ -190,5 +211,26 @@ export const appearances: Appearance[] = [
     href: 'https://insidetheden.captivate.fm/episode/paragraph-and-its-three-pillars-with-colin-arnstrong',
     date: '2023-04',
     kind: 'Podcast',
+  },
+  {
+    outlet: 'Web3 Talks',
+    title: '#38: How Paragraph combined web2 and web3 to build a Substack alternative',
+    href: 'https://listen.style/p/01grfnkjj5ypb47k8wxkdy1j09/01grfnkjkp8fpdj5p1czsbgz1b',
+    date: '2023-01',
+    kind: 'Podcast',
+  },
+  {
+    outlet: 'SiliconANGLE',
+    title: 'Web3 newsletter platform Paragraph raises $1.7M in pre-seed funding',
+    href: 'https://siliconangle.com/2022/10/24/web3-newsletter-platform-paragraph-raises-1-7m-pre-seed-funding/',
+    date: '2022-10',
+    kind: 'Press',
+  },
+  {
+    outlet: 'The Block',
+    title: 'Web3 publishing platform Paragraph raises $1.7 million',
+    href: 'https://www.theblock.co/post/179174/web3-publishing-platform-paragraph-raises',
+    date: '2022-10',
+    kind: 'Press',
   },
 ]

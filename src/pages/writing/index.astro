@@ -7,15 +7,17 @@ import SubscribeForm from '@/components/SubscribeForm.astro'
 import { getColinArticles } from '@/lib/getAllArticles'
 import { year } from '@/lib/format'
 import { person } from '@/data/profile'
+import { blog, breadcrumbs } from '@/lib/schema'
 
 const articles = await getColinArticles()
 const since = articles.length ? year(articles[articles.length - 1].isoDate) : ''
 ---
 
 <Layout
-  title="Writing"
-  description="Thoughts on startups, product, engineering, and whatever else is on my mind."
+  title="Writing on startups, product & engineering"
+  description="Essays by Colin Armstrong, founder of Paragraph, on startups, product, engineering, and the open web. Subscribe to get new posts by email."
   image="/og/writing.png"
+  schema={[blog(articles), breadcrumbs([{ name: 'Writing', path: '/writing' }])]}
 >
   <div class="container narrow">
     <header class="page-head">

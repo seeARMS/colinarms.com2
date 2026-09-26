@@ -1,5 +1,8 @@
 {
   "name": "armstrng",
+  // Colin Personal. Pinned so a deploy can never land on another account
+  // (the default Wrangler login on this machine is a work account).
+  "account_id": "68d615b353a7fe2663d3e7154366864a",
   "compatibility_date": "2026-04-15",
   "assets": {
     "directory": "./dist"

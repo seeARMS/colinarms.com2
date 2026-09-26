@@ -5,9 +5,11 @@
   "scripts": {
     "dev": "astro dev",
     "build": "node scripts/generate-og.mjs && astro build",
-    "preview": "npm run build && wrangler dev",
-    "deploy": "npm run build && wrangler deploy",
-    "lint": "eslint src"
+    "preview": "npm run build && XDG_CONFIG_HOME=\"$HOME/.config/wrangler-personal\" wrangler dev",
+    "deploy": "npm run build && XDG_CONFIG_HOME=\"$HOME/.config/wrangler-personal\" wrangler deploy",
+    "lint": "eslint src",
+    "deploy:www": "XDG_CONFIG_HOME=\"$HOME/.config/wrangler-personal\" wrangler deploy --config redirect/wrangler.jsonc",
+    "cf": "XDG_CONFIG_HOME=\"$HOME/.config/wrangler-personal\" wrangler"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.1.10",
