@@ -1,23 +1,50 @@
-import { defineConfig } from 'astro/config'
+import { defineConfig, fontProviders } from 'astro/config'
 import cloudflare from '@astrojs/cloudflare'
-import tailwindcss from '@tailwindcss/vite'
 import sitemap from '@astrojs/sitemap'
+import photoMeta from './scripts/photo-meta.mjs'
 
 export default defineConfig({
   site: 'https://armstr.ng',
   output: 'server',
+  // URLs have no trailing slash. Pages build to files (writing.html, not
+  // writing/index.html), which Cloudflare serves at /writing directly, so no
+  // link on the site goes through a redirect.
+  trailingSlash: 'never',
   prefetch: {
     prefetchAll: true,
-    defaultStrategy: 'load',
+    defaultStrategy: 'hover',
   },
   build: {
+    format: 'file',
     inlineStylesheets: 'always',
   },
   integrations: [sitemap()],
   adapter: cloudflare({
     imageService: 'compile',
   }),
+  devToolbar: { enabled: false },
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [photoMeta()],
   },
+  // Same faces as heade.rs: Geist for everything, Geist Mono for data.
+  fonts: [
+    {
+      provider: fontProviders.fontsource(),
+      name: 'Geist',
+      cssVariable: '--font-sans',
+      weights: ['100 900'],
+      styles: ['normal', 'italic'],
+      subsets: ['latin'],
+      fallbacks: ['ui-sans-serif', 'system-ui', 'sans-serif'],
+    },
+    {
+      provider: fontProviders.fontsource(),
+      name: 'Geist Mono',
+      cssVariable: '--font-mono',
+      weights: ['100 900'],
+      styles: ['normal'],
+      subsets: ['latin'],
+      fallbacks: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+    },
+  ],
 })

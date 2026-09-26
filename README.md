@@ -1,41 +1,31 @@
-# Colin's personal website
+# armstr.ng
 
-Hi. This is my personal website.
+Colin Armstrong's personal site: [armstr.ng](https://armstr.ng).
 
-I built this by heavily relying on the Spotlight Tailwind UI site template, so a lot of thanks need to be given to the good folks over at TailwindCSS.
+Astro on Cloudflare Workers, in the same design language as [heade.rs](https://heade.rs): Geist and Geist Mono, a gray canvas with white hairline cards, and one blue accent for things that move. Pages are prerendered; `/api/subscribe` is the only thing that runs on request.
 
+## Where things live
 
-## Getting started
+| What | Where |
+| --- | --- |
+| Bio facts, projects, work history, podcasts & press, social links | `src/data/profile.ts` |
+| Photo captions | `src/data/photos.ts` |
+| Photos (camera settings come from their EXIF at build time) | `src/assets/photos/` |
+| Posts | Pulled from the Paragraph API when the site builds (`src/lib/getAllArticles.js`) |
+| Design tokens and shared styles | `src/styles/global.css` |
+| Social preview images | `scripts/generate-og.mjs`, run before each build |
 
-To get started with this template, first install the npm dependencies:
+New Paragraph posts appear after the next build.
 
-```bash
+## Develop
+
+```sh
 npm install
+npm run dev       # http://localhost:4321
+npm run build     # social preview images, then the site
+npm run deploy    # build and deploy with Wrangler
 ```
 
-Next, create a `.env.local` file in the root of your project and set the `NEXT_PUBLIC_SITE_URL` variable to your site's public URL:
+## Configuration
 
-```
-NEXT_PUBLIC_SITE_URL=https://example.com
-```
-
-Next, run the development server:
-
-```bash
-npm run dev
-```
-
-Finally, open [http://localhost:3000](http://localhost:3000) in your browser to view the website.
-
-## License
-
-The underlying Spotlight template is a commercial product and is licensed under the [Tailwind UI license](https://tailwindui.com/license).
-
-## Learn more
-
-To learn more about the technologies used in this site template, see the following resources:
-
-- [Tailwind CSS](https://tailwindcss.com/docs) - the official Tailwind CSS documentation
-- [Next.js](https://nextjs.org/docs) - the official Next.js documentation
-- [Headless UI](https://headlessui.dev) - the official Headless UI documentation
-- [MDX](https://mdxjs.com) - the MDX documentation
+`PARAGRAPH_API_KEY` lets `/api/subscribe` add subscribers. Set it as a Worker secret (`npx wrangler secret put PARAGRAPH_API_KEY`) and, for local development, in `.dev.vars`. Subscribe requests are limited to five per visitor per minute by the `SUBSCRIBE_LIMIT` rate limiter in `wrangler.jsonc`.

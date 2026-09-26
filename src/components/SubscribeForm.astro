@@ -1,0 +1,161 @@
+---
+// The email field, styled like heade.rs's search box: an icon, the input, and
+// the action inside one bordered field. Any number can live on a page; the
+// script in SubscribeDialog wires them all up.
+interface Props {
+  size?: 'md' | 'lg'
+  autofocus?: boolean
+}
+
+const { size = 'md', autofocus = false } = Astro.props
+---
+
+<div class="subscribe">
+  <form class:list={['field', size]} data-subscribe-form novalidate>
+    <svg class="icon" viewBox="0 0 16 16" aria-hidden="true">
+      <rect x="2" y="3.5" width="12" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"></rect>
+      <path d="m2.75 4.5 5.25 4 5.25-4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"
+      ></path>
+    </svg>
+    <input
+      name="email"
+      type="email"
+      required
+      placeholder="you@example.com"
+      aria-label="Email address"
+      autocomplete="email"
+      autocapitalize="off"
+      spellcheck="false"
+      enterkeyhint="send"
+      autofocus={autofocus}
+    />
+    <!-- Left empty by people; bots that fill every field give themselves away. -->
+    <input class="trap" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" />
+    <button class="btn primary" type="submit">Subscribe</button>
+  </form>
+  <p class="status" role="status" aria-live="polite" data-subscribe-status></p>
+</div>
+
+<style>
+  .field {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    height: 44px;
+    padding: 0 5px 0 38px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    transition:
+      border-color 120ms,
+      box-shadow 120ms;
+  }
+
+  .field:hover {
+    border-color: var(--line-strong);
+  }
+
+  .field:focus-within {
+    border-color: var(--ink-3);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 8%, transparent);
+  }
+
+  .icon {
+    position: absolute;
+    left: 13px;
+    width: 16px;
+    height: 16px;
+    color: var(--ink-3);
+    pointer-events: none;
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    background: none;
+    color: var(--ink);
+    font-size: 14px;
+  }
+
+  input::placeholder {
+    color: var(--ink-3);
+  }
+
+  .trap {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+  }
+
+  .lg {
+    height: 52px;
+    padding: 0 6px 0 44px;
+  }
+
+  .lg .icon {
+    left: 16px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .lg input {
+    font-size: 16px;
+  }
+
+  .lg .btn {
+    height: 38px;
+    padding: 0 16px;
+  }
+
+  .status {
+    min-height: 20px;
+    margin-top: 8px;
+    font-size: 13px;
+  }
+
+  .status:empty {
+    min-height: 0;
+    margin: 0;
+  }
+
+  .status[data-tone='ok'] {
+    color: var(--green);
+  }
+
+  .status[data-tone='error'] {
+    color: var(--red);
+  }
+
+  /* The field shakes once when it can't be sent. */
+  .field[data-shake] {
+    animation: shake 0.32s var(--ease);
+  }
+
+  @keyframes shake {
+    25% {
+      transform: translateX(-4px);
+    }
+    50% {
+      transform: translateX(3px);
+    }
+    75% {
+      transform: translateX(-2px);
+    }
+  }
+
+  @media (max-width: 639px) {
+    /* 16px stops iOS from zooming into the field. */
+    input {
+      font-size: 16px;
+    }
+  }
+</style>

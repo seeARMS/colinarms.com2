@@ -1,27 +1,160 @@
 ---
+// Posts as rows in one card. With `byYear`, the year sits in its own column
+// on the first post of each year, like an archive.
+import { mediumDate, shortDate, year } from '@/lib/format'
+
 interface Props {
-  posts: { title: string; link?: string; slug?: string; isoDate?: string }[]
-  label?: string
+  posts: { title: string; link: string; isoDate: string }[]
+  byYear?: boolean
 }
 
-const { posts, label } = Astro.props
+const { posts, byYear = false } = Astro.props
+const rows = posts.map((post, i) => ({
+  ...post,
+  year: year(post.isoDate),
+  firstOfYear: i === 0 || year(posts[i - 1].isoDate) !== year(post.isoDate),
+}))
 ---
 
-<div class="bg-gray-50 dark:bg-zinc-800 rounded-lg px-6 py-5">
-  {label && <p class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500 mb-3">{label}</p>}
-  <div class="divide-y divide-zinc-200 dark:divide-zinc-700">
-    {posts.map((post) => (
-      <a
-        href={post.link ?? `/writing/${post.slug}`}
-        class="group flex items-baseline justify-between gap-4 py-3 transition-colors duration-200"
-      >
-        <span class="text-sm text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
-          {post.title}
-        </span>
-        <svg class="w-4 h-4 shrink-0 text-zinc-300 dark:text-zinc-600 group-hover:text-blue-500 group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" />
-        </svg>
-      </a>
-    ))}
-  </div>
-</div>
+<ol class:list={['card', 'posts', { 'by-year': byYear }]}>
+  {
+    rows.map((post) => (
+      <li class:list={{ 'new-year': byYear && post.firstOfYear }}>
+        <a href={post.link}>
+          {byYear && <span class="year mono num">{post.firstOfYear ? post.year : ''}</span>}
+          <span class="title">{post.title}</span>
+          <time class="date mono num" datetime={post.isoDate}>
+            {byYear ? (
+              <>
+                {shortDate(post.isoDate)}
+                <span class="with-year">, {post.year}</span>
+              </>
+            ) : (
+              mediumDate(post.isoDate)
+            )}
+          </time>
+          <svg class="go" viewBox="0 0 16 16" aria-hidden="true">
+            <path
+              d="m6 3.5 4.5 4.5L6 12.5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </a>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .posts {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow: hidden;
+  }
+
+  li + li {
+    border-top: 1px solid var(--line);
+  }
+
+  /* Within a year, rows are separated more quietly than between years. */
+  .by-year li + li:not(.new-year) {
+    border-top-color: transparent;
+    background-image: linear-gradient(var(--line), var(--line));
+    background-size: calc(100% - 96px) 1px;
+    background-position: right top;
+    background-repeat: no-repeat;
+  }
+
+  a {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    min-height: 48px;
+    padding: 13px 16px;
+    transition: background-color 120ms;
+  }
+
+  a:hover {
+    background: var(--surface-2);
+  }
+
+  .year {
+    flex: none;
+    width: 64px;
+    color: var(--ink-3);
+    font-size: 13px;
+  }
+
+  .title {
+    flex: 1;
+    min-width: 0;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    text-wrap: pretty;
+  }
+
+  .date {
+    flex: none;
+    color: var(--ink-3);
+    font-size: 12.5px;
+  }
+
+  /* The year column says it on wide screens; small screens fold it in. */
+  .with-year {
+    display: none;
+  }
+
+  .go {
+    flex: none;
+    align-self: center;
+    width: 14px;
+    height: 14px;
+    color: var(--ink-3);
+    transition:
+      transform 160ms var(--ease),
+      color 120ms;
+  }
+
+  a:hover .go {
+    color: var(--ink);
+    transform: translateX(2px);
+  }
+
+  @media (max-width: 639px) {
+    a {
+      flex-wrap: wrap;
+      gap: 2px 12px;
+    }
+
+    .title {
+      flex-basis: calc(100% - 40px);
+    }
+
+    .year {
+      display: none;
+    }
+
+    .by-year li + li:not(.new-year) {
+      background-size: 100% 1px;
+    }
+
+    .go {
+      display: none;
+    }
+
+    .date {
+      order: -1;
+      width: 100%;
+    }
+
+    .with-year {
+      display: inline;
+    }
+  }
+</style>

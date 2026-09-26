@@ -2,54 +2,59 @@
 export const prerender = true
 
 import Layout from '@/layouts/Layout.astro'
-import Footer from '@/components/Footer.astro'
-import Navbar from '@/components/Navbar.astro'
-import SubscribeDialog from '@/components/SubscribeDialog.astro'
-import SubscribeWell from '@/components/SubscribeWell.astro'
+import PostList from '@/components/PostList.astro'
+import SubscribeForm from '@/components/SubscribeForm.astro'
 import { getColinArticles } from '@/lib/getAllArticles'
+import { year } from '@/lib/format'
+import { person } from '@/data/profile'
 
 const articles = await getColinArticles()
+const since = articles.length ? year(articles[articles.length - 1].isoDate) : ''
 ---
 
-<Layout title="Writing" description="Thoughts on startups, product, engineering, and whatever else is on my mind." image="/og/writing.png">
-  <Navbar />
-  <SubscribeDialog />
-  <div class="flex-1">
-    <div class="max-w-2xl mx-auto px-6 sm:px-8 pt-20 pb-16 sm:pt-24 sm:pb-24">
-      <h1 class="mb-2 text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-zinc-100">
-        Writing
-      </h1>
-      <p class="mb-8 text-base text-zinc-500 dark:text-zinc-400">
-        Thoughts on startups, product, engineering, and whatever else is on my mind. If you'd like to follow along, drop your email below.
+<Layout
+  title="Writing"
+  description="Thoughts on startups, product, engineering, and whatever else is on my mind."
+  image="/og/writing.png"
+>
+  <div class="container narrow">
+    <header class="page-head">
+      <h1>Writing</h1>
+      <p class="summary">
+        Thoughts on startups, product, engineering, and whatever else is on my mind. If you'd like to follow along,
+        drop your email below.
       </p>
-
-      <div class="mb-10">
-        <SubscribeWell />
+      <div class="subscribe">
+        <SubscribeForm size="lg" />
       </div>
+    </header>
 
-      <div class="divide-y divide-zinc-200 dark:divide-zinc-700">
-        {articles.map((post) => {
-          const date = new Date(post.isoDate).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-          })
-          return (
-            <a
-              href={post.link}
-              class="group flex items-baseline gap-4 py-3 transition-colors duration-200"
-            >
-              <time class="text-sm text-zinc-500 min-w-[100px] tabular-nums">
-                {date}
-              </time>
-              <span class="text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200 flex-1">
-                {post.title}
-              </span>
-            </a>
-          )
-        })}
-      </div>
-    </div>
+    {
+      articles.length > 0 && (
+        <section class="section" aria-labelledby="archive">
+          <div class="section-head">
+            <h2 id="archive">Archive</h2>
+            <span class="meta">
+              {articles.length} posts since {since}, also on{' '}
+              <a class="link" href={person.blog} rel="noopener">
+                Paragraph
+              </a>
+            </span>
+          </div>
+          <PostList posts={articles} byYear />
+        </section>
+      )
+    }
   </div>
-  <Footer />
 </Layout>
+
+<style>
+  .narrow {
+    max-width: calc(800px + var(--gutter) * 2);
+  }
+
+  .subscribe {
+    max-width: 520px;
+    margin-top: 24px;
+  }
+</style>
