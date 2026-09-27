@@ -2,7 +2,7 @@
 // Colin, this site and Paragraph are defined once and referred to by @id, so
 // search engines can tie the site, the posts, the press and Paragraph to the
 // same person. Layout.astro renders whatever a page passes as `schema`.
-import { appearances, person, socials } from '@/data/profile'
+import { appearances, person, projects, socials } from '@/data/profile'
 
 export const SITE = 'https://armstr.ng'
 export const PERSON_ID = `${SITE}/#person`
@@ -93,6 +93,32 @@ export function profilePage(name: string, image?: string) {
     personNode(image),
     paragraphNode(),
   ]
+}
+
+/**
+ * Colin's side projects, with the same @ids their own sites use
+ * (https://heade.rs/#app and so on), so both ends name the same app and creator.
+ */
+export function projectList() {
+  return {
+    '@type': 'ItemList',
+    '@id': `${SITE}/projects#projects`,
+    name: `Projects by ${person.name}`,
+    itemListElement: projects.map((p, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: {
+        '@type': p.type,
+        '@id': `${new URL(p.href).origin}/#app`,
+        name: p.name,
+        url: new URL('/', p.href).href,
+        description: p.summary,
+        isAccessibleForFree: true,
+        offers: { '@type': 'Offer', price: 0, priceCurrency: 'USD' },
+        creator: personRef(),
+      },
+    })),
+  }
 }
 
 /** Home › … › this page. */

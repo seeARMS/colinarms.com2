@@ -56,6 +56,8 @@ export type Project = {
   href: string
   /** A file in /public, or 'headers' for the inline, theme-aware mark. */
   logo: string
+  /** The schema.org type the project's own site describes itself as. */
+  type: 'WebApplication' | 'SoftwareApplication'
 }
 
 export const projects: Project[] = [
@@ -64,18 +66,21 @@ export const projects: Project[] = [
     summary: 'Domain and IP lookup with live routes and latency',
     href: 'https://heade.rs',
     logo: 'headers',
+    type: 'WebApplication',
   },
   {
     name: 'Draftside',
     summary: 'Private writing editor with on-device AI',
     href: 'https://draftside.ai',
     logo: '/draftside.svg',
+    type: 'WebApplication',
   },
   {
     name: 'Council',
     summary: 'CLI that runs three AI models and synthesizes one answer',
     href: 'https://council.armstr.ng',
     logo: '/council.svg',
+    type: 'SoftwareApplication',
   },
 ]
 
