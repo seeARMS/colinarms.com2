@@ -243,11 +243,12 @@ const graph = schema.length ? JSON.stringify({ '@context': 'https://schema.org',
     <script is:inline define:vars={{ GA_MEASUREMENT_ID }}>
       window.dataLayer = window.dataLayer || []
       function gtag() {
+        // eslint-disable-next-line prefer-rest-params -- gtag.js needs the arguments object itself, not an array
         dataLayer.push(arguments)
       }
       gtag('js', new Date())
       gtag('config', GA_MEASUREMENT_ID, { page_path: window.location.pathname })
-      var s = document.createElement('script')
+      const s = document.createElement('script')
       s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_MEASUREMENT_ID
       s.async = true
       document.body.appendChild(s)
