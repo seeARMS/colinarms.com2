@@ -168,6 +168,21 @@ const graph = schema.length ? JSON.stringify({ '@context': 'https://schema.org',
       })()
     </script>
 
+    <!-- A page Chrome prerendered (see prefetch in astro.config.mjs) isn't drawn
+         until it's shown, so its lazy images would only start loading then.
+         Load the ones that will be on screen, once the page's own scripts
+         have placed everything (Photography shuffles its grid), so they're
+         there on arrival. The rest load as they're scrolled near. -->
+    <script is:inline>
+      if (document.prerendering) {
+        addEventListener('DOMContentLoaded', () => {
+          for (const img of document.querySelectorAll('img[loading="lazy"]')) {
+            if (img.getBoundingClientRect().top < innerHeight) img.loading = 'eager'
+          }
+        })
+      }
+    </script>
+
     <!-- Before first paint: pick the theme, so the page never flashes. -->
     <script is:inline>
       ;(() => {
@@ -208,6 +223,9 @@ const graph = schema.length ? JSON.stringify({ '@context': 'https://schema.org',
 
         apply()
         media.addEventListener('change', applyQuietly)
+        // A page Chrome prerendered (see prefetch in astro.config.mjs) may have
+        // been drawn before the theme last changed, so look again once shown.
+        document.addEventListener('prerenderingchange', applyQuietly)
 
         // The new theme spreads out from the toggle like ink into paper. The
         // circle is set in percentages of the page, which hold however the
@@ -244,19 +262,25 @@ const graph = schema.length ? JSON.stringify({ '@context': 'https://schema.org',
     <Footer wide={wide} />
     <SubscribeDialog />
 
-    <!-- Google Analytics (deferred) -->
+    <!-- Google Analytics (deferred). A page Chrome prerendered counts as a
+         visit when it's shown, not when it loads in the background (maybe
+         never shown at all). -->
     <script is:inline define:vars={{ GA_MEASUREMENT_ID }}>
       window.dataLayer = window.dataLayer || []
       function gtag() {
         // eslint-disable-next-line prefer-rest-params -- gtag.js needs the arguments object itself, not an array
         dataLayer.push(arguments)
       }
-      gtag('js', new Date())
-      gtag('config', GA_MEASUREMENT_ID, { page_path: window.location.pathname })
-      const s = document.createElement('script')
-      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_MEASUREMENT_ID
-      s.async = true
-      document.body.appendChild(s)
+      const start = () => {
+        gtag('js', new Date())
+        gtag('config', GA_MEASUREMENT_ID, { page_path: window.location.pathname })
+        const s = document.createElement('script')
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_MEASUREMENT_ID
+        s.async = true
+        document.body.appendChild(s)
+      }
+      if (document.prerendering) document.addEventListener('prerenderingchange', start, { once: true })
+      else start()
     </script>
   </body>
 </html>

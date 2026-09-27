@@ -29,9 +29,16 @@ export default defineConfig({
   // Astro 7's default ('jsx') drops it, which runs words together in copy
   // written across lines.
   compressHTML: true,
+  // Each page fetches every page it links to once it loads, so a tap never
+  // waits on the network. Chrome and Edge prerender them instead (rendered
+  // ahead, images and all, so a tap just swaps the page in); Safari and
+  // Firefox keep the fetched copy (see public/_headers).
   prefetch: {
     prefetchAll: true,
-    defaultStrategy: 'hover',
+    defaultStrategy: 'load',
+  },
+  experimental: {
+    clientPrerender: true,
   },
   build: {
     format: 'file',
