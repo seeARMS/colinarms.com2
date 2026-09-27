@@ -9,6 +9,7 @@ import { year } from '@/lib/format'
 import { person } from '@/data/profile'
 import { blog, breadcrumbs } from '@/lib/schema'
 
+// The Markdown version of this page (writing.md.ts) repeats its copy; change both.
 const articles = await getColinArticles()
 const since = articles.length ? year(articles[articles.length - 1].isoDate) : ''
 ---

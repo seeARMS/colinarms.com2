@@ -1,4 +1,5 @@
 import { siteSlug } from './slug.js'
+import { edited } from '../data/posts.ts'
 
 const API_BASE = 'https://public.api.paragraph.com/api/v1'
 const PUB_ID = '3eJHzLXKQHclhCdsO4Yr'
@@ -6,27 +7,40 @@ const PUB_ID = '3eJHzLXKQHclhCdsO4Yr'
 export async function getColinArticles() {
   const { items } = await fetchPosts()
 
-  return items.map((post) => ({
-    title: post.title,
-    subtitle: post.subtitle,
-    link: `/writing/${siteSlug(post.slug)}`,
-    isoDate: new Date(Number(post.publishedAt)).toISOString(),
-  }))
+  return items.map((post) => {
+    const slug = siteSlug(post.slug)
+    const isoDate = new Date(Number(post.publishedAt)).toISOString()
+    return {
+      title: post.title,
+      subtitle: post.subtitle,
+      link: `/writing/${slug}`,
+      isoDate,
+      /** When its text last changed (src/data/posts.ts), else when it was published. */
+      updatedIso: edited[slug] ?? isoDate,
+    }
+  })
 }
 
 export async function getColinArticlesWithContent() {
   const { items } = await fetchPosts({ includeContent: true })
 
-  return items.map((post) => ({
-    title: post.title,
-    subtitle: post.subtitle,
-    slug: siteSlug(post.slug),
-    /** The slug on paragraph.com, which may differ from the site's. */
-    paragraphSlug: post.slug,
-    html: post.staticHtml,
-    updatedIso: new Date(Math.max(Number(post.publishedAt), Number(post.updatedAt) || 0)).toISOString(),
-    isoDate: new Date(Number(post.publishedAt)).toISOString(),
-  }))
+  return items.map((post) => {
+    const slug = siteSlug(post.slug)
+    const isoDate = new Date(Number(post.publishedAt)).toISOString()
+    return {
+      title: post.title,
+      subtitle: post.subtitle,
+      slug,
+      /** The slug on paragraph.com, which may differ from the site's. */
+      paragraphSlug: post.slug,
+      html: post.staticHtml,
+      /** Paragraph's own Markdown of the post, for its Markdown version. */
+      markdown: post.markdown,
+      /** When its text last changed (src/data/posts.ts), else when it was published. */
+      updatedIso: edited[slug] ?? isoDate,
+      isoDate,
+    }
+  })
 }
 
 async function fetchPosts({ includeContent } = {}) {

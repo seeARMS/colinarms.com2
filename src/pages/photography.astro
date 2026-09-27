@@ -1,42 +1,15 @@
 ---
 export const prerender = true
 
-import { Image, getImage } from 'astro:assets'
+import { Image } from 'astro:assets'
 import Layout from '@/layouts/Layout.astro'
-import meta from 'virtual:photo-meta'
-import { captions } from '@/data/photos'
+import { getPhotos, mainCamera } from '@/lib/photos'
 import { breadcrumbs, imageGallery } from '@/lib/schema'
 
-const modules = import.meta.glob<{ default: ImageMetadata }>('/src/assets/photos/*.{jpg,jpeg,png,webp}', {
-  eager: true,
-})
-
-const photos = await Promise.all(
-  Object.entries(modules)
-    .map(([path, mod]) => ({
-      name: path.replace(/.*\//, '').replace(/\.[^.]+$/, ''),
-      image: mod.default,
-    }))
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .map(async ({ name, image }) => {
-      // The lightbox gets its own large copy, so photos stay sharp on big screens.
-      const full = await getImage({ src: image, width: Math.min(2400, image.width), format: 'webp', quality: 82 })
-      const m = meta[name] ?? {}
-      return {
-        name,
-        image,
-        full: full.src,
-        caption: captions[name],
-        date: m.date,
-        chips: [m.camera, m.lens, m.focal, m.aperture, m.shutter, m.iso].filter(Boolean) as string[],
-      }
-    }),
-)
-
+// The Markdown version of this page (photography.md.ts) repeats its copy; change both.
+const photos = await getPhotos()
 // "mostly on a Canon EOS R5", from the photos themselves.
-const counts = new Map<string, number>()
-for (const p of photos) if (p.chips[0]) counts.set(p.chips[0], (counts.get(p.chips[0]) ?? 0) + 1)
-const camera = [...counts].sort((a, b) => b[1] - a[1])[0]?.[0]
+const camera = mainCamera(photos)
 ---
 
 <Layout

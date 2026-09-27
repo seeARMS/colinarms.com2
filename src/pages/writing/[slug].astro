@@ -20,7 +20,7 @@ export async function getStaticPaths() {
       ...post,
       allPosts: posts
         .filter((p) => p.slug !== post.slug)
-        .map(({ html: _, ...rest }) => ({ ...rest, link: `/writing/${rest.slug}` })),
+        .map(({ html: _, markdown: __, ...rest }) => ({ ...rest, link: `/writing/${rest.slug}` })),
     },
   }))
 }

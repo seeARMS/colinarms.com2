@@ -3,6 +3,20 @@ import cloudflare from '@astrojs/cloudflare'
 import sitemap from '@astrojs/sitemap'
 import photoMeta from './scripts/photo-meta.mjs'
 import postImages from './scripts/post-images.mjs'
+import { getColinArticles } from './src/lib/getAllArticles.js'
+
+// When each dated page last changed, for the sitemap's lastmod: a post's last
+// edit (src/data/posts.ts) or its publishing, and the archive's newest of
+// those. Other pages have no date to trust, and no lastmod beats a wrong one.
+let lastChanged
+const lastmod = async (url) => {
+  lastChanged ??= getColinArticles().then((posts) => {
+    const dates = new Map(posts.map((post) => [post.link, post.updatedIso]))
+    if (posts.length) dates.set('/writing', posts.map((post) => post.updatedIso).sort().at(-1))
+    return dates
+  })
+  return (await lastChanged).get(new URL(url).pathname)
+}
 
 export default defineConfig({
   site: 'https://armstr.ng',
@@ -23,7 +37,14 @@ export default defineConfig({
     format: 'file',
     inlineStylesheets: 'always',
   },
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      serialize: async (item) => {
+        const date = await lastmod(item.url)
+        return date ? { ...item, lastmod: date } : item
+      },
+    }),
+  ],
   adapter: cloudflare({
     imageService: 'compile',
   }),

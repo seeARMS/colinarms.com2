@@ -7,6 +7,23 @@ export const person = {
   previously: 'Previously Google and Coinbase',
   email: 'colin@armstr.ng',
   blog: 'https://paragraph.com/@colins-blog',
+  /** The site's description in search results, unless a page has its own. */
+  description:
+    'Colin Armstrong is the founder and CEO of Paragraph, the media engine for early-stage startups. Previously anti-abuse at Google and payments at Coinbase.',
+  /**
+   * What tells him apart from everyone else named Colin Armstrong, for search
+   * engines. heade.rs, Draftside and Council use the same words.
+   */
+  disambiguation:
+    'Founder and CEO of Paragraph (paragraph.com), a software engineer and entrepreneur in the San Francisco Bay Area who previously worked at Google and Coinbase.',
+}
+
+/** Paragraph, the company, as search engines and agents should know it. */
+export const paragraph = {
+  /** The day it was incorporated. */
+  founded: '2022-04-07',
+  disambiguation:
+    'The company behind paragraph.com, a publishing platform for startups and writers, founded by Colin Armstrong in April 2022; it acquired the onchain publishing platform Mirror (mirror.xyz) in 2024.',
 }
 
 export type Social = {

@@ -5,6 +5,7 @@
 // stroke by stroke, the first time the list comes into view.
 import Mark from './Mark.astro'
 import type { Role } from '@/data/profile'
+import { anchor, tenure } from '@/lib/format'
 
 interface Props {
   roles: Role[]
@@ -16,9 +17,9 @@ const { roles, variant = 'link' } = Astro.props
 
 const rows = roles.map((role) => ({
   ...role,
-  slug: role.company.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+  slug: anchor(role.company),
   current: role.to === undefined,
-  years: role.to ? `${role.from}–${role.to}` : `Since ${role.from}`,
+  years: tenure(role),
 }))
 ---
 

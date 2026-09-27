@@ -2,7 +2,7 @@
 // Colin, this site and Paragraph are defined once and referred to by @id, so
 // search engines can tie the site, the posts, the press and Paragraph to the
 // same person. Layout.astro renders whatever a page passes as `schema`.
-import { appearances, person, projects, socials } from '@/data/profile'
+import { appearances, paragraph, person, projects, socials } from '@/data/profile'
 
 export const SITE = 'https://armstr.ng'
 export const PERSON_ID = `${SITE}/#person`
@@ -24,6 +24,7 @@ export function personNode(image?: string) {
     email: `mailto:${person.email}`,
     jobTitle: 'Founder & CEO',
     description: `${person.name} is the founder and CEO of Paragraph, the media engine for early-stage startups. He previously led anti-abuse and privacy engineering teams at Google and helped build Coinbase's payments infrastructure.`,
+    disambiguatingDescription: person.disambiguation,
     worksFor: { '@id': PARAGRAPH_ID },
     homeLocation: { '@type': 'Place', name: 'San Francisco Bay Area' },
     knowsAbout: ['Startups', 'Publishing', 'Newsletters', 'Anti-abuse', 'Privacy engineering', 'Payments', 'Photography'],
@@ -50,7 +51,13 @@ export function personNode(image?: string) {
 
 /** Enough of Colin to stand on its own on any page. */
 export function personRef() {
-  return { '@type': 'Person', '@id': PERSON_ID, name: person.name, url: url('/') }
+  return {
+    '@type': 'Person',
+    '@id': PERSON_ID,
+    name: person.name,
+    url: url('/'),
+    disambiguatingDescription: person.disambiguation,
+  }
 }
 
 export function paragraphNode() {
@@ -60,7 +67,8 @@ export function paragraphNode() {
     name: 'Paragraph',
     url: 'https://paragraph.com/',
     description: 'The media engine for early-stage startups.',
-    foundingDate: '2022',
+    disambiguatingDescription: paragraph.disambiguation,
+    foundingDate: paragraph.founded,
     founder: { '@id': PERSON_ID },
     sameAs: ['https://x.com/paragraph_xyz', 'https://www.linkedin.com/company/paragraph-xyz'],
   }
@@ -190,7 +198,8 @@ export function imageGallery(photos: { src: string; caption?: string }[]) {
       '@type': 'ImageObject',
       contentUrl: url(p.src),
       caption: p.caption,
-      creator: personRef(),
+      // Just the name: the gallery's author above says the rest, once.
+      creator: { '@type': 'Person', '@id': PERSON_ID, name: person.name },
       creditText: person.name,
       copyrightNotice: `© ${person.name}`,
     })),

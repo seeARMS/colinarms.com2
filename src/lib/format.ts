@@ -1,3 +1,5 @@
+import type { Appearance, Role } from '@/data/profile'
+
 // Dates are written the same way everywhere, in the site's own time zone, so
 // a post published late in the evening doesn't slip to the next day.
 const TZ = 'America/Los_Angeles'
@@ -15,6 +17,23 @@ export const mediumDate = (iso: string) => medium.format(new Date(iso))
 export const shortDate = (iso: string) => short.format(new Date(iso))
 /** 2024 */
 export const year = (iso: string) => yearOnly.format(new Date(iso))
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+/** 2024-05 → May 2024 (a podcast or article's month, with no time zone to mind) */
+export function monthYear(ym: string): string {
+  const [y, m] = ym.split('-').map(Number)
+  return `${MONTHS[m - 1]} ${y}`
+}
+
+/** "Since 2022" for the job that's still going, else "2017–2022". */
+export const tenure = (role: Role) => (role.to ? `${role.from}–${role.to}` : `Since ${role.from}`)
+
+/** Where a role sits on Projects & Work: Paragraph → /projects#paragraph. */
+export const anchor = (company: string) => company.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+
+/** Where an appearance ran, said the way you'd say it: "On Into the Bytecode". */
+export const venue = (a: Appearance) =>
+  a.kind === 'Podcast' ? `On ${a.outlet}` : a.kind === 'Interview' ? `Interviewed by ${a.outlet}` : `In ${a.outlet}`
 
 /** Minutes to read, at an unhurried 230 words a minute. */
 export function readingTime(html: string): number {
