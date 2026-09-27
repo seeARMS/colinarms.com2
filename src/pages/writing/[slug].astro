@@ -10,6 +10,7 @@ import { longDate, postDescription, readingTime } from '@/lib/format'
 import { blogPosting, breadcrumbs } from '@/lib/schema'
 import { person } from '@/data/profile'
 import { highlight } from '@/lib/highlight'
+import { optimizeImages } from '@/lib/post-images'
 
 export async function getStaticPaths() {
   const posts = await getColinArticlesWithContent()
@@ -27,7 +28,7 @@ export async function getStaticPaths() {
 const { slug } = Astro.params
 const { title, subtitle, html, isoDate, updatedIso, paragraphSlug, allPosts } = Astro.props
 const minutes = html ? readingTime(html) : 0
-const body = html ? await highlight(html) : ''
+const body = html ? await optimizeImages(await highlight(html)) : ''
 const path = `/writing/${slug}`
 const image = `/og/${slug}.png`
 const description = postDescription(title, subtitle, html ?? '')
@@ -79,10 +80,7 @@ const schema = [
       ) : (
         <p class="empty">
           This post lives on Paragraph.{' '}
-          <a class="link" href={`${person.blog}/${paragraphSlug}`} rel="noopener">
-            Read it there
-          </a>
-          .
+          <a class="link" href={`${person.blog}/${paragraphSlug}`} rel="noopener">Read it there</a>.
         </p>
       )
     }
@@ -109,6 +107,19 @@ const schema = [
     }
   </aside>
 </Layout>
+
+<script>
+  // Once a post image has arrived, drop its blurred preview, so the preview
+  // can't show through the transparent parts of a screenshot.
+  for (const img of document.querySelectorAll<HTMLImageElement>('.prose img[data-blur]')) {
+    const arrived = () => {
+      img.style.removeProperty('background-image')
+      delete img.dataset.blur
+    }
+    if (img.complete && img.naturalWidth) arrived()
+    else img.addEventListener('load', arrived, { once: true })
+  }
+</script>
 
 <style>
   .post,
@@ -182,6 +193,9 @@ const schema = [
 
   .after {
     display: grid;
+    /* Never wider than the column: an auto track would grow to the subscribe
+       field's natural width and push the page sideways on phones. */
+    grid-template-columns: minmax(0, 1fr);
     gap: 48px;
     margin-top: 72px;
   }

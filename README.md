@@ -12,6 +12,7 @@ Astro on Cloudflare Workers, in the same design language as [heade.rs](https://h
 | Photo captions | `src/data/photos.ts` |
 | Photos (camera settings come from their EXIF at build time) | `src/assets/photos/` |
 | Posts | Pulled from the Paragraph API when the site builds (`src/lib/getAllArticles.js`) |
+| Images in posts (resized to WebP, real dimensions, blurred preview) | `src/lib/post-images.ts`, with sizes and previews from `scripts/post-images.mjs` |
 | Design tokens and shared styles | `src/styles/global.css` |
 | Social preview images | `scripts/generate-og.mjs`, run before each build |
 

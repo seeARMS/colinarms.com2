@@ -72,8 +72,11 @@ const { size = 'md', autofocus = false } = Astro.props
     pointer-events: none;
   }
 
+  /* A zero width lets the field take whatever room the row has, instead of
+     asking for the ~20 characters an email input wants by default. */
   input {
     flex: 1;
+    width: 0;
     min-width: 0;
     height: 100%;
     padding: 0;

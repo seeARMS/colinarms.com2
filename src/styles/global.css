@@ -545,6 +545,14 @@ img {
   box-shadow: 0 0 0 1px var(--line);
 }
 
+/* Until it loads, a post image shows a blurred preview of itself (set inline,
+   see src/lib/post-images.ts). */
+.prose img[data-blur] {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 .prose hr {
   margin: 2.5em 0;
   border: 0;

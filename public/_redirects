@@ -4,3 +4,12 @@
 /writing/nextjs:-server-side-and-client-side-mismatch/ /writing/nextjs-server-side-and-client-side-mismatch 301
 /writing/nextjs%3A-server-side-and-client-side-mismatch /writing/nextjs-server-side-and-client-side-mismatch 301
 /writing/nextjs%3A-server-side-and-client-side-mismatch/ /writing/nextjs-server-side-and-client-side-mismatch 301
+
+# A post that's no longer published (archived on Paragraph).
+/writing/photoshop-hijacks-your-cursor /writing 301
+/writing/photoshop-hijacks-your-cursor/ /writing 301
+
+# Until September 2026 every address ended in a slash (/writing/), and that's
+# what search engines have indexed. Move them permanently to the slashless
+# form, rather than with Cloudflare's default temporary redirect.
+/*/ /:splat 301

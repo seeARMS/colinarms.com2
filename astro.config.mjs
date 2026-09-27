@@ -2,6 +2,7 @@ import { defineConfig, fontProviders } from 'astro/config'
 import cloudflare from '@astrojs/cloudflare'
 import sitemap from '@astrojs/sitemap'
 import photoMeta from './scripts/photo-meta.mjs'
+import postImages from './scripts/post-images.mjs'
 
 export default defineConfig({
   site: 'https://armstr.ng',
@@ -23,8 +24,16 @@ export default defineConfig({
     imageService: 'compile',
   }),
   devToolbar: { enabled: false },
+  // Images in posts are hosted by Paragraph (and one by Highlight); allowing
+  // them here lets the build resize them (see src/lib/post-images.ts).
+  image: {
+    remotePatterns: [
+      { protocol: 'https', hostname: 'storage.googleapis.com', pathname: '/papyrus_images/**' },
+      { protocol: 'https', hostname: 'highlight-creator-assets.highlight.xyz' },
+    ],
+  },
   vite: {
-    plugins: [photoMeta()],
+    plugins: [photoMeta(), postImages()],
   },
   // Same faces as heade.rs: Geist for everything, Geist Mono for data.
   fonts: [

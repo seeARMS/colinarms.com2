@@ -57,8 +57,9 @@ const rows = roles.map((role) => ({
             </span>
             <span class="what">{role.summary}</span>
             <span class="track" role="img" aria-label={`${role.years.replace('–', ' to ')}`}>
-              <i class="bar" />
-              {role.current && <i class="tip" />}
+              {/* Spans, not <i>: an italic element makes the browser fetch Geist Italic. */}
+              <span class="bar" />
+              {role.current && <span class="tip" />}
             </span>
             <span class="yrs mono num">{role.years}</span>
           </>

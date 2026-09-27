@@ -86,9 +86,24 @@ const graph = schema.length ? JSON.stringify({ '@context': 'https://schema.org',
     <Font cssVariable="--font-sans" preload={[{ style: 'normal' }]} />
     <Font cssVariable="--font-mono" />
 
-    <!-- Paint the first frame only once the page's content is in, so a page
-         transition can find what it carries across. -->
-    <link rel="expect" href="#site-footer" blocking="render" />
+    <!-- Arriving from another page on this site, hold the first frame until the
+         page's content is in, so the page transition can find what it carries
+         across. Arriving from anywhere else (a search result, a shared link),
+         nothing transitions, so the page paints as it streams in. -->
+    <script is:inline>
+      ;(() => {
+        const activation = window.navigation?.activation
+        const from = activation?.from?.url
+        if (!from || activation.navigationType === 'reload') return
+        if (new URL(from).origin !== location.origin) return
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
+        const expect = document.createElement('link')
+        expect.rel = 'expect'
+        expect.href = '#site-footer'
+        expect.setAttribute('blocking', 'render')
+        document.head.append(expect)
+      })()
+    </script>
 
     <!-- Page transitions carry one thing across: the post title you clicked
          grows into the post's heading (and back again), and a Work row glides
