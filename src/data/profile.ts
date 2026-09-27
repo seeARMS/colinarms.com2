@@ -16,6 +16,8 @@ export type Social = {
   /** A filled path, drawn in `viewBox` (24×24 unless given). */
   icon: string
   viewBox?: string
+  /** False keeps it off the site's pages; search engines still see it (sameAs). */
+  listed?: boolean
 }
 
 export const socials: Social[] = [
@@ -29,6 +31,7 @@ export const socials: Social[] = [
     name: 'Farcaster',
     handle: '@colin',
     href: 'https://farcaster.xyz/colin',
+    listed: false,
     // The arch from Farcaster's own wordmark, centered in a square.
     icon: 'M25.6958 3.08141H22.6493V6.15997H23.5826V6.16087H25.6958V22.8188H20.5927L20.5896 22.8035L17.9857 10.3421C17.7374 9.15422 17.0877 8.07935 16.1564 7.31498C15.2251 6.55065 14.0519 6.12979 12.8532 6.12978H12.8429C11.6442 6.12979 10.471 6.55061 9.53964 7.31498C8.60831 8.07935 7.95874 9.1546 7.71048 10.3421L5.10348 22.8188H0V6.16048H2.11314V6.15997H3.0465V3.08141H0V0H25.6958V3.08141Z',
     viewBox: '0 -1.44 25.7 25.7',

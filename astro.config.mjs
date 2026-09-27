@@ -35,16 +35,19 @@ export default defineConfig({
   vite: {
     plugins: [photoMeta(), postImages()],
   },
-  // Same faces as heade.rs: Geist for everything, Geist Mono for data.
+  // Newsreader for everything, with its optical sizes, so the big type gets
+  // the finer display cut and small type the sturdier text cut. Geist Mono is
+  // only for code in posts.
   fonts: [
     {
-      provider: fontProviders.fontsource(),
-      name: 'Geist',
-      cssVariable: '--font-sans',
-      weights: ['100 900'],
+      provider: fontProviders.google(),
+      name: 'Newsreader',
+      cssVariable: '--font-serif',
+      weights: ['200 800'],
       styles: ['normal', 'italic'],
       subsets: ['latin'],
-      fallbacks: ['ui-sans-serif', 'system-ui', 'sans-serif'],
+      fallbacks: ['Georgia', 'serif'],
+      options: { experimental: { variableAxis: { opsz: [['6', '72']] } } },
     },
     {
       provider: fontProviders.fontsource(),

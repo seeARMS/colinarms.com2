@@ -1,7 +1,7 @@
 ---
-// Posts as rows in one card. With `byYear`, the year sits in its own column
-// on the first post of each year, like an archive.
-import { mediumDate, shortDate, year } from '@/lib/format'
+// Posts as rows between hairlines. With `byYear`, the year sits in its own
+// column on the first post of each year, like an archive.
+import { shortDate, year } from '@/lib/format'
 
 interface Props {
   posts: { title: string; link: string; isoDate: string }[]
@@ -16,33 +16,26 @@ const rows = posts.map((post, i) => ({
 }))
 ---
 
-<ol class:list={['card', 'posts', { 'by-year': byYear }]}>
+<ol class:list={['rows', 'posts', { 'by-year': byYear }]}>
   {
     rows.map((post) => (
       <li class:list={{ 'new-year': byYear && post.firstOfYear }}>
         <a href={post.link}>
-          {byYear && <span class="year mono num">{post.firstOfYear ? post.year : ''}</span>}
-          <span class="title" data-vt-post={post.link}>{post.title}</span>
-          <time class="date mono num" datetime={post.isoDate}>
+          {byYear && <span class="year">{post.firstOfYear ? post.year : ''}</span>}
+          {/* The title hugs its text, so it can grow into a post's heading cleanly. */}
+          <span class="title" data-vt-post={post.link}>
+            <span class="stroke">{post.title}</span>
+          </span>
+          <time class="date" datetime={post.isoDate}>
             {byYear ? (
               <>
                 {shortDate(post.isoDate)}
                 <span class="with-year">, {post.year}</span>
               </>
             ) : (
-              mediumDate(post.isoDate)
+              post.year
             )}
           </time>
-          <svg class="go" viewBox="0 0 16 16" aria-hidden="true">
-            <path
-              d="m6 3.5 4.5 4.5L6 12.5"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
         </a>
       </li>
     ))
@@ -50,53 +43,31 @@ const rows = posts.map((post, i) => ({
 </ol>
 
 <style>
-  .posts {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    overflow: hidden;
-  }
-
-  li + li {
-    border-top: 1px solid var(--line);
-  }
-
-  /* Within a year, rows are separated more quietly than between years. */
-  .by-year li + li:not(.new-year) {
-    border-top-color: transparent;
-    background-image: linear-gradient(var(--line), var(--line));
-    background-size: calc(100% - 96px) 1px;
-    background-position: right top;
-    background-repeat: no-repeat;
-  }
-
   a {
     display: flex;
     align-items: baseline;
-    gap: 16px;
-    min-height: 48px;
-    padding: 13px 16px;
-    transition: background-color 120ms;
+    gap: 24px;
+    padding: 13px 0;
+    font-size: 19px;
+    line-height: 1.35;
   }
 
-  a:hover {
-    background: var(--surface-2);
+  /* Within a year, rows are separated more quietly than between years. */
+  .by-year li:not(:last-child):has(+ li:not(.new-year)) {
+    border-bottom-color: transparent;
+    background: linear-gradient(var(--line), var(--line)) no-repeat right bottom / calc(100% - 88px) 1px;
   }
 
   .year {
     flex: none;
     width: 64px;
     color: var(--ink-3);
-    font-size: 13px;
+    font-size: 17px;
   }
 
-  /* The title hugs its text, so it can grow into a post's heading cleanly. */
   .title {
     flex: 0 1 auto;
     min-width: 0;
-    font-size: 15px;
-    font-weight: 500;
-    letter-spacing: -0.01em;
     text-wrap: pretty;
   }
 
@@ -104,7 +75,7 @@ const rows = posts.map((post, i) => ({
     flex: none;
     margin-left: auto;
     color: var(--ink-3);
-    font-size: 12.5px;
+    font-size: 17px;
   }
 
   /* The year column says it on wide screens; small screens fold it in. */
@@ -112,47 +83,23 @@ const rows = posts.map((post, i) => ({
     display: none;
   }
 
-  .go {
-    flex: none;
-    align-self: center;
-    width: 14px;
-    height: 14px;
-    color: var(--ink-3);
-    transition:
-      transform 160ms var(--ease),
-      color 120ms;
-  }
-
-  a:hover .go {
-    color: var(--ink);
-    transform: translateX(2px);
-  }
-
   @media (max-width: 639px) {
     a {
-      flex-wrap: wrap;
-      gap: 2px 12px;
-    }
-
-    .title {
-      flex-basis: calc(100% - 40px);
+      gap: 16px;
+      font-size: 18px;
     }
 
     .year {
       display: none;
     }
 
-    .by-year li + li:not(.new-year) {
-      background-size: 100% 1px;
-    }
-
-    .go {
-      display: none;
+    .by-year li:not(:last-child):has(+ li:not(.new-year)) {
+      border-bottom-color: var(--line);
+      background: none;
     }
 
     .date {
-      order: -1;
-      width: 100%;
+      font-size: 15.5px;
     }
 
     .with-year {

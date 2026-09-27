@@ -4,8 +4,11 @@ export const prerender = true
 import { Image, getImage } from 'astro:assets'
 import Layout from '@/layouts/Layout.astro'
 import PostList from '@/components/PostList.astro'
-import WorkTimeline from '@/components/WorkTimeline.astro'
+import WorkList from '@/components/WorkList.astro'
 import avatar from '@/assets/colin.jpg'
+import heron from '@/assets/photos/heron.jpg'
+import motmot from '@/assets/photos/4V3A8589.jpg'
+import fitzRoy from '@/assets/photos/4V3A1468-HDR.jpg'
 import { person, projects, work } from '@/data/profile'
 import { getColinArticles } from '@/lib/getAllArticles'
 import { profilePage } from '@/lib/schema'
@@ -26,81 +29,63 @@ const schema = profilePage(`${person.name} – ${person.title}`, new URL(portrai
   </script>
 
   <div class="container">
-    <header class="page-head intro">
-      <div class="who rise">
-        <Image
-          src={avatar}
-          alt="Colin Armstrong"
-          widths={[72, 144, 216]}
-          sizes="72px"
-          format="webp"
-          quality={82}
-          loading="eager"
-          fetchpriority="high"
-          class="face"
-        />
-        <div>
-          <h1>{person.name}</h1>
-          <p class="role">{person.title} · {person.previously}</p>
-        </div>
-      </div>
-
-      <div class="bio rise" style="--i:1">
-        <p>
-          I'm building <a class="link" href="https://paragraph.com" rel="noopener">Paragraph</a>, the media engine for
-          early-stage startups. We help founders turn launches, product updates, and what they're learning into media
-          they own. In 2024 we acquired Mirror and raised $5 million from USV and Coinbase Ventures.
-        </p>
-        <p>
-          Before that, I led anti-abuse and privacy engineering teams at Google and helped build Coinbase's payments
-          infrastructure. I also angel invest in early-stage startups like <a
-            class="link"
-            href="https://farcaster.xyz"
-            rel="noopener">Farcaster</a
-          >, <a class="link" href="https://daimo.com" rel="noopener">Daimo</a>, and <a
-            class="link"
-            href="https://layer3.xyz"
-            rel="noopener">Layer3</a
-          >, and back venture funds as a limited partner.
-        </p>
-        <p>
-          On the side I build small tools like <a class="link" href={headers.href} rel="noopener">{headers.name}</a>, <a
-            class="link"
-            href={draftside.href}
-            rel="noopener">{draftside.name}</a
-          >, and <a class="link" href={council.href} rel="noopener">{council.name}</a>. In my free time I enjoy <a
-            class="link"
-            href="/photography">photography</a
-          >, wine, cooking & cycling.
-        </p>
-        <p class="ask">
-          If you're a founder building something early, <a class="link" href={`mailto:${person.email}`}>email me</a>.
-        </p>
-      </div>
+    <header class="intro">
+      <Image
+        src={avatar}
+        alt="Portrait of Colin Armstrong"
+        widths={[80, 160, 240]}
+        sizes="80px"
+        format="webp"
+        quality={82}
+        loading="eager"
+        fetchpriority="high"
+        class="face"
+      />
+      <h1>{person.name}</h1>
     </header>
 
-    <section class="section rise" style="--i:2" aria-labelledby="work">
-      <div class="section-head">
-        <h2 id="work">Work</h2>
-        <a class="more" href="/projects">
-          Projects & Work
-          <svg viewBox="0 0 16 16" aria-hidden="true">
-            <path
-              d="M3 8h9.5M8.5 4l4 4-4 4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"></path>
-          </svg>
-        </a>
-      </div>
-      <WorkTimeline roles={work} />
-    </section>
+    <div class="bio">
+      <p style="--i:0">
+        I'm building <a class="link" href="https://paragraph.com" rel="noopener">Paragraph</a>, the media engine for
+        early-stage startups. We help founders turn launches, product updates, and what they're learning into media they
+        own. We've raised $7 million from investors including USV and Coinbase Ventures, and in 2024 we acquired Mirror.
+      </p>
+      <p style="--i:1">
+        Before that, I led anti-abuse and privacy engineering teams at Google and helped build Coinbase's payments
+        infrastructure. I also angel invest in early-stage startups like <a
+          class="link"
+          href="https://farcaster.xyz"
+          rel="noopener">Farcaster</a
+        >, <a class="link" href="https://daimo.com" rel="noopener">Daimo</a>, and <a
+          class="link"
+          href="https://layer3.xyz"
+          rel="noopener">Layer3</a
+        >, and in a few venture funds that do the same.
+      </p>
+      <p style="--i:2">
+        On the side I build small tools like <a class="link" href={headers.href} rel="noopener">{headers.name}</a>, <a
+          class="link"
+          href={draftside.href}
+          rel="noopener">{draftside.name}</a
+        >, and <a class="link" href={council.href} rel="noopener">{council.name}</a>. In my free time I enjoy <a
+          class="link snap"
+          href="/photography"
+          >photography<span class="fan" aria-hidden="true"
+            ><span class="print p1"
+              ><Image src={heron} alt="" widths={[176]} sizes="88px" format="webp" quality={78} /></span
+            ><span class="print p2 tall"
+              ><Image src={motmot} alt="" widths={[104]} sizes="52px" format="webp" quality={78} /></span
+            ><span class="print p3"
+              ><Image src={fitzRoy} alt="" widths={[176]} sizes="88px" format="webp" quality={78} /></span
+            ></span
+          ></a
+        >, wine, cooking & cycling.
+      </p>
+    </div>
 
     {
       articles.length > 0 && (
-        <section class="section" aria-labelledby="writing">
+        <section class="section lists" aria-labelledby="writing">
           <div class="section-head">
             <h2 id="writing">Writing</h2>
             <a class="more" href="/writing">
@@ -110,7 +95,7 @@ const schema = profilePage(`${person.name} – ${person.title}`, new URL(portrai
                   d="M3 8h9.5M8.5 4l4 4-4 4"
                   fill="none"
                   stroke="currentColor"
-                  stroke-width="1.5"
+                  stroke-width="1.3"
                   stroke-linecap="round"
                   stroke-linejoin="round"
                 />
@@ -121,61 +106,169 @@ const schema = profilePage(`${person.name} – ${person.title}`, new URL(portrai
         </section>
       )
     }
+
+    <section class="section lists" aria-labelledby="work">
+      <div class="section-head">
+        <h2 id="work">Work</h2>
+        <a class="more" href="/projects">
+          Projects & work
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            <path
+              d="M3 8h9.5M8.5 4l4 4-4 4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.3"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
+          </svg>
+        </a>
+      </div>
+      <WorkList roles={work} />
+    </section>
   </div>
 </Layout>
 
 <style>
   .intro {
-    padding-top: 64px;
-  }
-
-  .who {
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 24px;
+    padding-top: 104px;
   }
 
   .face {
     display: block;
     flex: none;
-    width: 72px;
-    height: 72px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
-    box-shadow:
-      0 0 0 1px var(--line),
-      0 0 0 4px var(--surface),
-      0 0 0 5px var(--line);
+    box-shadow: 0 0 0 1px var(--line);
   }
 
-  .role {
-    margin-top: 6px;
-    color: var(--ink-2);
-    font-size: 15px;
+  h1 {
+    font-size: 60px;
+    font-weight: 360;
+    line-height: 1;
+    letter-spacing: -0.022em;
   }
 
   .bio {
     display: grid;
-    gap: 14px;
-    max-width: 62ch;
-    margin-top: 28px;
-    color: var(--ink-2);
-    font-size: 16px;
-    line-height: 1.65;
+    gap: 0.85em;
+    margin-top: 40px;
+    font-size: 21px;
+    line-height: 1.62;
     text-wrap: pretty;
   }
 
-  .ask {
-    color: var(--ink);
+  /* Pointing at "photography" fans out three prints of the real thing. */
+  .snap {
+    position: relative;
+  }
+
+  .fan {
+    position: absolute;
+    z-index: 2;
+    bottom: calc(100% + 4px);
+    left: 50%;
+    pointer-events: none;
+  }
+
+  .print {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 4px;
+    border-radius: 2px;
+    background: #fff;
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.12),
+      0 10px 28px rgb(0 0 0 / 0.18);
+    opacity: 0;
+    transform: translate(-50%, 12px) scale(0.86);
+    transition:
+      opacity 180ms ease,
+      transform 460ms var(--ease);
+  }
+
+  /* Fixed sizes, free of the site's max-width: the fan has no width of its
+     own, so a percentage would squeeze each print to nothing. */
+  .print :global(img) {
+    display: block;
+    width: 88px;
+    max-width: none;
+    height: 60px;
+    object-fit: cover;
+  }
+
+  .print.tall :global(img) {
+    width: 52px;
+    height: 74px;
+  }
+
+  @media (hover: hover) {
+    .snap:is(:hover, :focus-visible) .print {
+      opacity: 1;
+    }
+
+    .snap:is(:hover, :focus-visible) .p1 {
+      transform: translate(-118%, -4px) rotate(-8deg);
+    }
+
+    .snap:is(:hover, :focus-visible) .p2 {
+      transform: translate(-50%, -16px) rotate(1.5deg);
+      transition-delay: 40ms;
+    }
+
+    .snap:is(:hover, :focus-visible) .p3 {
+      transform: translate(18%, -4px) rotate(7deg);
+      transition-delay: 80ms;
+    }
+  }
+
+  /* Arrival, once per visit: the name inks in (thin and soft to its full
+     weight), the portrait settles, and the rest follows. */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html:not(.seen)) h1 {
+      animation: ink-in 1.3s var(--ease) both;
+    }
+
+    :global(html:not(.seen)) .face {
+      animation: settle 0.9s var(--ease) 0.1s both;
+    }
+
+    :global(html:not(.seen)) .bio p {
+      animation: fade 0.9s ease-out both;
+      animation-delay: calc(0.45s + var(--i) * 0.09s);
+    }
+
+    :global(html:not(.seen)) .lists {
+      animation: fade 0.9s ease-out 0.85s both;
+    }
+  }
+
+  @keyframes ink-in {
+    from {
+      opacity: 0;
+      font-weight: 200;
+      filter: blur(5px);
+    }
+    45% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes settle {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
   }
 
   @media (max-width: 639px) {
     .intro {
-      padding-top: 36px;
-    }
-
-    .who {
-      align-items: flex-start;
-      gap: 14px;
+      gap: 16px;
+      padding-top: 56px;
     }
 
     .face {
@@ -183,13 +276,13 @@ const schema = profilePage(`${person.name} – ${person.title}`, new URL(portrai
       height: 56px;
     }
 
-    .role {
-      font-size: 14px;
+    h1 {
+      font-size: 36px;
     }
 
     .bio {
-      margin-top: 22px;
-      font-size: 15px;
+      margin-top: 28px;
+      font-size: 19px;
     }
   }
 </style>

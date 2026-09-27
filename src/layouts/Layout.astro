@@ -19,6 +19,8 @@ interface Props {
   schema?: object[]
   /** Keep the page out of search results (the 404). */
   noindex?: boolean
+  /** Run the header and footer as wide as a page with a wide grid (photos). */
+  wide?: boolean
 }
 
 const {
@@ -30,6 +32,7 @@ const {
   publishedDate,
   modifiedDate,
   schema = [],
+  wide = false,
 } = Astro.props
 
 const GA_MEASUREMENT_ID = 'G-VLG18DVXN5'
@@ -56,7 +59,7 @@ const graph = schema.length ? JSON.stringify({ '@context': 'https://schema.org',
     <link rel="icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="alternate" type="application/rss+xml" title="Colin Armstrong" href="/feed.xml" />
-    <meta name="theme-color" content="#fafafa" />
+    <meta name="theme-color" content="#fbfbfc" />
 
     <link rel="preconnect" href="https://public.api.paragraph.com" />
     <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
@@ -83,7 +86,7 @@ const graph = schema.length ? JSON.stringify({ '@context': 'https://schema.org',
     <!-- Structured data: one connected graph per page (src/lib/schema.ts) -->
     {graph && <script type="application/ld+json" set:html={graph} />}
 
-    <Font cssVariable="--font-sans" preload={[{ style: 'normal' }]} />
+    <Font cssVariable="--font-serif" preload={[{ style: 'normal' }]} />
     <Font cssVariable="--font-mono" />
 
     <!-- Arriving from another page on this site, hold the first frame until the
@@ -186,7 +189,7 @@ const graph = schema.length ? JSON.stringify({ '@context': 'https://schema.org',
           root.classList.toggle('dark', dark)
           document
             .querySelector('meta[name="theme-color"]')
-            ?.setAttribute('content', dark ? '#0a0a0a' : '#fafafa')
+            ?.setAttribute('content', dark ? '#171716' : '#fbfbfc')
         }
 
         // Swap every color at once, rather than each element easing on its own.
@@ -201,28 +204,39 @@ const graph = schema.length ? JSON.stringify({ '@context': 'https://schema.org',
         apply()
         media.addEventListener('change', applyQuietly)
 
-        window.toggleDarkMode = () => {
+        // The new theme spreads out from the toggle like ink into paper. The
+        // circle is set in percentages of the page, which hold however the
+        // snapshot is scaled (a percentage radius is of the diagonal over √2).
+        window.toggleDarkMode = (from) => {
           write(root.classList.contains('dark') ? 'light' : 'dark')
           const calm = matchMedia('(prefers-reduced-motion: reduce)').matches
-          if (document.startViewTransition && !calm) {
-            root.dataset.themeSwap = ''
-            document
-              .startViewTransition(applyQuietly)
-              .finished.finally(() => delete root.dataset.themeSwap)
-          } else {
-            applyQuietly()
-          }
+          if (!document.startViewTransition || calm) return applyQuietly()
+          const box = from?.getBoundingClientRect?.()
+          const x = box ? box.left + box.width / 2 : innerWidth - 40
+          const y = box ? box.top + box.height / 2 : 40
+          const reach = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y))
+          const radius = (reach / (Math.hypot(innerWidth, innerHeight) / Math.SQRT2)) * 100
+          const at = `${(x / innerWidth) * 100}% ${(y / innerHeight) * 100}%`
+          root.dataset.themeSwap = ''
+          const swap = document.startViewTransition(applyQuietly)
+          swap.ready.then(() =>
+            root.animate(
+              { clipPath: [`circle(0% at ${at})`, `circle(${radius}% at ${at})`] },
+              { duration: 720, easing: 'cubic-bezier(0.3, 0.6, 0.2, 1)', pseudoElement: '::view-transition-new(root)' },
+            ),
+          )
+          swap.finished.finally(() => delete root.dataset.themeSwap)
         }
       })()
     </script>
   </head>
   <body>
     <a class="skip" href="#content">Skip to content</a>
-    <Nav />
+    <Nav wide={wide} />
     <main id="content">
       <slot />
     </main>
-    <Footer />
+    <Footer wide={wide} />
     <SubscribeDialog />
 
     <!-- Google Analytics (deferred) -->

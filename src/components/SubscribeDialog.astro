@@ -102,16 +102,16 @@ import SubscribeForm from './SubscribeForm.astro'
 
 <style>
   .dialog {
-    width: min(420px, calc(100vw - 32px));
+    width: min(460px, calc(100vw - 32px));
     margin: auto;
-    padding: 20px;
+    padding: 26px 26px 22px;
     border: 1px solid var(--line);
-    border-radius: 12px;
+    border-radius: 16px;
     background: var(--surface);
     color: var(--ink);
     box-shadow:
       0 1px 2px rgb(0 0 0 / 0.04),
-      0 16px 48px rgb(0 0 0 / 0.12);
+      0 20px 56px rgb(0 0 0 / 0.14);
   }
 
   .dialog[open] {
@@ -150,12 +150,6 @@ import SubscribeForm from './SubscribeForm.astro'
     }
   }
 
-  @keyframes fade {
-    from {
-      opacity: 0;
-    }
-  }
-
   .top {
     display: flex;
     align-items: center;
@@ -164,20 +158,27 @@ import SubscribeForm from './SubscribeForm.astro'
   }
 
   h2 {
-    font-size: 18px;
-    font-weight: 600;
-    letter-spacing: -0.025em;
+    font-size: 30px;
+    font-weight: 380;
+    letter-spacing: -0.015em;
   }
 
   .close {
+    width: 34px;
+    height: 34px;
     border-color: transparent;
     background: none;
     color: var(--ink-2);
   }
 
+  .close:hover {
+    background: var(--surface-2);
+  }
+
   .note {
-    margin: 4px 0 16px;
+    margin: 6px 0 20px;
     color: var(--ink-2);
+    font-size: 18px;
   }
 
   @media (prefers-reduced-motion: reduce) {

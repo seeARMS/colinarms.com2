@@ -2,7 +2,7 @@
 
 Colin Armstrong's personal site: [armstr.ng](https://armstr.ng).
 
-Astro on Cloudflare Workers, in the same design language as [heade.rs](https://heade.rs): Geist and Geist Mono, a gray canvas with white hairline cards, and one blue accent for things that move. Pages are prerendered; `/api/subscribe` is the only thing that runs on request.
+Astro on Cloudflare Workers. The design is set in [Newsreader](https://fonts.google.com/specimen/Newsreader), with its optical sizes, in one narrow column on near-white paper (a dark gray at night), with ultramarine for links and anything that moves. Newsreader is self-hosted through Astro's font config; Geist Mono is only for code in posts. Pages are prerendered; `/api/subscribe` is the only thing that runs on request.
 
 ## Where things live
 

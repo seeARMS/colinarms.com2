@@ -1,16 +1,25 @@
 ---
+// The bottom of every page: who and where on the left, the ways to follow
+// along on the right.
 import { person, socials } from '@/data/profile'
+
+interface Props {
+  wide?: boolean
+}
+
+const { wide = false } = Astro.props
+const shown = socials.filter((s) => s.listed !== false)
 ---
 
 <footer class="foot" id="site-footer">
-  <div class="container inner">
+  <div class:list={['container', 'inner', { wide }]}>
     <div class="about">
-      <p class="brand">armstr<span>.ng</span></p>
+      <a class="brand" href="/">armstr<span>.ng</span></a>
       <p class="made">
-        <a class="mail" href={`mailto:${person.email}`}>{person.email}</a>
+        <a class="link mail" href={`mailto:${person.email}`}>{person.email}</a>
         <span class="social">
           {
-            socials.map((s) => (
+            shown.map((s) => (
               <a href={s.href} rel="me noopener" aria-label={`Colin on ${s.name}`} title={s.name}>
                 <svg viewBox={s.viewBox ?? '0 0 24 24'} aria-hidden="true">
                   <path d={s.icon} />
@@ -23,31 +32,15 @@ import { person, socials } from '@/data/profile'
     </div>
 
     <p class="follow">
-      <span class="faint">Follow along</span>
-      <button type="button" class="chip" data-subscribe>
-        <svg viewBox="0 0 16 16" aria-hidden="true">
-          <rect x="2" y="3.5" width="12" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"
-          ></rect>
-          <path d="m2.75 4.5 5.25 4 5.25-4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"
-          ></path>
-        </svg>
-        Email
-      </button>
-      <a class="chip" href="/feed.xml">
-        <svg viewBox="0 0 16 16" aria-hidden="true">
-          <path d="M3 3.25a9.75 9.75 0 0 1 9.75 9.75M3 7.25A5.75 5.75 0 0 1 8.75 13" fill="none" stroke="currentColor"
-          stroke-width="1.5" stroke-linecap="round"></path>
-          <circle cx="3.75" cy="12.25" r="1.25" fill="currentColor"></circle>
-        </svg>
-        RSS
-      </a>
+      <button type="button" class="plain" data-subscribe>Subscribe</button>
+      <a class="plain" href="/feed.xml">RSS</a>
     </p>
   </div>
 </footer>
 
 <style>
   .foot {
-    margin-top: 88px;
+    margin-top: 120px;
     border-top: 1px solid var(--line);
     background: var(--surface);
   }
@@ -58,39 +51,36 @@ import { person, socials } from '@/data/profile'
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 16px 32px;
-    padding-block: 24px;
-    font-size: 13px;
+    padding-block: 22px 26px;
+    font-size: 15.5px;
   }
 
   .about {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+    display: grid;
+    gap: 4px;
   }
 
   .brand {
-    font-weight: 600;
-    letter-spacing: -0.02em;
+    justify-self: start;
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
   }
 
   .brand span {
-    color: var(--ink-3);
+    color: var(--ink-2);
+    font-weight: 400;
   }
 
   .made {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 6px 14px;
-    color: var(--ink-2);
+    gap: 4px 12px;
   }
 
   .mail {
     color: var(--ink-2);
-    text-decoration: underline;
-    text-decoration-color: var(--line-strong);
-    text-underline-offset: 3px;
-    transition: color 120ms;
   }
 
   .mail:hover {
@@ -100,23 +90,20 @@ import { person, socials } from '@/data/profile'
   .social {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
   }
 
   .social a {
     display: inline-grid;
     place-items: center;
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
     border-radius: 6px;
-    color: var(--ink-3);
-    transition:
-      color 120ms,
-      background-color 120ms;
+    color: var(--ink-2);
   }
 
   .social a:hover {
-    background: var(--surface-2);
+    background: color-mix(in srgb, var(--ink) 6%, transparent);
     color: var(--ink);
   }
 
@@ -128,39 +115,35 @@ import { person, socials } from '@/data/profile'
 
   .follow {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
+    gap: 22px;
   }
 
-  .follow .faint {
-    margin-right: 4px;
-  }
-
-  .chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    height: 28px;
-    padding: 0 10px;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    background: var(--bg);
+  .plain {
+    padding: 0;
+    border: 0;
+    background: none;
     color: var(--ink-2);
-    font-size: 13px;
+    font-size: 16px;
     cursor: pointer;
-    transition:
-      color 120ms,
-      border-color 120ms;
   }
 
-  .chip:hover {
-    border-color: var(--line-strong);
+  .plain:hover {
     color: var(--ink);
   }
 
-  .chip svg {
-    width: 14px;
-    height: 14px;
+  @media (max-width: 639px) {
+    .foot {
+      margin-top: 88px;
+    }
+
+    .inner {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .social {
+      margin-left: -7px;
+    }
   }
 </style>
