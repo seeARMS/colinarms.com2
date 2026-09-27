@@ -29,8 +29,7 @@ const rows = posts.map((post, i) => ({
           <time class="date" datetime={post.isoDate}>
             {byYear ? (
               <>
-                {shortDate(post.isoDate)}
-                <span class="with-year">, {post.year}</span>
+                {shortDate(post.isoDate)}<span class="with-year">, {post.year}</span>
               </>
             ) : (
               post.year

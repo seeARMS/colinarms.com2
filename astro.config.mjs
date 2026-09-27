@@ -11,6 +11,10 @@ export default defineConfig({
   // writing/index.html), which Cloudflare serves at /writing directly, so no
   // link on the site goes through a redirect.
   trailingSlash: 'never',
+  // A line break between two tags still reads as a space, as in plain HTML.
+  // Astro 7's default ('jsx') drops it, which runs words together in copy
+  // written across lines.
+  compressHTML: true,
   prefetch: {
     prefetchAll: true,
     defaultStrategy: 'hover',
