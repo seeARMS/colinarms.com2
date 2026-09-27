@@ -14,7 +14,7 @@ Astro on Cloudflare Workers. The design is set in [Newsreader](https://fonts.goo
 | Posts | Pulled from the Paragraph API when the site builds (`src/lib/getAllArticles.js`) |
 | Images in posts (resized to WebP, real dimensions, blurred preview) | `src/lib/post-images.ts`, with sizes and previews from `scripts/post-images.mjs` |
 | Design tokens and shared styles | `src/styles/global.css` |
-| Social preview images | `scripts/generate-og.mjs`, run before each build |
+| Social preview images | `scripts/generate-og.mjs`, run before each build; set in Geist from `scripts/fonts/` |
 | Redirects from old addresses (www.armstr.ng, writing.cma.xyz, blog.colinarms.com, cma.xyz, colinarms.com) | `redirect/index.js`, a separate Worker; old paths on armstr.ng itself are in `public/_redirects` |
 | Markdown versions of pages, and `/llms.txt`, for agents | `src/pages/*.md.ts` and `src/pages/llms.txt.ts`, served by `src/worker.ts` |
 | When a post was last edited (its modified date) | `src/data/posts.ts` |
