@@ -29,11 +29,12 @@ npm run build     # social preview images, then the site
 
 ## Deploy
 
+Pushing to `main` deploys the site. Cloudflare's Workers Builds is connected to this repo: it builds each push and reports back as a "Workers Builds: armstrng" check on the commit.
+
 Everything deploys to the **Colin Personal** Cloudflare account. Its Wrangler login lives in a separate profile (`~/.config/wrangler-personal`), so the work login in the default profile is never used, and `account_id` in `wrangler.jsonc` pins the account as a second guard.
 
 ```sh
 npm run cf -- login   # once: authorize the personal account
-npm run deploy        # build and deploy the site
 npm run deploy:www    # the Worker that redirects old addresses to armstr.ng
 npm run cf -- tail    # any other wrangler command, same profile
 npm test              # where each old address should land
