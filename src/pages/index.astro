@@ -21,12 +21,29 @@ const schema = profilePage(`${person.name} – ${person.title}`, new URL(portrai
 ---
 
 <Layout image="/og/home.png" schema={schema}>
-  <!-- The entrance plays once per visit; coming back later, the page is just there. -->
+  <!-- The entrance plays once per visit; coming back later, the page is just there.
+       If Chrome prerendered the page (see prefetch in astro.config.mjs), it
+       waits until the page is shown, rather than playing unseen. -->
   <script is:inline>
-    try {
-      if (sessionStorage.getItem('visited')) document.documentElement.classList.add('seen')
-      sessionStorage.setItem('visited', '1')
-    } catch {}
+    ;(() => {
+      const root = document.documentElement
+      const arrive = () => {
+        try {
+          if (sessionStorage.getItem('visited')) root.classList.add('seen')
+          sessionStorage.setItem('visited', '1')
+        } catch {}
+      }
+      if (!document.prerendering) return arrive()
+      root.classList.add('seen')
+      document.addEventListener(
+        'prerenderingchange',
+        () => {
+          root.classList.remove('seen')
+          arrive()
+        },
+        { once: true },
+      )
+    })()
   </script>
 
   <div class="container">
