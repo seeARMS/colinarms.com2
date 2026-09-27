@@ -22,15 +22,15 @@ export default {
         headers.set('content-type', 'text/markdown; charset=utf-8')
         headers.set('vary', 'Accept')
         headers.set('link', `<${new URL(source.page, url).href}>; rel="canonical"`)
+        // At a page's own address, keep the Markdown out of every cache, so
+        // none can hand it to a browser. The HTML there doesn't say Vary:
+        // Accept, because Safari prefetches pages with fetch() (Accept: */*)
+        // and wouldn't reuse the prefetched page for the click that follows.
+        if (source.negotiated) headers.set('cache-control', 'no-store')
         return new Response(request.method === 'HEAD' ? null : file.body, { headers })
       }
     }
-    const response = reading ? await page(request, env, ctx) : await handle(request, env, ctx)
-    if (!response.headers.get('content-type')?.startsWith('text/html')) return response
-    // Pages vary by Accept now; say so, so no cache hands a browser the Markdown.
-    const varied = new Response(response.body, response)
-    varied.headers.append('vary', 'Accept')
-    return varied
+    return reading ? page(request, env, ctx) : handle(request, env, ctx)
   },
 }
 
@@ -47,10 +47,10 @@ async function page(request: Request, env: Handle[1], ctx: Handle[2]) {
 
 /** The Markdown file a request should get, if any, and the page it stands for. */
 function markdownFor(path: string, accept: string | null) {
-  if (path.endsWith('.md')) return { file: path, page: path === '/index.md' ? '/' : path.slice(0, -3) }
+  if (path.endsWith('.md')) return { file: path, page: path === '/index.md' ? '/' : path.slice(0, -3), negotiated: false }
   if (!prefersMarkdown(accept)) return undefined
-  if (path === '/') return { file: '/index.md', page: '/' }
+  if (path === '/') return { file: '/index.md', page: '/', negotiated: true }
   // Pages only. An address ending in a slash is redirected first (public/_redirects).
   if (path.endsWith('/') || path.includes('.')) return undefined
-  return { file: `${path}.md`, page: path }
+  return { file: `${path}.md`, page: path, negotiated: true }
 }
