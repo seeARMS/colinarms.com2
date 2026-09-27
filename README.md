@@ -15,6 +15,7 @@ Astro on Cloudflare Workers, in the same design language as [heade.rs](https://h
 | Images in posts (resized to WebP, real dimensions, blurred preview) | `src/lib/post-images.ts`, with sizes and previews from `scripts/post-images.mjs` |
 | Design tokens and shared styles | `src/styles/global.css` |
 | Social preview images | `scripts/generate-og.mjs`, run before each build |
+| Redirects from old addresses (www.armstr.ng, writing.cma.xyz, blog.colinarms.com, cma.xyz, colinarms.com) | `redirect/index.js`, a separate Worker; old paths on armstr.ng itself are in `public/_redirects` |
 
 New Paragraph posts appear after the next build.
 
@@ -33,9 +34,12 @@ Everything deploys to the **Colin Personal** Cloudflare account. Its Wrangler lo
 ```sh
 npm run cf -- login   # once: authorize the personal account
 npm run deploy        # build and deploy the site
-npm run deploy:www    # the Worker that redirects www.armstr.ng to armstr.ng
+npm run deploy:www    # the Worker that redirects old addresses to armstr.ng
 npm run cf -- tail    # any other wrangler command, same profile
+npm test              # where each old address should land
 ```
+
+Each old hostname is a Custom Domain of the redirect Worker. Cloudflare won't attach one while the hostname still has a DNS record of its own, so delete that record first. Keep zone redirect rules off these hostnames too: they run before Workers.
 
 ## Search
 

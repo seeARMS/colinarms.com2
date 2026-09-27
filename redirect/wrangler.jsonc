@@ -6,5 +6,15 @@
   "main": "index.js",
   "compatibility_date": "2026-09-26",
   "workers_dev": false,
-  "routes": [{ "pattern": "www.armstr.ng", "custom_domain": true }]
+  // Every old address of the site and its writing (see index.js). A zone
+  // redirect rule on any of these hosts runs before the Worker, so none should
+  // exist.
+  "routes": [
+    { "pattern": "www.armstr.ng", "custom_domain": true },
+    { "pattern": "writing.cma.xyz", "custom_domain": true },
+    { "pattern": "cma.xyz", "custom_domain": true },
+    { "pattern": "blog.colinarms.com", "custom_domain": true },
+    { "pattern": "colinarms.com", "custom_domain": true },
+    { "pattern": "www.colinarms.com", "custom_domain": true }
+  ]
 }

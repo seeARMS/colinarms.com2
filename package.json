@@ -8,6 +8,7 @@
     "preview": "npm run build && XDG_CONFIG_HOME=\"$HOME/.config/wrangler-personal\" wrangler dev",
     "deploy": "npm run build && XDG_CONFIG_HOME=\"$HOME/.config/wrangler-personal\" wrangler deploy",
     "lint": "eslint src",
+    "test": "node --test redirect/",
     "deploy:www": "XDG_CONFIG_HOME=\"$HOME/.config/wrangler-personal\" wrangler deploy --config redirect/wrangler.jsonc",
     "cf": "XDG_CONFIG_HOME=\"$HOME/.config/wrangler-personal\" wrangler"
   },
