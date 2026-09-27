@@ -46,7 +46,7 @@ const canonicalUrl = new URL(path, Astro.site).href
 // The page's Markdown version, for agents (src/pages/*.md.ts, served by src/worker.ts).
 const markdownPath = path === '/' ? '/index.md' : `${path}.md`
 
-const imageUrl = new URL(image || '/og/home.png', Astro.site).href
+const imageUrl = new URL(image || '/og/home.jpg', Astro.site).href
 
 const graph = schema.length ? JSON.stringify({ '@context': 'https://schema.org', '@graph': schema }) : undefined
 ---
