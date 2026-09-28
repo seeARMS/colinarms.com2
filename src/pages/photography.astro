@@ -58,18 +58,66 @@ const camera = mainCamera(photos)
         ))
       }
     </div>
+
+    <!-- Runs as soon as the grid is parsed, before the page is first drawn, so
+         the photos never move once they're on screen. The order is fresh for
+         each visit and kept in history.state, so a reload, or Safari
+         restoring the page behind its snapshot, shows the same order. Photos
+         that arrive once the page is showing fade in; ones already at hand
+         (cached, or loaded while Chrome prerendered the page) just appear. -->
+    <script is:inline>
+      ;(() => {
+        const grid = document.querySelector('[data-grid]')
+        const thumbs = Array.from(grid.children)
+        const n = thumbs.length
+        const state = history.state && typeof history.state === 'object' ? history.state : {}
+        let order = state.photoOrder
+        const valid = Array.isArray(order) && order.length === n && new Set(order).size === n && order.every((i) => thumbs[i])
+        if (!valid) {
+          order = thumbs.map((_, i) => i)
+          for (let i = n - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1))
+            ;[order[i], order[j]] = [order[j], order[i]]
+          }
+          try {
+            history.replaceState({ ...state, photoOrder: order }, '')
+          } catch {}
+        }
+        grid.append(...order.map((i) => thumbs[i]))
+
+        let shownAt = document.prerendering ? Infinity : performance.now()
+        document.addEventListener('prerenderingchange', () => (shownAt = performance.now()), { once: true })
+        for (const img of grid.querySelectorAll('img')) {
+          if (img.complete) {
+            img.dataset.loaded = ''
+            continue
+          }
+          img.addEventListener(
+            'load',
+            () => {
+              img.dataset.loaded = ''
+              if (performance.now() - shownAt > 200) {
+                img.animate({ opacity: [0, 1] }, { duration: 600, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)' })
+              }
+            },
+            { once: true },
+          )
+        }
+      })()
+    </script>
   </div>
 
   <div class="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer" data-lightbox inert>
     <div class="frost" data-frost></div>
-    <img class="lb-img" data-lb-img src="data:," alt="" />
+    <img class="lb-img" data-lb-img alt="" draggable="false" hidden />
+    <img class="lb-img" data-lb-img alt="" draggable="false" hidden />
     <button class="btn square lb-close" type="button" aria-label="Close" data-lb-close>
       <svg viewBox="0 0 16 16" aria-hidden="true">
         <path d="m4 4 8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
       </svg>
     </button>
     <div class="lb-bar" data-lb-bar>
-      <div class="lb-info">
+      <div class="lb-info" aria-live="polite">
         <p class="lb-title"><span data-lb-caption></span><span class="faint" data-lb-date></span></p>
         <p class="lb-settings" data-lb-chips></p>
       </div>
@@ -104,31 +152,20 @@ const camera = mainCamera(photos)
 
 <script>
   const grid = document.querySelector<HTMLElement>('[data-grid]')!
-
-  // A fresh order on every visit.
-  const shuffled = Array.from(grid.children) as HTMLElement[]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
-  }
-  grid.append(...shuffled)
-
-  // Each photo fades in as it arrives.
-  for (const img of grid.querySelectorAll('img')) {
-    if (img.complete) img.dataset.loaded = ''
-    else img.addEventListener('load', () => (img.dataset.loaded = ''), { once: true })
-  }
+  // In the order the grid now shows them (it's shuffled before the page is drawn).
+  const thumbs = Array.from(grid.querySelectorAll<HTMLElement>('.thumb'))
 
   const lightbox = document.querySelector<HTMLElement>('[data-lightbox]')!
   const frost = lightbox.querySelector<HTMLElement>('[data-frost]')!
-  const lbImg = lightbox.querySelector<HTMLImageElement>('[data-lb-img]')!
   const bar = lightbox.querySelector<HTMLElement>('[data-lb-bar]')!
   const counter = lightbox.querySelector<HTMLElement>('[data-lb-counter]')!
   const captionEl = lightbox.querySelector<HTMLElement>('[data-lb-caption]')!
   const dateEl = lightbox.querySelector<HTMLElement>('[data-lb-date]')!
   const chipsEl = lightbox.querySelector<HTMLElement>('[data-lb-chips]')!
   const closeBtn = lightbox.querySelector<HTMLButtonElement>('[data-lb-close]')!
-  const thumbs = Array.from(grid.querySelectorAll<HTMLElement>('.thumb'))
+  // Two images take turns: one shows the photo, the other slides in with the
+  // next one, so a swipe can bring the neighbor along with your finger.
+  const slides = Array.from(lightbox.querySelectorAll<HTMLImageElement>('[data-lb-img]'))
 
   // The viewer sits outside the page, so the page can be made inert beneath it.
   document.body.append(lightbox)
@@ -146,301 +183,393 @@ const camera = mainCamera(photos)
     frost.getBoundingClientRect()
     requestAnimationFrame(() => {
       frost.style.opacity = ''
-      delete lightbox.dataset.visible
+      if (!isOpen) delete lightbox.dataset.visible
       requestAnimationFrame(() => (frost.style.transition = ''))
     })
   })
 
-  let currentIndex = -1
-  let isOpen = false
-  let returnFocus: HTMLElement | null = null
-  let dragStartY = 0
-  let dragY = 0
-  let isDragging = false
-  let pendingTimeouts: number[] = []
+  const EASE = 'cubic-bezier(0.32, 0.72, 0, 1)'
+  // Space between two photos as they slide past each other.
+  const GAP = 24
+  const calm = matchMedia('(prefers-reduced-motion: reduce)')
 
-  function cancelPending() {
-    pendingTimeouts.forEach((id) => clearTimeout(id))
-    pendingTimeouts = []
+  let index = -1
+  let isOpen = false
+  let cur = slides[0]
+  let spare = slides[1]
+  let returnFocus: HTMLElement | null = null
+
+  const wrap = (i: number) => (i + thumbs.length) % thumbs.length
+  const thumbImg = (i: number) => thumbs[i].querySelector('img')!
+
+  // Every motion runs through here, so anything can be interrupted: settle()
+  // jumps whatever is moving to where it was going. Each motion sets its end
+  // state inline and animates from where it starts, so a finished (or
+  // finished early) animation leaves things where they belong.
+  let running: Animation[] = []
+  function animate(el: HTMLElement, keyframes: PropertyIndexedKeyframes, duration: number) {
+    const a = el.animate(keyframes, { duration, easing: EASE })
+    running.push(a)
+    a.finished.then(
+      () => (running = running.filter((r) => r !== a)),
+      () => {},
+    )
+    return a
+  }
+
+  function settle() {
+    for (const a of running) a.finish()
+    running = []
   }
 
   type Rect = { left: number; top: number; width: number; height: number }
+  const placed = new WeakMap<HTMLElement, Rect>()
 
   // Centered above the info bar, as large as the photo allows.
-  function getFinalRect(thumb: HTMLElement): Rect {
+  function finalRect(i: number): Rect {
     const room = innerWidth < 640 ? 176 : 152
     const vw = innerWidth * 0.92
     const vh = innerHeight - room
-    const w0 = Number(thumb.dataset.w) || 1080
-    const h0 = Number(thumb.dataset.h) || 810
+    const w0 = Number(thumbs[i].dataset.w) || 1080
+    const h0 = Number(thumbs[i].dataset.h) || 810
     const scale = Math.min(vw / w0, vh / h0, 1.5)
     const width = w0 * scale
     const height = h0 * scale
     return { left: (innerWidth - width) / 2, top: Math.max(16, (innerHeight - room - height) / 2 + 16), width, height }
   }
 
-  function setFinalRect(rect: Rect) {
-    lbImg.style.left = `${rect.left}px`
-    lbImg.style.top = `${rect.top}px`
-    lbImg.style.width = `${rect.width}px`
-    lbImg.style.height = `${rect.height}px`
+  function place(img: HTMLElement, rect: Rect) {
+    placed.set(img, rect)
+    img.style.left = `${rect.left}px`
+    img.style.top = `${rect.top}px`
+    img.style.width = `${rect.width}px`
+    img.style.height = `${rect.height}px`
   }
 
-  function getCurrentFinalRect(): Rect {
-    return {
-      left: parseFloat(lbImg.style.left),
-      top: parseFloat(lbImg.style.top),
-      width: parseFloat(lbImg.style.width),
-      height: parseFloat(lbImg.style.height),
+  // The transform that lays an image placed at `rect` over `box` (the
+  // thumbnail), scaling about the center.
+  function flip(box: DOMRect, rect: Rect) {
+    const dx = box.left + box.width / 2 - (rect.left + rect.width / 2)
+    const dy = box.top + box.height / 2 - (rect.top + rect.height / 2)
+    return `translate(${dx}px, ${dy}px) scale(${box.width / rect.width}, ${box.height / rect.height})`
+  }
+
+  // Large copies, downloaded and decoded once, so showing one again is instant.
+  const ready = new Set<string>()
+  const fetching = new Map<string, Promise<boolean>>()
+  function warm(i: number) {
+    const full = thumbs[i].dataset.full ?? ''
+    let done = fetching.get(full)
+    if (!done) {
+      const img = new Image()
+      img.decoding = 'async'
+      img.src = full
+      done = img.decode().then(
+        () => (ready.add(full), true),
+        () => false,
+      )
+      fetching.set(full, done)
+    }
+    return done
+  }
+
+  // Put photo i into an image: the large copy if it's ready, else the
+  // thumbnail the browser already has, sharpened once the large copy arrives.
+  function load(img: HTMLImageElement, i: number) {
+    const t = thumbs[i]
+    const full = t.dataset.full ?? ''
+    const small = thumbImg(i)
+    const src = ready.has(full) ? full : small.complete && small.currentSrc ? small.currentSrc : full
+    img.dataset.index = String(i)
+    if (img.getAttribute('src') !== src) img.src = src
+    img.alt = t.dataset.caption ?? ''
+    place(img, finalRect(i))
+    if (src !== full) {
+      warm(i).then((ok) => {
+        if (ok && img.dataset.index === String(i)) img.src = full
+      })
     }
   }
 
-  function inverseTransform(thumbRect: Rect, finalRect: Rect) {
-    const dx = thumbRect.left - finalRect.left
-    const dy = thumbRect.top - finalRect.top
-    const sx = thumbRect.width / finalRect.width
-    const sy = thumbRect.height / finalRect.height
-    return `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`
-  }
-
-  // Start from the thumbnail the browser already has, then sharpen to the
-  // large copy once it's downloaded.
-  function show(thumb: HTMLElement) {
-    const small = thumb.querySelector('img')
-    lbImg.src = small?.currentSrc || small?.src || ''
-    const full = thumb.dataset.full
-    if (!full) return
-    const hi = new Image()
-    hi.decoding = 'async'
-    hi.src = full
-    hi.decode().then(
-      () => {
-        if (thumbs[currentIndex] === thumb) lbImg.src = full
-      },
-      () => {},
-    )
-  }
-
-  function describe(index: number) {
-    const t = thumbs[index]
-    counter.textContent = `${index + 1} / ${thumbs.length}`
+  function describe(i: number) {
+    const t = thumbs[i]
+    counter.textContent = `${i + 1} / ${thumbs.length}`
     captionEl.textContent = t.dataset.caption ?? ''
     dateEl.textContent = t.dataset.date ?? ''
     chipsEl.textContent = t.dataset.chips ? t.dataset.chips.split('|').join(', ') : ''
-    lbImg.alt = t.dataset.caption ?? ''
   }
 
-  function open(index: number) {
-    // Interrupt any close in progress, and put the grid back as it was.
-    cancelPending()
-    if (currentIndex >= 0 && currentIndex !== index) thumbs[currentIndex].classList.remove('is-active')
-    lbImg.style.transition = ''
+  function warmNeighbors() {
+    if (thumbs.length < 2) return
+    warm(wrap(index + 1))
+    warm(wrap(index - 1))
+  }
 
-    currentIndex = index
-    const thumb = thumbs[index]
-    const thumbRect = thumb.querySelector('img')!.getBoundingClientRect()
-    returnFocus = thumb
-    thumb.classList.add('is-active')
+  function open(i: number) {
+    if (isOpen) return
+    settle()
+    isOpen = true
+    index = i
+    returnFocus = thumbs[i]
+    const box = thumbImg(i).getBoundingClientRect()
+    thumbs.forEach((t, j) => t.classList.toggle('is-active', j === i))
 
-    show(thumb)
-    describe(index)
-    lbImg.classList.remove('animating')
-
-    // Place it at its final rect, then invert back onto the thumbnail (FLIP).
-    const final = getFinalRect(thumb)
-    setFinalRect(final)
-    lbImg.style.transformOrigin = '0 0'
-    lbImg.style.transform = inverseTransform(thumbRect, final)
-    lbImg.style.borderRadius = '8px'
-    lbImg.style.opacity = '1'
-    lbImg.style.willChange = 'transform'
+    spare.hidden = true
+    load(cur, i)
+    describe(i)
+    cur.hidden = false
+    cur.style.transform = ''
+    cur.style.opacity = ''
+    cur.style.borderRadius = ''
 
     lightbox.dataset.visible = ''
     lightbox.dataset.open = ''
     lightbox.inert = false
     setPageInert(true)
-    isOpen = true
     document.body.style.overflow = 'hidden'
-
-    lbImg.getBoundingClientRect()
-    requestAnimationFrame(() => {
-      lbImg.classList.add('animating')
-      lbImg.style.transform = ''
-      lbImg.style.borderRadius = '6px'
-    })
-
-    pendingTimeouts.push(
-      window.setTimeout(() => {
-        bar.dataset.shown = ''
-        closeBtn.dataset.shown = ''
-        lbImg.style.willChange = ''
-      }, 420),
-    )
+    bar.dataset.shown = ''
+    closeBtn.dataset.shown = ''
     closeBtn.focus({ preventScroll: true })
+
+    // Grow out of the thumbnail (FLIP), rounding its corners as a thumbnail's.
+    const rect = placed.get(cur)!
+    if (calm.matches) animate(cur, { opacity: [0, 1] }, 200)
+    else {
+      const radius = `${3 / (box.width / rect.width)}px`
+      animate(cur, { transform: [flip(box, rect), 'none'], borderRadius: [radius, '6px'] }, 500)
+    }
+    warmNeighbors()
   }
 
-  function finishClose() {
+  function close() {
+    if (!isOpen) return
+    settle()
     isOpen = false
+
+    // Hand the page back right away, not after the morph.
     delete lightbox.dataset.open
     lightbox.inert = true
     setPageInert(false)
     document.body.style.overflow = ''
     delete bar.dataset.shown
     delete closeBtn.dataset.shown
+    frost.style.transition = ''
+    frost.style.opacity = ''
+
+    // Browsing may have moved on to a photo that's scrolled out of view.
+    const i = index
+    const thumb = thumbs[i]
+    const on = thumb.getBoundingClientRect()
+    if (on.bottom < 0 || on.top > innerHeight) thumb.scrollIntoView({ block: 'center', behavior: 'instant' })
     returnFocus?.focus({ preventScroll: true })
-  }
 
-  function close() {
-    if (!isOpen) return
-    cancelPending()
-    // Hand the page back right away, not after the morph.
-    finishClose()
-
-    const thumb = thumbs[currentIndex]
-    const closingIndex = currentIndex
-    const thumbRect = thumb.querySelector('img')!.getBoundingClientRect()
-    const final = getCurrentFinalRect()
-
-    lbImg.style.willChange = 'transform'
-    lbImg.style.transformOrigin = '0 0'
-    lbImg.classList.add('animating')
-    lbImg.style.transform = inverseTransform(thumbRect, final)
-    lbImg.style.borderRadius = '8px'
-
-    pendingTimeouts.push(
-      window.setTimeout(() => {
-        thumb.classList.remove('is-active')
-        delete lightbox.dataset.visible
-      }, 480),
-    )
-    pendingTimeouts.push(
-      window.setTimeout(() => {
-        if (currentIndex === closingIndex) currentIndex = -1
-        lbImg.classList.remove('animating')
-        lbImg.style.transform = ''
-        lbImg.style.willChange = ''
-      }, 750),
-    )
-  }
-
-  function navigate(dir: number) {
-    if (!isOpen) return
-    cancelPending()
-    const nextIndex = (currentIndex + dir + thumbs.length) % thumbs.length
-    const prevThumb = thumbs[currentIndex]
-
-    // A fade and a slight settle on the way out.
-    lbImg.style.transformOrigin = '50% 50%'
-    lbImg.style.willChange = 'transform, opacity'
-    lbImg.classList.add('animating')
-    lbImg.style.transform = `translateX(${dir * -12}px) scale(0.98)`
-    lbImg.style.opacity = '0'
-
-    pendingTimeouts.push(
-      window.setTimeout(() => {
-        prevThumb.classList.remove('is-active')
-        currentIndex = nextIndex
-        const nextThumb = thumbs[nextIndex]
-        nextThumb.classList.add('is-active')
-        returnFocus = nextThumb
-
-        show(nextThumb)
-        describe(nextIndex)
-        lbImg.classList.remove('animating')
-
-        setFinalRect(getFinalRect(nextThumb))
-        lbImg.style.transform = `translateX(${dir * 12}px) scale(1.02)`
-        lbImg.style.opacity = '0'
-
-        lbImg.getBoundingClientRect()
-        requestAnimationFrame(() => {
-          lbImg.classList.add('animating')
-          lbImg.style.transform = ''
-          lbImg.style.opacity = '1'
-        })
-
-        pendingTimeouts.push(window.setTimeout(() => (lbImg.style.willChange = ''), 400))
-      }, 180),
-    )
-  }
-
-  // Drag up or down to dismiss.
-  lbImg.addEventListener('pointerdown', (e) => {
-    if (!isOpen) return
-    isDragging = true
-    dragStartY = e.clientY
-    dragY = 0
-    lbImg.classList.remove('animating')
-    lbImg.style.transformOrigin = '50% 50%'
-    lbImg.style.willChange = 'transform'
-    lbImg.setPointerCapture(e.pointerId)
-    lbImg.style.cursor = 'grabbing'
-  })
-
-  lbImg.addEventListener('pointermove', (e) => {
-    if (!isDragging) return
-    dragY = e.clientY - dragStartY
-    const progress = Math.min(Math.abs(dragY) / 300, 1)
-    lbImg.style.transform = `translateY(${dragY}px) scale(${1 - progress * 0.15})`
-    frost.style.opacity = String(1 - progress * 0.6)
-  })
-
-  lbImg.addEventListener('pointerup', () => {
-    if (!isDragging) return
-    isDragging = false
-    lbImg.style.cursor = ''
-
-    if (Math.abs(dragY) > 120) {
-      cancelPending()
-      finishClose()
-      const dismissedIndex = currentIndex
-
-      lbImg.style.transition = 'transform 0.3s ease, opacity 0.3s ease'
-      lbImg.style.transform = `translateY(${dragY > 0 ? 400 : -400}px) scale(0.8)`
-      lbImg.style.opacity = '0'
-      frost.style.transition = 'opacity 0.3s ease'
-      frost.style.opacity = '0'
-      pendingTimeouts.push(
-        window.setTimeout(() => {
-          delete lightbox.dataset.visible
-          pendingTimeouts.push(
-            window.setTimeout(() => {
-              thumbs[dismissedIndex]?.classList.remove('is-active')
-              if (currentIndex === dismissedIndex) currentIndex = -1
-              lbImg.style.transform = ''
-              lbImg.style.opacity = ''
-              lbImg.style.transition = ''
-              lbImg.style.willChange = ''
-              frost.style.opacity = ''
-              frost.style.transition = ''
-              lbImg.classList.remove('animating')
-            }, 300),
-          )
-        }, 100),
-      )
+    // Shrink back into the thumbnail, from wherever a drag left it.
+    const img = cur
+    const box = thumbImg(i).getBoundingClientRect()
+    const rect = placed.get(img)!
+    const from = img.style.transform || 'none'
+    let motion: Animation
+    if (calm.matches) {
+      img.style.opacity = '0'
+      motion = animate(img, { opacity: [1, 0] }, 200)
     } else {
-      // Not far enough: settle back.
-      lbImg.style.transition = 'transform 0.4s cubic-bezier(0.32, 0.72, 0, 1)'
-      lbImg.style.transform = ''
-      frost.style.opacity = ''
-      setTimeout(() => {
-        lbImg.style.transition = ''
-        lbImg.style.willChange = ''
-      }, 400)
+      const to = flip(box, rect)
+      const radius = `${3 / (box.width / rect.width)}px`
+      img.style.transform = to
+      img.style.borderRadius = radius
+      motion = animate(img, { transform: [from, to], borderRadius: ['6px', radius] }, 500)
     }
+    motion.finished.then(() => {
+      if (isOpen) return
+      thumb.classList.remove('is-active')
+      delete lightbox.dataset.visible
+      img.hidden = true
+      img.style.transform = ''
+      img.style.opacity = ''
+      img.style.borderRadius = ''
+    })
+  }
+
+  // Hide the image that just slid away, unless it's back in use by then.
+  function retire(img: HTMLImageElement, motion: Animation) {
+    motion.finished.then(() => {
+      if (img === cur || (drag?.axis === 'x' && img === spare)) return
+      img.hidden = true
+      img.style.transform = ''
+      img.style.opacity = ''
+    })
+  }
+
+  // Slide to the next photo (dir 1) or the previous one (-1). A swipe passes
+  // `offset`, how far the finger has already carried the photo.
+  function go(dir: number, offset = 0) {
+    if (!isOpen || thumbs.length < 2) return
+    settle()
+    const next = wrap(index + dir)
+    const out = cur
+    const inn = spare
+    load(inn, next)
+    inn.hidden = false
+    thumbs[index].classList.remove('is-active')
+    thumbs[next].classList.add('is-active')
+    index = next
+    cur = inn
+    spare = out
+    returnFocus = thumbs[next]
+    describe(next)
+
+    if (calm.matches) {
+      out.style.transform = ''
+      inn.style.transform = ''
+      out.style.opacity = '0'
+      inn.style.opacity = ''
+      retire(out, animate(out, { opacity: [1, 0] }, 200))
+      animate(inn, { opacity: [0, 1] }, 200)
+    } else {
+      const span = innerWidth + GAP
+      const left = 1 - Math.min(Math.abs(offset) / span, 1)
+      const duration = Math.max(240, 460 * left)
+      out.style.transform = `translateX(${-dir * span}px)`
+      inn.style.transform = ''
+      inn.style.opacity = ''
+      retire(out, animate(out, { transform: [`translateX(${offset}px)`, out.style.transform] }, duration))
+      animate(inn, { transform: [`translateX(${offset + dir * span}px)`, 'translateX(0)'] }, duration)
+    }
+    warmNeighbors()
+  }
+
+  // Swipe sideways for the next or previous photo, or up or down to close.
+  // The first 10px decide which; after that the photo follows the finger.
+  type Sample = { t: number; x: number; y: number }
+  type Drag = { id: number; x: number; y: number; dx: number; dy: number; axis: '' | 'x' | 'y'; trail: Sample[] }
+  let drag: Drag | null = null
+  let dragged = false
+
+  function slideTo(dx: number) {
+    // With one photo there's nothing to bring in, so it only gives a little.
+    if (thumbs.length < 2) {
+      cur.style.transform = `translateX(${dx / 4}px)`
+      return
+    }
+    const dir = dx < 0 ? 1 : -1
+    const j = wrap(index + dir)
+    if (spare.hidden || spare.dataset.index !== String(j)) {
+      load(spare, j)
+      spare.hidden = false
+    }
+    cur.style.transform = `translateX(${dx}px)`
+    spare.style.transform = `translateX(${dx + dir * (innerWidth + GAP)}px)`
+  }
+
+  function pull(dy: number) {
+    const p = Math.min(Math.abs(dy) / 300, 1)
+    cur.style.transform = `translateY(${dy}px) scale(${1 - p * 0.15})`
+    frost.style.opacity = String(1 - p * 0.6)
+  }
+
+  lightbox.addEventListener('pointerdown', (e) => {
+    dragged = false
+    if (!isOpen || drag || !e.isPrimary || e.button !== 0) return
+    if ((e.target as Element).closest('button')) return
+    const at = { t: e.timeStamp, x: e.clientX, y: e.clientY }
+    drag = { id: e.pointerId, x: at.x, y: at.y, dx: 0, dy: 0, axis: '', trail: [at] }
+  })
+
+  lightbox.addEventListener('pointermove', (e) => {
+    if (!drag || e.pointerId !== drag.id) return
+    if (!drag.axis) {
+      const dx = e.clientX - drag.x
+      const dy = e.clientY - drag.y
+      if (Math.hypot(dx, dy) < 10) return
+      drag.axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y'
+      // Count from here, so the photo doesn't jump by those first 10px.
+      drag.x = e.clientX
+      drag.y = e.clientY
+      settle()
+      lightbox.setPointerCapture(e.pointerId)
+      lightbox.dataset.dragging = ''
+      if (drag.axis === 'y') frost.style.transition = 'none'
+    }
+    drag.dx = e.clientX - drag.x
+    drag.dy = e.clientY - drag.y
+    drag.trail.push({ t: e.timeStamp, x: e.clientX, y: e.clientY })
+    while (drag.trail.length > 2 && e.timeStamp - drag.trail[0].t > 100) drag.trail.shift()
+    if (drag.axis === 'x') slideTo(drag.dx)
+    else pull(drag.dy)
+  })
+
+  function release(e: PointerEvent, cancelled: boolean) {
+    if (!drag || e.pointerId !== drag.id) return
+    const d = drag
+    drag = null
+    delete lightbox.dataset.dragging
+    if (!d.axis || !isOpen) return
+    dragged = true
+
+    // How fast it was moving over the last tenth of a second, in px/ms.
+    const first = d.trail[0]
+    const dt = Math.max(1, e.timeStamp - first.t)
+    const vx = (e.clientX - first.x) / dt
+    const vy = (e.clientY - first.y) / dt
+
+    if (d.axis === 'x') {
+      const dir = d.dx < 0 ? 1 : -1
+      const flung = Math.abs(vx) > 0.3 && Math.sign(vx) === -dir
+      if (!cancelled && thumbs.length > 1 && (Math.abs(d.dx) > innerWidth * 0.25 || flung)) return go(dir, d.dx)
+      // Not far enough: both photos settle back.
+      const from = cur.style.transform || 'none'
+      cur.style.transform = ''
+      animate(cur, { transform: [from, 'translateX(0)'] }, 320)
+      if (!spare.hidden) {
+        const peek = spare.style.transform || 'none'
+        spare.style.transform = `translateX(${dir * (innerWidth + GAP)}px)`
+        retire(spare, animate(spare, { transform: [peek, spare.style.transform] }, 320))
+      }
+    } else {
+      const flung = Math.abs(vy) > 0.5 && Math.sign(vy) === Math.sign(d.dy)
+      if (!cancelled && (Math.abs(d.dy) > 120 || flung)) return close()
+      // Not far enough: settle back.
+      const from = cur.style.transform || 'none'
+      cur.style.transform = ''
+      animate(cur, { transform: [from, 'none'] }, 360)
+      frost.style.transition = ''
+      frost.style.opacity = ''
+    }
+  }
+
+  lightbox.addEventListener('pointerup', (e) => release(e, false))
+  lightbox.addEventListener('pointercancel', (e) => release(e, true))
+  lightbox.addEventListener('lostpointercapture', (e) => release(e, true))
+  // A drag that ends where it started would otherwise count as a click (and
+  // one over the backdrop would close the viewer).
+  lightbox.addEventListener(
+    'click',
+    (e) => {
+      if (dragged && e.detail > 0) e.stopPropagation()
+      dragged = false
+    },
+    true,
+  )
+
+  addEventListener('resize', () => {
+    if (!isOpen || drag) return
+    settle()
+    place(cur, finalRect(index))
   })
 
   thumbs.forEach((thumb, i) => thumb.addEventListener('click', () => open(i)))
   frost.addEventListener('click', close)
   closeBtn.addEventListener('click', close)
-  lightbox.querySelector('[data-lb-prev]')!.addEventListener('click', () => navigate(-1))
-  lightbox.querySelector('[data-lb-next]')!.addEventListener('click', () => navigate(1))
+  lightbox.querySelector('[data-lb-prev]')!.addEventListener('click', () => go(-1))
+  lightbox.querySelector('[data-lb-next]')!.addEventListener('click', () => go(1))
 
   document.addEventListener('keydown', (e) => {
-    if (!isOpen) return
+    if (!isOpen || e.metaKey || e.ctrlKey || e.altKey) return
     if (e.key === 'Escape') close()
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigate(1)
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') navigate(-1)
+    else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(1)
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') go(-1)
+    else return
+    e.preventDefault()
   })
 </script>
 
@@ -468,10 +597,7 @@ const camera = mainCamera(photos)
     display: block;
     width: 100%;
     height: auto;
-    transition:
-      opacity 0.6s var(--ease),
-      transform 0.8s var(--ease),
-      filter 0.3s;
+    transition: filter 0.3s;
   }
 
   .thumb:hover :global(img) {
@@ -482,11 +608,11 @@ const camera = mainCamera(photos)
     opacity: 0 !important;
   }
 
-  /* Each photo fades up as it loads (without a script they simply appear). */
+  /* A photo stays hidden until it has loaded (the script by the grid fades in
+     the ones that arrive late). Without a script they simply appear. */
   @media (scripting: enabled) {
     .thumb :global(img:not([data-loaded])) {
       opacity: 0;
-      transform: scale(1.015);
     }
   }
 
@@ -501,6 +627,15 @@ const camera = mainCamera(photos)
     z-index: 100;
     visibility: hidden;
     pointer-events: none;
+    /* Every touch is the viewer's: swipes browse or close, nothing scrolls. */
+    touch-action: none;
+    overscroll-behavior: contain;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .lightbox[data-dragging] {
+    cursor: grabbing;
   }
 
   .lightbox[data-visible] {
@@ -527,20 +662,13 @@ const camera = mainCamera(photos)
 
   .lb-img {
     position: absolute;
-    border-radius: 3px;
+    border-radius: 6px;
+    background: var(--surface-2);
     box-shadow:
       0 0 0 1px rgb(0 0 0 / 0.06),
       0 24px 64px rgb(0 0 0 / 0.22);
-    transform-origin: 0 0;
     object-fit: cover;
-    touch-action: none;
-  }
-
-  .lb-img:global(.animating) {
-    transition:
-      transform 0.5s cubic-bezier(0.32, 0.72, 0, 1),
-      border-radius 0.4s cubic-bezier(0.32, 0.72, 0, 1),
-      opacity 0.25s ease;
+    -webkit-user-drag: none;
   }
 
   .lb-close {
@@ -553,6 +681,7 @@ const camera = mainCamera(photos)
 
   .lb-close[data-shown] {
     opacity: 1;
+    transition-delay: 0.3s;
   }
 
   .lb-bar {
@@ -575,6 +704,7 @@ const camera = mainCamera(photos)
     opacity: 1;
     pointer-events: auto;
     transform: none;
+    transition-delay: 0.3s;
   }
 
   .lb-info {
