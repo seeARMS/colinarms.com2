@@ -60,7 +60,6 @@ export const GET: APIRoute = async () => {
       [
         `- ${link('Photography', md('/photography'))}: wildlife, landscape and astrophotography, with camera settings`,
         `- ${link('RSS feed', abs('/feed.xml'))}: new posts`,
-        `- ${link("Colin's blog on Paragraph", person.blog)}: the same posts, where they're published`,
       ].join('\n'),
     ].join('\n\n'),
   ]

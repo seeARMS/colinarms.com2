@@ -28,7 +28,7 @@ export function personNode(image?: string) {
     worksFor: { '@id': PARAGRAPH_ID },
     homeLocation: { '@type': 'Place', name: 'San Francisco Bay Area' },
     knowsAbout: ['Startups', 'Publishing', 'Newsletters', 'Anti-abuse', 'Privacy engineering', 'Payments', 'Photography'],
-    sameAs: [...socials.map((s) => s.href), person.blog],
+    sameAs: socials.map((s) => s.href),
     subjectOf: appearances.map((a) =>
       a.kind === 'Podcast'
         ? {

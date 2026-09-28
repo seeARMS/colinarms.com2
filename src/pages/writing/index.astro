@@ -6,7 +6,6 @@ import PostList from '@/components/PostList.astro'
 import SubscribeForm from '@/components/SubscribeForm.astro'
 import { getColinArticles } from '@/lib/getAllArticles'
 import { year } from '@/lib/format'
-import { person } from '@/data/profile'
 import { blog, breadcrumbs } from '@/lib/schema'
 
 // The Markdown version of this page (writing.md.ts) repeats its copy; change both.
@@ -37,12 +36,7 @@ const since = articles.length ? year(articles[articles.length - 1].isoDate) : ''
         <section class="section" aria-labelledby="archive">
           <div class="section-head">
             <h2 id="archive">Archive</h2>
-            <span class="meta">
-              {articles.length} posts since {since}, also on{' '}
-              <a class="link" href={person.blog} rel="noopener">
-                Paragraph
-              </a>
-            </span>
+            <span class="meta">{articles.length} posts since {since}</span>
           </div>
           <PostList posts={articles} byYear />
         </section>

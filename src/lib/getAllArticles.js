@@ -31,8 +31,6 @@ export async function getColinArticlesWithContent() {
       title: post.title,
       subtitle: post.subtitle,
       slug,
-      /** The slug on paragraph.com, which may differ from the site's. */
-      paragraphSlug: post.slug,
       html: post.staticHtml,
       /** Paragraph's own Markdown of the post, for its Markdown version. */
       markdown: post.markdown,

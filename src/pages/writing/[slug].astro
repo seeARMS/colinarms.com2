@@ -8,7 +8,6 @@ import SubscribeForm from '@/components/SubscribeForm.astro'
 import { getColinArticlesWithContent } from '@/lib/getAllArticles'
 import { longDate, postDescription, readingTime } from '@/lib/format'
 import { blogPosting, breadcrumbs } from '@/lib/schema'
-import { person } from '@/data/profile'
 import { highlight } from '@/lib/highlight'
 import { optimizeImages } from '@/lib/post-images'
 
@@ -26,7 +25,7 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params
-const { title, subtitle, html, isoDate, updatedIso, paragraphSlug, allPosts } = Astro.props
+const { title, subtitle, html, isoDate, updatedIso, allPosts } = Astro.props
 const minutes = html ? readingTime(html) : 0
 const body = html ? await optimizeImages(await highlight(html)) : ''
 const path = `/writing/${slug}`
@@ -78,10 +77,7 @@ const schema = [
       html ? (
         <div class="prose body" set:html={body} />
       ) : (
-        <p class="empty">
-          This post lives on Paragraph.{' '}
-          <a class="link" href={`${person.blog}/${paragraphSlug}`} rel="noopener">Read it there</a>.
-        </p>
+        <p class="empty">This post's text couldn't be loaded when the site was built.</p>
       )
     }
   </article>

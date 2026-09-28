@@ -4,7 +4,7 @@ import type { APIRoute, GetStaticPaths } from 'astro'
 import { person } from '@/data/profile'
 import { longDate, postDescription, readingTime } from '@/lib/format'
 import { getColinArticlesWithContent } from '@/lib/getAllArticles'
-import { abs, frontMatter, link, markdown } from '@/lib/markdown'
+import { abs, frontMatter, markdown } from '@/lib/markdown'
 
 export const prerender = true
 
@@ -14,7 +14,7 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths
 
 export const GET: APIRoute = ({ params, props }) => {
-  const { title, subtitle, html, markdown: body, isoDate, updatedIso, paragraphSlug } = props
+  const { title, subtitle, html, markdown: body, isoDate, updatedIso } = props
   const minutes = html ? readingTime(html) : 0
 
   return markdown(
@@ -29,6 +29,6 @@ export const GET: APIRoute = ({ params, props }) => {
     `# ${title}`,
     subtitle,
     [person.name, longDate(isoDate), minutes > 0 && `${minutes} minute read`].filter(Boolean).join(' · '),
-    body?.trim() || `This post lives on Paragraph. ${link('Read it there', `${person.blog}/${paragraphSlug}`)}.`,
+    body?.trim() || "This post's text couldn't be loaded when the site was built.",
   )
 }

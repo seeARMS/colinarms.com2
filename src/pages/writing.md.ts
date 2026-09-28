@@ -24,7 +24,7 @@ export const GET: APIRoute = async () => {
     articles.length > 0 &&
       [
         '## Archive',
-        `${articles.length} posts since ${years.at(-1)}, also on ${link('Paragraph', person.blog)}.`,
+        `${articles.length} posts since ${years.at(-1)}.`,
         ...years.map((y) =>
           [
             `### ${y}`,

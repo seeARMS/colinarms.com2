@@ -6,7 +6,6 @@ export const person = {
   title: 'Founder & CEO of Paragraph',
   previously: 'Previously Google and Coinbase',
   email: 'colin@armstr.ng',
-  blog: 'https://paragraph.com/@colins-blog',
   /** The site's description in search results, unless a page has its own. */
   description:
     'Colin Armstrong is the founder and CEO of Paragraph, the media engine for early-stage startups. Previously anti-abuse at Google and payments at Coinbase.',
