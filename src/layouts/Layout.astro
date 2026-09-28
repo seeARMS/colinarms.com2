@@ -19,8 +19,6 @@ interface Props {
   schema?: object[]
   /** Keep the page out of search results (the 404). */
   noindex?: boolean
-  /** Run the header and footer as wide as a page with a wide grid (photos). */
-  wide?: boolean
 }
 
 const {
@@ -32,7 +30,6 @@ const {
   publishedDate,
   modifiedDate,
   schema = [],
-  wide = false,
 } = Astro.props
 
 const GA_MEASUREMENT_ID = 'G-VLG18DVXN5'
@@ -255,11 +252,11 @@ const graph = schema.length ? JSON.stringify({ '@context': 'https://schema.org',
   </head>
   <body>
     <a class="skip" href="#content">Skip to content</a>
-    <Nav wide={wide} />
+    <Nav />
     <main id="content">
       <slot />
     </main>
-    <Footer wide={wide} />
+    <Footer />
     <SubscribeDialog />
 
     <!-- Google Analytics (deferred). A page Chrome prerendered counts as a
