@@ -3,16 +3,11 @@
 // along on the right.
 import { person, socials } from '@/data/profile'
 
-interface Props {
-  wide?: boolean
-}
-
-const { wide = false } = Astro.props
 const shown = socials.filter((s) => s.listed !== false)
 ---
 
 <footer class="foot" id="site-footer">
-  <div class:list={['container', 'inner', { wide }]}>
+  <div class="container inner">
     <div class="about">
       <a class="brand" href="/">armstr<span>.ng</span></a>
       <p class="made">
