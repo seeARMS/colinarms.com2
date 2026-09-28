@@ -3,12 +3,6 @@
 // toggle. It sits on the page like a running head rather than floating over it.
 import { pagePath } from '@/lib/path'
 
-interface Props {
-  /** As wide as a page with a wide grid (Photography). */
-  wide?: boolean
-}
-
-const { wide = false } = Astro.props
 const path = pagePath(Astro.url)
 
 const links = [
@@ -22,7 +16,7 @@ const isActive = (href: string) => path.startsWith(href)
 ---
 
 <header class="nav">
-  <div class:list={['container', 'inner', { wide }]}>
+  <div class="container inner">
     <a href="/" class="home" aria-label="armstr.ng home">armstr<span>.ng</span></a>
 
     <nav class="links" aria-label="Main">
