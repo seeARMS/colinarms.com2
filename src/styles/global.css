@@ -526,6 +526,18 @@ a:hover .stroke {
   animation-duration: 160ms;
 }
 
+/* The nav (named in Nav.astro) holds still while the page fades beneath it:
+   the new one is shown at once, in place, with the new page's link marked.
+   The theme switch leaves it alone. */
+:root:not([data-theme-swap])::view-transition-group(nav),
+:root:not([data-theme-swap])::view-transition-new(nav) {
+  animation: none;
+}
+
+:root:not([data-theme-swap])::view-transition-old(nav) {
+  display: none;
+}
+
 /* What a page transition carries across (see Layout.astro): a post's title or
    a Work row. They glide a little slower than the page fades around them. */
 ::view-transition-group(post-title),
