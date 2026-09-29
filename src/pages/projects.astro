@@ -5,7 +5,7 @@ import Layout from '@/layouts/Layout.astro'
 import Mark from '@/components/Mark.astro'
 import WorkList from '@/components/WorkList.astro'
 import { appearances, projects, work } from '@/data/profile'
-import { monthYear, venue } from '@/lib/format'
+import { anchor, monthYear, venue } from '@/lib/format'
 import { breadcrumbs, projectList } from '@/lib/schema'
 
 // The Markdown version of this page (projects.md.ts) repeats its copy; change both.
@@ -62,6 +62,11 @@ const out = 'M5 11 11 5M6 5h5v5'
     </section>
 
     <section class="section" aria-labelledby="work">
+      <!-- A link to one role (/projects#google) lands at the top of Work, not
+           on the row itself, so the section reads from its heading. The row
+           then opens, and WorkList.astro brings it up if it would run off
+           the screen. -->
+      {work.map((role) => <span class="role-anchor" id={anchor(role.company)} />)}
       <div class="section-head">
         <h2 id="work">Work</h2>
         <span class="meta">Since {since}</span>
@@ -148,6 +153,11 @@ const out = 'M5 11 11 5M6 5h5v5'
 
   .project:hover .domain svg {
     transform: translate(2px, -2px);
+  }
+
+  .role-anchor {
+    display: block;
+    scroll-margin-top: 32px;
   }
 
   .lead {

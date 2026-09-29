@@ -41,7 +41,7 @@ const rows = roles.map((role) => ({
         </>
       )
       return (
-        <li class="role" id={role.slug} data-current={role.current ? '' : undefined}>
+        <li class="role" data-role={role.slug} data-current={role.current ? '' : undefined}>
           {variant === 'expand' ? (
             <>
               <button
@@ -129,15 +129,32 @@ const rows = roles.map((role) => ({
     btn.addEventListener('click', () => setOpen(btn, btn.getAttribute('aria-expanded') !== 'true')),
   )
 
-  const target = location.hash ? document.getElementById(decodeURIComponent(location.hash.slice(1))) : null
+  // The page lands at the top of Work (see projects.astro). If the opened
+  // entry would then run past the bottom of the screen, as it can on a phone,
+  // scroll just enough to show all of it, but never past the row's own top.
+  const reveal = (role: HTMLElement) => {
+    const { top, bottom } = role.getBoundingClientRect()
+    const details = role.querySelector('.clip')?.scrollHeight ?? 0
+    const by = Math.min(bottom + details + 24 - innerHeight, top - 32)
+    if (by > 0) scrollBy({ top: by, behavior: calm.matches ? 'auto' : 'smooth' })
+  }
+
+  const slug = decodeURIComponent(location.hash.slice(1))
+  const target = slug ? document.querySelector<HTMLElement>(`[data-role="${CSS.escape(slug)}"]`) : null
   const btn = target?.querySelector<HTMLButtonElement>('[data-role-toggle]')
   if (target && btn) {
     // Arriving from the home page, the row glides into place first (see the
     // page transition in Layout.astro); the details unfold once it has landed.
     // By the first frame the transition (if any) has started, so look then.
+    // Wait for the page to finish loading too, or the browser may pull the
+    // scroll back to the link's target.
+    const loaded = new Promise((done) =>
+      document.readyState === 'complete' ? done(null) : addEventListener('load', done, { once: true }),
+    )
     requestAnimationFrame(() => {
       const landed = (window as { arrival?: Promise<unknown> }).arrival ?? Promise.resolve()
-      landed.then(() => {
+      Promise.all([landed, loaded]).then(() => {
+        reveal(target)
         setOpen(btn, true)
         target.querySelector('.co')?.classList.add('arrived')
       })
@@ -146,10 +163,6 @@ const rows = roles.map((role) => ({
 </script>
 
 <style>
-  .role {
-    scroll-margin-top: 32px;
-  }
-
   .line {
     display: flex;
     align-items: center;
