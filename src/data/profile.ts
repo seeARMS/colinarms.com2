@@ -130,7 +130,7 @@ export const work: Role[] = [
     from: 2024,
     to: 2025,
     summary: 'CEO, via acquisition',
-    logo: '/mirror.png',
+    logo: '/mirror.webp',
     details: [
       'In May 2024, Paragraph acquired Mirror, the onchain publishing platform founded by Denis Nazarov, which had raised more than $10 million from a16z and USV. We raised $5 million from USV and Coinbase Ventures alongside the deal.',
       "We ran Mirror next to Paragraph, with nothing changing for its writers. In September 2025 we retired it and moved every Mirror writer and post to Paragraph.",
