@@ -48,7 +48,10 @@ function detect(code: string): string | undefined {
     }
   }
 
-  if (/\b(const|let|var|function|import|export|return|async|await|useState|useEffect)\b|=>/.test(text) && /[=(){}]/.test(text))
+  if (
+    /\b(const|let|var|function|import|export|return|async|await|useState|useEffect)\b|=>/.test(text) &&
+    /[=(){}]/.test(text)
+  )
     return 'jsx'
 
   return undefined
