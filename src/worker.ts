@@ -47,7 +47,8 @@ async function page(request: Request, env: Handle[1], ctx: Handle[2]) {
 
 /** The Markdown file a request should get, if any, and the page it stands for. */
 function markdownFor(path: string, accept: string | null) {
-  if (path.endsWith('.md')) return { file: path, page: path === '/index.md' ? '/' : path.slice(0, -3), negotiated: false }
+  if (path.endsWith('.md'))
+    return { file: path, page: path === '/index.md' ? '/' : path.slice(0, -3), negotiated: false }
   if (!prefersMarkdown(accept)) return undefined
   if (path === '/') return { file: '/index.md', page: '/', negotiated: true }
   // Pages only. An address ending in a slash is redirected first (public/_redirects).

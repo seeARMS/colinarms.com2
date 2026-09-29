@@ -30,7 +30,10 @@ export const GET: APIRoute = async () => {
     [
       '## Work',
       work
-        .map((role) => `- ${link(role.company, abs(`/projects#${anchor(role.company)}`))}: ${role.summary} · ${tenure(role)}`)
+        .map(
+          (role) =>
+            `- ${link(role.company, abs(`/projects#${anchor(role.company)}`))}: ${role.summary} · ${tenure(role)}`,
+        )
         .join('\n'),
       link('Projects & work', abs('/projects')),
     ].join('\n\n'),

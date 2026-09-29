@@ -27,7 +27,15 @@ export function personNode(image?: string) {
     disambiguatingDescription: person.disambiguation,
     worksFor: { '@id': PARAGRAPH_ID },
     homeLocation: { '@type': 'Place', name: 'San Francisco Bay Area' },
-    knowsAbout: ['Startups', 'Publishing', 'Newsletters', 'Anti-abuse', 'Privacy engineering', 'Payments', 'Photography'],
+    knowsAbout: [
+      'Startups',
+      'Publishing',
+      'Newsletters',
+      'Anti-abuse',
+      'Privacy engineering',
+      'Payments',
+      'Photography',
+    ],
     sameAs: socials.map((s) => s.href),
     subjectOf: appearances.map((a) =>
       a.kind === 'Podcast'
@@ -42,7 +50,9 @@ export function personNode(image?: string) {
             '@type': a.kind === 'Press' ? 'NewsArticle' : 'Article',
             headline: a.title,
             url: a.href,
-            datePublished: a.date,
+            image: a.image,
+            datePublished: a.published,
+            author: { '@type': 'Person', name: a.author },
             publisher: { '@type': 'Organization', name: a.outlet },
           },
     ),

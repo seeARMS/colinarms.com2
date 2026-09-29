@@ -133,7 +133,7 @@ export const work: Role[] = [
     logo: '/mirror.webp',
     details: [
       'In May 2024, Paragraph acquired Mirror, the onchain publishing platform founded by Denis Nazarov, which had raised more than $10 million from a16z and USV. We raised $5 million from USV and Coinbase Ventures alongside the deal.',
-      "We ran Mirror next to Paragraph, with nothing changing for its writers. In September 2025 we retired it and moved every Mirror writer and post to Paragraph.",
+      'We ran Mirror next to Paragraph, with nothing changing for its writers. In September 2025 we retired it and moved every Mirror writer and post to Paragraph.',
     ],
   },
   {
@@ -163,14 +163,27 @@ export const work: Role[] = [
   },
 ]
 
-export type Appearance = {
+type AppearanceBase = {
   outlet: string
   title: string
   href: string
-  /** YYYY-MM */
+  /** YYYY-MM, for the Projects page */
   date: string
-  kind: 'Podcast' | 'Press' | 'Interview'
 }
+
+// Articles also carry what the publisher's own page says (its publish time,
+// byline and lead image), for their NewsArticle/Article structured data.
+// Leave the image out when it's the outlet's stock art rather than something
+// about Paragraph or Colin.
+export type Appearance =
+  | (AppearanceBase & { kind: 'Podcast' })
+  | (AppearanceBase & {
+      kind: 'Press' | 'Interview'
+      /** ISO 8601 with a time zone, as the article gives it */
+      published: string
+      author: string
+      image?: string
+    })
 
 export const appearances: Appearance[] = [
   {
@@ -179,6 +192,8 @@ export const appearances: Appearance[] = [
     href: 'https://finance.yahoo.com/news/paragraph-absorbs-mirror-web3-publishing-200308303.html',
     date: '2025-09',
     kind: 'Press',
+    published: '2025-09-16T20:03:08Z',
+    author: 'Hongji Feng',
   },
   {
     outlet: "Kaloh's Podcast",
@@ -197,9 +212,11 @@ export const appearances: Appearance[] = [
   {
     outlet: 'The Block',
     title: 'Paragraph raises $5 million from USV and Coinbase Ventures, takes over Mirror',
-    href: 'https://www.theblock.co/post/292221/paragraph-raises-5-million-from-usv-and-coinbase-ventures-takes-over-web3-blogging-platform-mirror',
+    href: 'https://www.theblock.co/news/deals/2024-05-02-paragraph-raises-5-million-from-usv-and-coinbase-ventures-takes-over-web3-blogging-platform-mirror-292221',
     date: '2024-05',
     kind: 'Press',
+    published: '2024-05-02T14:38:13-04:00',
+    author: 'MK Manoylov',
   },
   {
     outlet: 'SiliconANGLE',
@@ -207,6 +224,8 @@ export const appearances: Appearance[] = [
     href: 'https://siliconangle.com/2024/05/03/web3-newsletter-paragraph-raises-5m-takes-blogging-platform-mirror/',
     date: '2024-05',
     kind: 'Press',
+    published: '2024-05-03T17:10:07+00:00',
+    author: 'Kyt Dotson',
   },
   {
     outlet: 'Danica Swanson',
@@ -214,6 +233,9 @@ export const appearances: Appearance[] = [
     href: 'https://paragraph.com/@danicaswanson/referral-rewards-interview-with-colin-armstrong',
     date: '2023-10',
     kind: 'Interview',
+    published: '2023-10-23T15:58:29.616Z',
+    author: 'Danica Swanson',
+    image: 'https://storage.googleapis.com/papyrus_images/5349644c5ca3bdc4b2e7c5c175d0842c.jpg',
   },
   {
     outlet: 'Milk Road',
@@ -249,12 +271,16 @@ export const appearances: Appearance[] = [
     href: 'https://siliconangle.com/2022/10/24/web3-newsletter-platform-paragraph-raises-1-7m-pre-seed-funding/',
     date: '2022-10',
     kind: 'Press',
+    published: '2022-10-24T18:25:06+00:00',
+    author: 'Kyt Dotson',
   },
   {
     outlet: 'The Block',
     title: 'Web3 publishing platform Paragraph raises $1.7 million',
-    href: 'https://www.theblock.co/post/179174/web3-publishing-platform-paragraph-raises',
+    href: 'https://www.theblock.co/news/deals/2022-10-24-web3-publishing-platform-paragraph-raises-179174',
     date: '2022-10',
     kind: 'Press',
+    published: '2022-10-24T09:00:35-04:00',
+    author: 'Kari McMahon',
   },
 ]

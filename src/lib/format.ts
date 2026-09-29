@@ -37,7 +37,10 @@ export const venue = (a: Appearance) =>
 
 /** Minutes to read, at an unhurried 230 words a minute. */
 export function readingTime(html: string): number {
-  const words = html.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length
+  const words = html
+    .replace(/<[^>]+>/g, ' ')
+    .split(/\s+/)
+    .filter(Boolean).length
   return Math.max(1, Math.round(words / 230))
 }
 
@@ -58,11 +61,21 @@ export function postDescription(title: string, subtitle: string | undefined, htm
   const inner = [...html.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/g)].map((m) => m[1])
   // Skip opening asides set in italics (like an old "written with Paragraph"
   // plug); the description should start with the post itself.
-  const text = (p: string) => p.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim()
+  const text = (p: string) =>
+    p
+      .replace(/<[^>]+>/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
   const italics = (p: string) => [...p.matchAll(/<em>([\s\S]*?)<\/em>/g)].map((m) => text(m[1])).join(' ')
   const aside = (p: string) => text(p).length > 0 && italics(p).length >= text(p).length * 0.85
   while (inner.length && aside(inner[0])) inner.shift()
-  const paragraphs = inner.map((p) => decode(p.replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim()).filter(Boolean)
+  const paragraphs = inner
+    .map((p) =>
+      decode(p.replace(/<[^>]+>/g, ' '))
+        .replace(/\s+/g, ' ')
+        .trim(),
+    )
+    .filter(Boolean)
   const sentences = paragraphs.join(' ').split(/(?<=[.!?])\s+/)
 
   let out = subtitle?.trim() ?? ''
@@ -76,7 +89,12 @@ export function postDescription(title: string, subtitle: string | undefined, htm
   // Still short (one long opening sentence): cut the rest at a word.
   if (out.length < 90 && i < sentences.length) {
     const room = LIMIT - (out ? out.length + 1 : 0) - 1
-    const cut = sentences.slice(i).join(' ').slice(0, room).replace(/\s+\S*$/, '').replace(/[,;:]$/, '')
+    const cut = sentences
+      .slice(i)
+      .join(' ')
+      .slice(0, room)
+      .replace(/\s+\S*$/, '')
+      .replace(/[,;:]$/, '')
     if (cut) out = `${out ? `${out} ` : ''}${cut}…`
   }
   return out || `${title}, by Colin Armstrong.`
