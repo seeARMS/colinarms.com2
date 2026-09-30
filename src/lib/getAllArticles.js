@@ -47,12 +47,42 @@ export async function getColinArticlesWithContent() {
   })
 }
 
-async function fetchPosts({ includeContent } = {}) {
+/**
+ * Each post's ID and when Paragraph last updated it, one per line, so it
+ * changes when a post is published, edited, unpublished or deleted. The build
+ * serves the version it was made from at /content-version.txt, and the
+ * Worker's cron rebuilds the site when Paragraph's differs (src/worker.ts).
+ */
+function contentVersion(items) {
+  return items.map((post) => `${post.id} ${post.updatedAt}`).join('\n')
+}
+
+/** The version this build is made from. */
+export async function getContentVersion() {
+  const { items } = await fetchPosts()
+  return contentVersion(items)
+}
+
+/**
+ * The version Paragraph has now. It throws when the API fails, rather than
+ * reading an outage as "no posts" and rebuilding the site without them.
+ */
+export async function getLiveContentVersion() {
+  const res = await fetch(postsUrl())
+  if (!res.ok) throw new Error(`Paragraph's API answered ${res.status}`)
+  const { items } = await res.json()
+  return contentVersion(items)
+}
+
+function postsUrl({ includeContent } = {}) {
   const params = new URLSearchParams({ limit: '50' })
   if (includeContent) params.set('includeContent', 'true')
+  return `${API_BASE}/publications/${PUB_ID}/posts?${params}`
+}
 
+async function fetchPosts({ includeContent } = {}) {
   try {
-    const res = await fetch(`${API_BASE}/publications/${PUB_ID}/posts?${params}`)
+    const res = await fetch(postsUrl({ includeContent }))
     return res.json()
   } catch (e) {
     console.error('Failed to fetch posts:', e)
