@@ -26,6 +26,8 @@
       "/contact.md"
     ]
   },
+  // Rebuild the site when a post changes on Paragraph (scheduled in src/worker.ts).
+  "triggers": { "crons": ["*/5 * * * *"] },
   // Five subscribe attempts per visitor per minute (see src/pages/api/subscribe.ts).
   "ratelimits": [
     {
