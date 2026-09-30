@@ -1,13 +1,18 @@
 import { siteSlug } from './slug.js'
-import { edited } from '../data/posts.ts'
+import { edited, unlisted } from '../data/posts.ts'
 
 const API_BASE = 'https://public.api.paragraph.com/api/v1'
 const PUB_ID = '3eJHzLXKQHclhCdsO4Yr'
 
-export async function getColinArticles() {
+/**
+ * Posts for the site's lists. Unlisted posts (src/data/posts.ts) are left out
+ * unless `includeUnlisted` is set.
+ */
+export async function getColinArticles({ includeUnlisted = false } = {}) {
   const { items } = await fetchPosts()
 
-  return items.map((post) => {
+  const listed = includeUnlisted ? items : items.filter((post) => !unlisted.has(siteSlug(post.slug)))
+  return listed.map((post) => {
     const slug = siteSlug(post.slug)
     const isoDate = new Date(Number(post.publishedAt)).toISOString()
     return {
@@ -31,6 +36,7 @@ export async function getColinArticlesWithContent() {
       title: post.title,
       subtitle: post.subtitle,
       slug,
+      unlisted: unlisted.has(slug),
       html: post.staticHtml,
       /** Paragraph's own Markdown of the post, for its Markdown version. */
       markdown: post.markdown,

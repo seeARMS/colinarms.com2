@@ -7,3 +7,12 @@
 // post's settings change. Every post's moved on September 27, 2026, when their
 // canonical URLs were set, which would have called a 2021 post fresh.
 export const edited: Record<string, string> = {}
+
+// Posts left off every list on the site: the writing archive, the home page,
+// "Keep reading", the RSS feed, llms.txt and the Markdown versions. Each post's
+// page still builds and stays in the sitemap, so links from elsewhere keep
+// working and search engines keep indexing it. By slug on this site.
+export const unlisted = new Set([
+  'nextjs-server-side-and-client-side-mismatch',
+  'automatically-remove-unused-imports-and-variables-in-vim-using-ale-and-eslint',
+])
