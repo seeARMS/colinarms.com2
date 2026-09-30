@@ -15,7 +15,7 @@ const pages = [
 ]
 
 // Everything a mistyped or old link might have meant.
-const articles = await getColinArticles()
+const articles = await getColinArticles({ includeUnlisted: true })
 const routes = [...pages, ...articles.map((a) => ({ path: a.link, title: a.title }))]
 ---
 

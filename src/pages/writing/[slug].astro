@@ -18,8 +18,8 @@ export async function getStaticPaths() {
     props: {
       ...post,
       allPosts: posts
-        .filter((p) => p.slug !== post.slug)
-        .map(({ html: _, markdown: __, ...rest }) => ({ ...rest, link: `/writing/${rest.slug}` })),
+        .filter((p) => p.slug !== post.slug && !p.unlisted)
+        .map(({ html: _, markdown: __, unlisted: ___, ...rest }) => ({ ...rest, link: `/writing/${rest.slug}` })),
     },
   }))
 }

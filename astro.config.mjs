@@ -10,7 +10,7 @@ import { getColinArticles } from './src/lib/getAllArticles.js'
 // those. Other pages have no date to trust, and no lastmod beats a wrong one.
 let lastChanged
 const lastmod = async (url) => {
-  lastChanged ??= getColinArticles().then((posts) => {
+  lastChanged ??= getColinArticles({ includeUnlisted: true }).then((posts) => {
     const dates = new Map(posts.map((post) => [post.link, post.updatedIso]))
     if (posts.length) dates.set('/writing', posts.map((post) => post.updatedIso).sort().at(-1))
     return dates
