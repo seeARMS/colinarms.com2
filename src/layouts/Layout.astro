@@ -56,6 +56,8 @@ const graph = schema.length ? JSON.stringify({ '@context': 'https://schema.org',
     <meta name="description" content={description} />
     <meta name="author" content={person.name} />
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonicalUrl} />}
+    {/* Lets Google show a large image for a page, which Discover requires. */}
+    {!noindex && <meta name="robots" content="max-image-preview:large" />}
     {!noindex && <link rel="alternate" type="text/markdown" href={markdownPath} />}
     <link rel="describedby" href="/llms.txt" />
     <link rel="icon" href="/favicon.ico" />
