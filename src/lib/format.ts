@@ -9,8 +9,13 @@ const medium = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric'
 const short = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', timeZone: TZ })
 const yearOnly = new Intl.DateTimeFormat('en-US', { year: 'numeric', timeZone: TZ })
 
+// A bare day ('2026-10-02', as in src/data/posts.ts) reads as midnight UTC,
+// which is still the day before in California, so it's written as is.
+const longDay = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
+const DAY = /^\d{4}-\d{2}-\d{2}$/
+
 /** October 15, 2024 */
-export const longDate = (iso: string) => long.format(new Date(iso))
+export const longDate = (iso: string) => (DAY.test(iso) ? longDay : long).format(new Date(iso))
 /** Oct 15, 2024 */
 export const mediumDate = (iso: string) => medium.format(new Date(iso))
 /** Oct 15 */
@@ -45,7 +50,8 @@ export function readingTime(html: string): number {
 }
 
 const ENTITIES: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' }
-const decode = (text: string) =>
+/** Decodes the HTML entities in a piece of text: &amp; → &. */
+export const decode = (text: string) =>
   text.replace(/&(#x?[0-9a-f]+|\w+);/gi, (match, entity: string) => {
     if (!entity.startsWith('#')) return ENTITIES[entity] ?? match
     const code = entity[1] === 'x' ? parseInt(entity.slice(2), 16) : parseInt(entity.slice(1), 10)
