@@ -16,6 +16,8 @@ export const getStaticPaths = (async () => {
 export const GET: APIRoute = ({ params, props }) => {
   const { title, subtitle, html, markdown: body, isoDate, updatedIso } = props
   const minutes = html ? readingTime(html) : 0
+  // As on the page: only for a post edited on a later day.
+  const updated = longDate(updatedIso) === longDate(isoDate) ? undefined : longDate(updatedIso)
 
   return markdown(
     frontMatter({
@@ -28,7 +30,9 @@ export const GET: APIRoute = ({ params, props }) => {
     }),
     `# ${title}`,
     subtitle,
-    [person.name, longDate(isoDate), minutes > 0 && `${minutes} minute read`].filter(Boolean).join(' · '),
+    [person.name, longDate(isoDate), updated && `Updated ${updated}`, minutes > 0 && `${minutes} minute read`]
+      .filter(Boolean)
+      .join(' · '),
     body?.trim() || "This post's text couldn't be loaded when the site was built.",
   )
 }

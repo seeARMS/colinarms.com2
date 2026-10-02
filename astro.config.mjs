@@ -3,6 +3,7 @@ import cloudflare from '@astrojs/cloudflare'
 import sitemap from '@astrojs/sitemap'
 import photoMeta from './scripts/photo-meta.mjs'
 import postImages from './scripts/post-images.mjs'
+import checkShareCards from './scripts/check-share-cards.mjs'
 import { getColinArticles } from './src/lib/getAllArticles.js'
 
 // When each dated page last changed, for the sitemap's lastmod: a post's last
@@ -45,6 +46,7 @@ export default defineConfig({
     inlineStylesheets: 'always',
   },
   integrations: [
+    checkShareCards(),
     sitemap({
       serialize: async (item) => {
         const date = await lastmod(item.url)
